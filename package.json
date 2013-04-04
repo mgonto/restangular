@@ -11,7 +11,9 @@
   "engines": {
     "node": ">= 0.9"
   },
-  "dependencies": {},
+  "dependencies": {
+    "underscore": ">= 1.4.4"
+  },
   "devDependencies": {
     "grunt": ">= 0.4.0",
     "grunt-contrib-concat": "*",
