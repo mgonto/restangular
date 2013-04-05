@@ -18,7 +18,8 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-bower" : "*"
+    "grunt-bower" : "*",
+    "grunt-bower-task": "*"
   },
   "scripts": {
   }

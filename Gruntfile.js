@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     bower: {
       dev: {
         dest: '<%= dirs.dest %>/dependencies'
-      }
+      },
     },
     uglify: {
       options: {
@@ -75,6 +75,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.loadNpmTasks('grunt-bower');
+
 
   // Default task.
   grunt.registerTask('default', ['build']);
