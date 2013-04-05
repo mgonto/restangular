@@ -26,6 +26,11 @@ module.exports = function(grunt) {
         dest: '<%= dirs.dest %>/<%= pkg.name %>.js'
       }
     },
+    bower: {
+      dev: {
+        dest: '<%= dirs.dest %>/dependencies'
+      }
+    },
     uglify: {
       options: {
         banner: '<%= meta.banner %>'
@@ -69,12 +74,13 @@ module.exports = function(grunt) {
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
+  grunt.loadNpmTasks('grunt-bower');
 
   // Default task.
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['concat', 'uglify']);
+  grunt.registerTask('build', ['bower', 'concat', 'uglify']);
 
 
   // Provides the "bump" task.
