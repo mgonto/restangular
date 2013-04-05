@@ -28,8 +28,12 @@ module.exports = function(grunt) {
     },
     bower: {
       dev: {
-        dest: '<%= dirs.dest %>/dependencies'
+        dest: '<%= dirs.dest %>/dependencies',
       },
+    },
+    bowerInstall: {
+        install: {
+        }
     },
     uglify: {
       options: {
@@ -74,6 +78,10 @@ module.exports = function(grunt) {
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
+  grunt.loadNpmTasks('grunt-bower-task');
+
+  grunt.renameTask("bower", "bowerInstall");
+
   grunt.loadNpmTasks('grunt-bower');
 
 
@@ -81,7 +89,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['bower', 'concat', 'uglify']);
+  grunt.registerTask('build', ['bowerInstall', 'bower', 'concat', 'uglify']);
 
 
   // Provides the "bump" task.
