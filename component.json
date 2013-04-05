@@ -12,6 +12,7 @@
   },
   "ignore": [
     "node_modules",
-    "components"
+    "components",
+    "lib"
   ]
 }
