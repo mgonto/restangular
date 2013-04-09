@@ -5,7 +5,7 @@ module.provider('Restangular', function() {
         /**
          * This is the BaseURL to be used with Restangular
          */
-        this.baseUrl = null;
+        this.baseUrl = "";
         this.setBaseUrl = function(baseUrl) {
             this.baseUrl = baseUrl;
         }
@@ -19,8 +19,8 @@ module.provider('Restangular', function() {
         }
         
         /**
-         * Sets the URL creator type
-         */
+         * Sets the URL creator type. For now, only Path is created. In the future we'll have queryParams
+        **/
         this.urlCreator = "path";
         this.setUrlCreator = function(name) {
             if (!_.has(urlCreatorFactory, name)) {
@@ -32,6 +32,11 @@ module.provider('Restangular', function() {
         //Internal values and functions
         var urlCreatorFactory = {};
         
+        /**
+         * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
+         * This means that if you have an Account that then has a set of Buildings, a URL to a building
+         * would be /accounts/123/buildings/456
+        **/
         var Path = function(baseUrl) {
             this.baseUrl = baseUrl;
         }
