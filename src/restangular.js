@@ -38,7 +38,11 @@ module.provider('Restangular', function() {
         
         Path.prototype.base = function(current) {
             return this.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
-                return acum + "/" + elem.route + "/" + elem.id;
+                var currUrl = acum + "/" + elem.route;
+                if (elem.id) {
+                    currUrl += "/" + elem.id;
+                }
+                return currUrl;
             }, '');
         }
         
@@ -86,12 +90,18 @@ module.provider('Restangular', function() {
           }
           
           function fetchFunction(what) {
+              var search = what ? {what: what} : {};
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource).getArray({what: what}, function(data) {
+              urlHandler.resource(this, $resource).getArray(search, function(data) {
                   var processedData = _.map(data, function(elem) {
-                      return restangularize(__this, elem, what);
+                      if (what) {
+                          return restangularize(__this, elem, what);
+                      } else {
+                          return restangularize(null, elem, __this.route);
+                      }
+                      
                   });
                   deferred.resolve(processedData);
               }, function error() {
@@ -143,10 +153,14 @@ module.provider('Restangular', function() {
           
           var service = {};
           
-          service.create = function(route, id) {
+          service.one = function(route, id) {
               return restangularize(null, {
                   id: id
               }, route);
+          }
+          
+          service.all = function(route) {
+              return restangularize(null, {} , route);
           }
           
           return service;
