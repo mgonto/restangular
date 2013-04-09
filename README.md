@@ -108,6 +108,20 @@ var account = Restangular.one("accounts", 123);
 $scope.account = account.get();
 ````
 
+# Contribute
+
+In order to Contribute just git clone the repository and then run:
+
+````
+npm install grunt-cli --global
+npm install
+grunt
+````
+
+All changes must be done in `src/restangular.js`and then after running `grunt`all changes will be submited to `dist/`
+
+Please submit a Pull Request or create issues for anything you want :).
+
 # License
 
 The MIT License
