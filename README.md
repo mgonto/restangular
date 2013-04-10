@@ -104,8 +104,8 @@ baseAccounts.fetch().then(function (accounts) {
 
 var account = Restangular.one("accounts", 123);
 
-// GET /accounts/123
-$scope.account = account.get();
+// GET /accounts/123?single=true
+$scope.account = account.get({single: true});
 ````
 
 # Contribute
