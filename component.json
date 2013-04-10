@@ -1,16 +1,16 @@
 {
   "name": "restangular",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./dist/restangular.min.js",
-  "description" : "Restfull Resources service for AngularJS apps",
+  "description": "Restfull Resources service for AngularJS apps",
   "repository": {
     "type": "git",
     "url": "git://github.com/mgonto/restangular.git"
   },
   "dependencies": {
-    "underscore" : ">= 1.4.4",
-    "angular" : "*",
-    "angular-resource" : "*"
+    "underscore": ">= 1.4.4",
+    "angular": "*",
+    "angular-resource": "*"
   },
   "ignore": [
     "node_modules",

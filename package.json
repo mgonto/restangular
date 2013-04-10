@@ -1,7 +1,7 @@
 {
   "name": "restangular",
   "description": "Restfull Resources service for AngularJS apps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/mgonto/restangular",
   "author": "Martin Gontovnikas <martin@gonto.com.ar>",
   "repository": {
@@ -11,16 +11,14 @@
   "engines": {
     "node": ">= 0.9"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "grunt": ">= 0.4.0",
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-bower" : "*",
+    "grunt-bower": "*",
     "grunt-bower-task": "*"
   },
-  "scripts": {
-  }
+  "scripts": {}
 }
