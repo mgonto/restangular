@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.1.0 - 2013-04-09
+ * @version v0.1.0 - 2013-04-10
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -93,7 +93,7 @@ module.provider('Restangular', function() {
               elem.getList = _.bind(fetchFunction, elem);
               elem.get = _.bind(getFunction, elem);
               elem.put = _.bind(putFunction, elem);
-              elem.delete = _.bind(deleteFunction, elem);
+              elem.remove = _.bind(deleteFunction, elem);
               
               if (parent) {
                   elem.parentResource = _.pick(parent, _.union(['id', 'route', 'parentResource'], __extraFields));

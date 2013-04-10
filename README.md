@@ -85,7 +85,7 @@ baseAccounts.getList().then(function (accounts) {
   firstAccount.put();
 
   // DELETE /accounts/123 We don't have first account anymore :(
-  firstAccount.delete();
+  firstAccount.remove();
 
   // Get /accounts/123/users
   firstAccount.getList("users").then(function(users) {
