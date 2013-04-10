@@ -81,7 +81,7 @@ baseAccounts.fetch().then(function (accounts) {
   firstAccount.name = "Gonto"
   
   // PUT /accounts/123. The name of this account will be Gonto from now on
-  firstAccount.put();
+  firstAccount.update();
   
   // DELETE /accounts/123 We don't have first account anymore :(
   firstAccount.remove();
