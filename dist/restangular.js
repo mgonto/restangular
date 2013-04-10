@@ -90,10 +90,10 @@ module.provider('Restangular', function() {
           
           function restangularize(parent, elem, route) {
               elem.route = route;
-              elem.fetch = _.bind(fetchFunction, elem);
+              elem.getList = _.bind(fetchFunction, elem);
               elem.get = _.bind(getFunction, elem);
-              elem.update = _.bind(putFunction, elem);
-              elem.remove = _.bind(deleteFunction, elem);
+              elem.put = _.bind(putFunction, elem);
+              elem.delete = _.bind(deleteFunction, elem);
               
               if (parent) {
                   elem.parentResource = _.pick(parent, _.union(['id', 'route', 'parentResource'], __extraFields));
@@ -113,7 +113,7 @@ module.provider('Restangular', function() {
                       } else {
                           return restangularize(null, elem, __this.route);
                       }
-
+                      
                   });
                   deferred.resolve(processedData);
               }, function error() {
@@ -174,7 +174,7 @@ module.provider('Restangular', function() {
           service.all = function(route) {
               return restangularize(null, {} , route);
           }
-
+          
           return service;
        
         }];
