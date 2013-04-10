@@ -63,45 +63,45 @@ Restangular.one('accounts', 1234)
 Now that we have our main Object lets's start playing with it.
 
 ````javascript
+// First way of creating a Restangular object. Just saying the base URL
 var baseAccounts = Restangular.all('accounts');
 
 // This will query /accounts and return a promise. As Angular supports setting promises to scope variables
 // as soon as we get the information from the server, it will be shown in our template :)
-$scope.allAccounts = baseAccounts.fetch();
+$scope.allAccounts = baseAccounts.getList();
 
 //Here we use Promises then 
-baseAccounts.fetch().then(function (accounts) {
+baseAccounts.getList().then(function (accounts) {
   // Here we can continue fetching the tree :).
-  
+
   var firstAccount = accounts[0];
   // This will query /accounts/123/buildings considering 123 is the id of the firstAccount
-  $scope.buildings = firstAccount.fetch("buildings");
-  
+  $scope.buildings = firstAccount.getList("buildings");
+
   // This is a regular JS object, we can change anything we want :) 
   firstAccount.name = "Gonto"
-  
+
   // PUT /accounts/123. The name of this account will be Gonto from now on
-  firstAccount.update();
-  
+  firstAccount.put();
+
   // DELETE /accounts/123 We don't have first account anymore :(
-  firstAccount.remove();
-  
+  firstAccount.delete();
+
   // Get /accounts/123/users
-  firstAccount.fetch("users").then(function(users) {
-    
+  firstAccount.getList("users").then(function(users) {
+
     var firstUser = users[0];
-    
+
     // GET /accounts/123/users/456. Just in case we want to update one user :)
     $scope.userFromServer = firstUser.get();
-    
+
   });
 
 }, function errorCallback() {
   alert("Oops error from server :(");
 })
 
-//Now let's try single :)
-
+// Second way of creating Restangular object. URL and ID :)
 var account = Restangular.one("accounts", 123);
 
 // GET /accounts/123?single=true
