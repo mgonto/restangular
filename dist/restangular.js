@@ -12,7 +12,7 @@ module.provider('Restangular', function() {
         /**
          * This is the BaseURL to be used with Restangular
          */
-        this.baseUrl = null;
+        this.baseUrl = "";
         this.setBaseUrl = function(baseUrl) {
             this.baseUrl = baseUrl;
         }
@@ -26,8 +26,8 @@ module.provider('Restangular', function() {
         }
         
         /**
-         * Sets the URL creator type
-         */
+         * Sets the URL creator type. For now, only Path is created. In the future we'll have queryParams
+        **/
         this.urlCreator = "path";
         this.setUrlCreator = function(name) {
             if (!_.has(urlCreatorFactory, name)) {
@@ -39,13 +39,22 @@ module.provider('Restangular', function() {
         //Internal values and functions
         var urlCreatorFactory = {};
         
+        /**
+         * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
+         * This means that if you have an Account that then has a set of Buildings, a URL to a building
+         * would be /accounts/123/buildings/456
+        **/
         var Path = function(baseUrl) {
             this.baseUrl = baseUrl;
         }
         
         Path.prototype.base = function(current) {
             return this.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
-                return acum + "/" + elem.route + "/" + elem.id;
+                var currUrl = acum + "/" + elem.route;
+                if (elem.id) {
+                    currUrl += "/" + elem.id;
+                }
+                return currUrl;
             }, '');
         }
         
@@ -93,12 +102,18 @@ module.provider('Restangular', function() {
           }
           
           function fetchFunction(what) {
+              var search = what ? {what: what} : {};
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource).getArray({what: what}, function(data) {
+              urlHandler.resource(this, $resource).getArray(search, function(data) {
                   var processedData = _.map(data, function(elem) {
-                      return restangularize(__this, elem, what);
+                      if (what) {
+                          return restangularize(__this, elem, what);
+                      } else {
+                          return restangularize(null, elem, __this.route);
+                      }
+
                   });
                   deferred.resolve(processedData);
               }, function error() {
@@ -150,12 +165,16 @@ module.provider('Restangular', function() {
           
           var service = {};
           
-          service.create = function(route, id) {
+          service.one = function(route, id) {
               return restangularize(null, {
                   id: id
               }, route);
           }
           
+          service.all = function(route) {
+              return restangularize(null, {} , route);
+          }
+
           return service;
        
         }];
