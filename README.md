@@ -86,6 +86,18 @@ baseAccounts.getList().then(function (accounts) {
 
   // DELETE /accounts/123 We don't have first account anymore :(
   firstAccount.remove();
+  
+  var myBuilding = {
+    name: "Gonto's Building",
+    place: "Argentina"
+  };
+  
+  // POST /accounts/123/buildings with MyBuilding information
+  firstAccount.post("Buildings", myBuilding).then(function() {
+    console.log("Object saved OK");
+  }, function() {
+    Console.log("There was an error saving");
+  });
 
   // Get /accounts/123/users
   firstAccount.getList("users").then(function(users) {

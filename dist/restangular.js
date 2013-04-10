@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.1.1 - 2013-04-10
+ * @version v0.2.0 - 2013-04-10
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -76,6 +76,7 @@ module.provider('Restangular', function() {
                 getArray: {method: 'GET', params: {}, isArray: true},
                 get: {method: 'GET', params: {}, isArray: false},
                 put: {method: 'PUT', params: {}, isArray: false},
+                post: {method: 'POST', params: {}, isArray: false},
                 remove: {method: 'DELETE', params: {}, isArray: false}
             });
         }
@@ -93,6 +94,7 @@ module.provider('Restangular', function() {
               elem.getList = _.bind(fetchFunction, elem);
               elem.get = _.bind(getFunction, elem);
               elem.put = _.bind(putFunction, elem);
+              elem.post = _.bind(postFunction, elem);
               elem.remove = _.bind(deleteFunction, elem);
               
               if (parent) {
@@ -160,6 +162,10 @@ module.provider('Restangular', function() {
           
           function putFunction(params) {
               return _.bind(elemFunction, this)("put", params);
+          }
+
+          function postFunction(what, elem) {
+              return _.bind(elemFunction, this)("post", {what: what}, elem);
           }
           
           

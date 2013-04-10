@@ -69,6 +69,7 @@ module.provider('Restangular', function() {
                 getArray: {method: 'GET', params: {}, isArray: true},
                 get: {method: 'GET', params: {}, isArray: false},
                 put: {method: 'PUT', params: {}, isArray: false},
+                post: {method: 'POST', params: {}, isArray: false},
                 remove: {method: 'DELETE', params: {}, isArray: false}
             });
         }
@@ -86,6 +87,7 @@ module.provider('Restangular', function() {
               elem.getList = _.bind(fetchFunction, elem);
               elem.get = _.bind(getFunction, elem);
               elem.put = _.bind(putFunction, elem);
+              elem.post = _.bind(postFunction, elem);
               elem.remove = _.bind(deleteFunction, elem);
               
               if (parent) {
@@ -153,6 +155,10 @@ module.provider('Restangular', function() {
           
           function putFunction(params) {
               return _.bind(elemFunction, this)("put", params);
+          }
+
+          function postFunction(what, elem) {
+              return _.bind(elemFunction, this)("post", {what: what}, elem);
           }
           
           
