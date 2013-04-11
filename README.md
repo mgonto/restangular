@@ -134,6 +134,14 @@ All changes must be done in `src/restangular.js`and then after running `grunt`al
 
 Please submit a Pull Request or create issues for anything you want :).
 
+# Releases Notes
+
+## 0.2.0
+* Added post method to all elements. Now you can also create new elements by calling `account.post('buildings', {name: "gonto"})`. 
+
+## 0.1.1
+* Changed `elem.delete()` to `elem.remove()` due to errors with Closure Compiler in Play 2 
+
 # License
 
 The MIT License
