@@ -96,7 +96,7 @@ baseAccounts.getList().then(function (accounts) {
   firstAccount.post("Buildings", myBuilding).then(function() {
     console.log("Object saved OK");
   }, function() {
-    Console.log("There was an error saving");
+    console.log("There was an error saving");
   });
 
   // Get /accounts/123/users
