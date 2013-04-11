@@ -142,6 +142,15 @@ Please submit a Pull Request or create issues for anything you want :).
 ## 0.1.1
 * Changed `elem.delete()` to `elem.remove()` due to errors with Closure Compiler in Play 2 
 
+# Server Frameworks
+
+This server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
+
+* Ruby on Rails
+* CakePHP for PHP
+* Play1 & 2 for Java & scala
+* Restify and Expres for NodeJS
+
 # License
 
 The MIT License
