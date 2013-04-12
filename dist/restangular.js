@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.3.0 - 2013-04-12
+ * @version v0.3.1 - 2013-04-12
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -103,12 +103,12 @@ module.provider('Restangular', function() {
               return elem;
           }
           
-          function fetchFunction(what, headers) {
+          function fetchFunction(what, params, headers) {
               var search = what ? {what: what} : {};
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource, headers).getArray(search, function(data) {
+              urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(data) {
                   var processedData = _.map(data, function(elem) {
                       if (what) {
                           return restangularize(__this, elem, what);
