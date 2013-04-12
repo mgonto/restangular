@@ -79,6 +79,9 @@ baseAccounts.getList().then(function (accounts) {
   var firstAccount = accounts[0];
   // This will query /accounts/123/buildings considering 123 is the id of the firstAccount
   $scope.buildings = firstAccount.getList("buildings");
+  
+  // GET /accounts/123/places?query=param with request header: x-user:mgonto
+  $scope.loggedInPlaces = firstAccount.getList("places", {query: param}, {'x-user': 'mgonto'})
 
   // This is a regular JS object, we can change anything we want :) 
   firstAccount.name = "Gonto"
@@ -101,8 +104,8 @@ baseAccounts.getList().then(function (accounts) {
     console.log("There was an error saving");
   });
 
-  // Get /accounts/123/users
-  firstAccount.getList("users").then(function(users) {
+  // GET /accounts/123/users?query=params
+  firstAccount.getList("users", {query: params}).then(function(users) {
 
     var firstUser = users[0];
 
