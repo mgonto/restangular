@@ -64,13 +64,13 @@ module.provider('Restangular', function() {
             return this.base(current) + "/" + what.toLowerCase();
         }
         
-        Path.prototype.resource = function(current, $resource) {
+        Path.prototype.resource = function(current, $resource, headers) {
             return $resource(this.base(current) + "/:what" , {}, {
-                getArray: {method: 'GET', params: {}, isArray: true},
-                get: {method: 'GET', params: {}, isArray: false},
-                put: {method: 'PUT', params: {}, isArray: false},
-                post: {method: 'POST', params: {}, isArray: false},
-                remove: {method: 'DELETE', params: {}, isArray: false}
+                getArray: {method: 'GET', params: {}, isArray: true, headers: headers || {}},
+                get: {method: 'GET', params: {}, isArray: false, headers: headers || {}},
+                put: {method: 'PUT', params: {}, isArray: false, headers: headers || {}},
+                post: {method: 'POST', params: {}, isArray: false, headers: headers || {}},
+                remove: {method: 'DELETE', params: {}, isArray: false, headers: headers || {}}
             });
         }
         
@@ -96,12 +96,12 @@ module.provider('Restangular', function() {
               return elem;
           }
           
-          function fetchFunction(what) {
+          function fetchFunction(what, headers) {
               var search = what ? {what: what} : {};
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource).getArray(search, function(data) {
+              urlHandler.resource(this, $resource, headers).getArray(search, function(data) {
                   var processedData = _.map(data, function(elem) {
                       if (what) {
                           return restangularize(__this, elem, what);
@@ -118,7 +118,7 @@ module.provider('Restangular', function() {
               return deferred.promise;
           }
           
-          function elemFunction(operation, params, obj) {
+          function elemFunction(operation, params, obj, headers) {
               var __this = this;
               var deferred = $q.defer();
               var resParams = params || {};
@@ -137,28 +137,28 @@ module.provider('Restangular', function() {
               };
               
               if (operation === 'get') {
-                  urlHandler.resource(this, $resource)[operation](resParams, okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, headers)[operation](resParams, okCallback, errorCallback);
               } else {
-                  urlHandler.resource(this, $resource)[operation](resParams, resObj, okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, headers)[operation](resParams, resObj, okCallback, errorCallback);
               }
               
               return deferred.promise;
           }
           
-          function getFunction(params) {
-              return _.bind(elemFunction, this)("get", params);;
+          function getFunction(params, headers) {
+              return _.bind(elemFunction, this)("get", params, undefined, headers);;
           }
           
-          function deleteFunction(params) {
-              return _.bind(elemFunction, this)("remove", params, {});
+          function deleteFunction(params, headers) {
+              return _.bind(elemFunction, this)("remove", params, {}, headers);
           }
           
-          function putFunction(params) {
-              return _.bind(elemFunction, this)("put", params);
+          function putFunction(params, headers) {
+              return _.bind(elemFunction, this)("put", params, undefined, headers);
           }
 
-          function postFunction(what, elem, params) {
-              return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem);
+          function postFunction(what, elem, params, headers) {
+              return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem, headers);
           }
           
           
