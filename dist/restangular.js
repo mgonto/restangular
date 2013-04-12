@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.3.1 - 2013-04-12
+ * @version v0.3.2 - 2013-04-12
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
