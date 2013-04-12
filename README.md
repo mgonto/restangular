@@ -174,6 +174,9 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 # Releases Notes
 
+## 0.3.2
+* Added ResponseExtractor for when the real data is wrapped in an envelope in the WebServer response.
+
 ## 0.3.1
 
 * Now all methods accept Headers. You can query `account.getList('buildings', {query: 'param'}, {'header': 'mine'})`
