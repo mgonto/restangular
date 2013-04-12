@@ -26,20 +26,43 @@ var app = angular.module('angularjs-starter', ['restangular']);
 ## Configuring Restangular
 
 ### Properties
-Restangular comes with some defaults for all of it's properties but you can configure them. All of this properties have setters so that you can change them. The properties are:
+Restangular comes with some defaults for all of it's properties but you can configure them. All of this properties have setters so that you can change them. 
 
-* baseUrl: The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is empty string
-* extraFields: This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
-* urlCreator: This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
+#### baseUrl
+The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is empty string
+
+#### extraFields
+This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
+
+#### urlCreator
+This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
+
+#### responseExtractor
+There are sometimes when the data from the response isn't the whole response, but it's wrapped in another object. For example, if your response is the following, you'd extract the data object: 
+
+````javascript
+{
+    status: 200,
+    data: {
+        name: "Gonto"
+    }
+}
+````
+
+The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP method being run.
 
 ### How to configure them
 You can configure this properties inside the config method of your app
 
 ````javascript
 app.config(function(RestangularProvider) {
-            RestangularProvider.setBaseUrl('/api/v1');
-            RestangularProvider.setExtraFields(['name']);
-          });
+    RestangularProvider.setBaseUrl('/api/v1');
+    RestangularProvider.setExtraFields(['name']);
+    RestangularProvider.setResponseExtractor(function(response, operation) {
+        return response.data;
+    });
+});
+          
 ````
 
 ## Using Restangular
