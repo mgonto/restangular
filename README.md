@@ -151,7 +151,7 @@ This server frameworks play real nice with Restangular, as they let you create a
 * Ruby on Rails
 * CakePHP for PHP
 * Play1 & 2 for Java & scala
-* Restify and Expres for NodeJS
+* Restify and Express for NodeJS
 
 # License
 
