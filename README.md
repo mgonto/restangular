@@ -11,7 +11,7 @@ You can click [here to download development unminified version](https://raw.gith
 
 #Dependencies
 
-Restangular depends on Angular, Angular-Resources and Underscore.
+Restangular depends on Angular, Angular-Resources and (Underscore or Lodash).
 
 #Starter Guide
 
