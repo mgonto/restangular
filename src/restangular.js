@@ -29,6 +29,20 @@ module.provider('Restangular', function() {
             this.urlCreator = name;
         }
         
+        /**
+         * Sets the Response parser. This is used in case your response isn't directly the data.
+         * For example if you have a response like {meta: {'meta'}, data: {name: 'Gonto'}}
+         * you can extract this data which is the one that needs wrapping
+         *
+         * The ResponseExtractor is a function that receives the response and the method executed.
+         */
+        this.responseExtractor = function(response, method) {
+            return response;
+        }
+        this.setResponseExtractor = function(extractor) {
+            this.responseExtractor = extractor;
+        }
+
         //Internal values and functions
         var urlCreatorFactory = {};
         
@@ -81,6 +95,7 @@ module.provider('Restangular', function() {
        this.$get = ['$resource', '$q', function($resource, $q) {
           var urlHandler = new urlCreatorFactory[this.urlCreator](this.baseUrl);
           var __extraFields = this.extraFields;
+          var __responseExtractor = this.responseExtractor;
           
           function restangularize(parent, elem, route) {
               elem.route = route;
@@ -101,7 +116,8 @@ module.provider('Restangular', function() {
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(data) {
+              urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(resData) {
+                  var data = __responseExtractor(resData, 'get');
                   var processedData = _.map(data, function(elem) {
                       if (what) {
                           return restangularize(__this, elem, what);
@@ -124,7 +140,8 @@ module.provider('Restangular', function() {
               var resParams = params || {};
               var resObj = obj || this;
               
-              var okCallback = function(elem) {
+              var okCallback = function(resData) {
+                  var elem = __responseExtractor(resData, operation);
                   if (elem) {
                       deferred.resolve(restangularize(__this.parentResource, elem, __this.route));
                   } else {
