@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.2.0 - 2013-04-10
+ * @version v0.2.0 - 2013-04-12
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -164,8 +164,8 @@ module.provider('Restangular', function() {
               return _.bind(elemFunction, this)("put", params);
           }
 
-          function postFunction(what, elem) {
-              return _.bind(elemFunction, this)("post", {what: what}, elem);
+          function postFunction(what, elem, params) {
+              return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem);
           }
           
           

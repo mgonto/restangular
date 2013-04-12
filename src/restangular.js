@@ -157,8 +157,8 @@ module.provider('Restangular', function() {
               return _.bind(elemFunction, this)("put", params);
           }
 
-          function postFunction(what, elem) {
-              return _.bind(elemFunction, this)("post", {what: what}, elem);
+          function postFunction(what, elem, params) {
+              return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem);
           }
           
           
