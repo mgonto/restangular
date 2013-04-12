@@ -139,14 +139,6 @@ All changes must be done in `src/restangular.js`and then after running `grunt`al
 
 Please submit a Pull Request or create issues for anything you want :).
 
-# Releases Notes
-
-## 0.2.0
-* Added post method to all elements. Now you can also create new elements by calling `account.post('buildings', {name: "gonto"})`. 
-
-## 0.1.1
-* Changed `elem.delete()` to `elem.remove()` due to errors with Closure Compiler in Play 2 
-
 # Server Frameworks
 
 This server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
@@ -155,6 +147,23 @@ This server frameworks play real nice with Restangular, as they let you create a
 * CakePHP for PHP
 * Play1 & 2 for Java & scala
 * Restify and Express for NodeJS
+
+
+# Releases Notes
+
+## 0.3.1
+
+* Now all methods accept Headers. You can query `account.getList('buildings', {query: 'param'}, {'header': 'mine'})`
+
+## 0.2.1
+
+* Added query params to all methods. getList, post, put, get and delete accept query params now.
+
+## 0.2.0
+* Added post method to all elements. Now you can also create new elements by calling `account.post('buildings', {name: "gonto"})`. 
+
+## 0.1.1
+* Changed `elem.delete()` to `elem.remove()` due to errors with Closure Compiler in Play 2 
 
 # License
 
