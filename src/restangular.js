@@ -96,12 +96,12 @@ module.provider('Restangular', function() {
               return elem;
           }
           
-          function fetchFunction(what, headers) {
+          function fetchFunction(what, params, headers) {
               var search = what ? {what: what} : {};
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource, headers).getArray(search, function(data) {
+              urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(data) {
                   var processedData = _.map(data, function(elem) {
                       if (what) {
                           return restangularize(__this, elem, what);
