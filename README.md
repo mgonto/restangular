@@ -5,7 +5,9 @@ This service is a perfect fit for any WebApp that uses Restfull Resources as the
 
 #How do I add this to my project?
 
-In order to use Restangular, you need to download Restangular file from dist folder in Github and include this in your HTML.
+You can do this by manually downloading the file from dist folder in Github or by using bower and running `bower install restangular``
+
+You can click [here to download development unminified version](https://raw.github.com/mgonto/restangular/master/dist/restangular.js) or you can click [here to download minified production version](https://raw.github.com/mgonto/restangular/master/dist/restangular.min.js)
 
 #Dependencies
 
