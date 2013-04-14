@@ -51,6 +51,16 @@ There are sometimes when the data from the response isn't the whole response, bu
 
 The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP method being run.
 
+#### restangularFields
+
+Restangular required 3 fields for every "Restangularized" element. This are:
+
+* id: Id of the element
+* route: name of the route of this element
+* parentResource: the reference to the parent resource
+
+All of this fields except for `id` are handled by Restangular. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property. By default, the values are id, route and parentResource respectively.
+
 ### How to configure them
 You can configure this properties inside the config method of your app
 
@@ -60,6 +70,11 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setExtraFields(['name']);
     RestangularProvider.setResponseExtractor(function(response, operation) {
         return response.data;
+    });
+    // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
+    RestangularProvider.setRestangularFields({
+      id: "__id",
+      route: "restangularRoute"
     });
 });
 

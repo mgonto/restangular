@@ -30,6 +30,25 @@ module.provider('Restangular', function() {
         }
         
         /**
+         * You can set the restangular fields here. The 3 required fields for Restangular are:
+         * 
+         * id: Id of the element
+         * route: name of the route of this element
+         * parentResource: the reference to the parent resource
+         * 
+         *  All of this fields except for id, are handled (and created) by Restangular. By default, 
+         *  the field values will be id, route and parentResource respectively
+         */
+        this.restangularFields = {
+            id: "id",
+            route: "route",
+            parentResource: "parentResource"
+        }
+        this.setRestangularFields = function(resFields) {
+            this.restangularFields = _.extend(this.restangularFields, resFields);
+        }
+        
+        /**
          * Sets the Response parser. This is used in case your response isn't directly the data.
          * For example if you have a response like {meta: {'meta'}, data: {name: 'Gonto'}}
          * you can extract this data which is the one that needs wrapping
@@ -96,6 +115,7 @@ module.provider('Restangular', function() {
           var urlHandler = new urlCreatorFactory[this.urlCreator](this.baseUrl);
           var __extraFields = this.extraFields;
           var __responseExtractor = this.responseExtractor;
+          var __restangularFields = this.restangularFields;
           
           function restangularize(parent, elem, route) {
               elem.route = route;
@@ -106,7 +126,12 @@ module.provider('Restangular', function() {
               elem.remove = _.bind(deleteFunction, elem);
               
               if (parent) {
-                  elem.parentResource = _.pick(parent, _.union(['id', 'route', 'parentResource'], __extraFields));
+                  var restangularFieldsForParent = _.chain(__restangularFields)
+                          .pick(['id', 'route', 'parentResource'])
+                          .values()
+                          .union(__extraFields)
+                          .value();
+                  elem.parentResource = _.pick(parent, restangularFieldsForParent);
               }
               return elem;
           }
