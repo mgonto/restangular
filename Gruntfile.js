@@ -28,8 +28,8 @@ module.exports = function(grunt) {
     },
     bower: {
       dev: {
-        dest: '<%= dirs.dest %>/dependencies',
-      },
+        dest: '<%= dirs.dest %>/dependencies'
+      }
     },
     bowerInstall: {
         install: {
