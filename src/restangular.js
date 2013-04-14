@@ -70,15 +70,17 @@ module.provider('Restangular', function() {
          * This means that if you have an Account that then has a set of Buildings, a URL to a building
          * would be /accounts/123/buildings/456
         **/
-        var Path = function(baseUrl) {
+        var Path = function(baseUrl, restangularFields) {
             this.baseUrl = baseUrl;
+            this.restangularFields = restangularFields;
         }
         
         Path.prototype.base = function(current) {
+            var __restangularFields = this.restangularFields;
             return this.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
-                var currUrl = acum + "/" + elem.route;
-                if (elem.id) {
-                    currUrl += "/" + elem.id;
+                var currUrl = acum + "/" + elem[__restangularFields.route];
+                if (elem[__restangularFields.id]) {
+                    currUrl += "/" + elem[__restangularFields.id];
                 }
                 return currUrl;
             }, '');
@@ -88,7 +90,7 @@ module.provider('Restangular', function() {
             var parents = [];
             while(!_.isUndefined(current)) {
                 parents.push(current);
-                current = current.parentResource;
+                current = current[this.restangularFields.parentResource];
             }
             return parents.reverse();
         }
@@ -112,13 +114,13 @@ module.provider('Restangular', function() {
         
         
        this.$get = ['$resource', '$q', function($resource, $q) {
-          var urlHandler = new urlCreatorFactory[this.urlCreator](this.baseUrl);
+          var urlHandler = new urlCreatorFactory[this.urlCreator](this.baseUrl, this.restangularFields);
           var __extraFields = this.extraFields;
           var __responseExtractor = this.responseExtractor;
           var __restangularFields = this.restangularFields;
           
           function restangularize(parent, elem, route) {
-              elem.route = route;
+              elem[__restangularFields.route] = route;
               elem.getList = _.bind(fetchFunction, elem);
               elem.get = _.bind(getFunction, elem);
               elem.put = _.bind(putFunction, elem);
@@ -131,7 +133,7 @@ module.provider('Restangular', function() {
                           .values()
                           .union(__extraFields)
                           .value();
-                  elem.parentResource = _.pick(parent, restangularFieldsForParent);
+                  elem[__restangularFields.parentResource]= _.pick(parent, restangularFieldsForParent);
               }
               return elem;
           }
@@ -147,7 +149,7 @@ module.provider('Restangular', function() {
                       if (what) {
                           return restangularize(__this, elem, what);
                       } else {
-                          return restangularize(null, elem, __this.route);
+                          return restangularize(null, elem, __this[__restangularFields.route]);
                       }
                       
                   });
@@ -168,7 +170,7 @@ module.provider('Restangular', function() {
               var okCallback = function(resData) {
                   var elem = __responseExtractor(resData, operation);
                   if (elem) {
-                      deferred.resolve(restangularize(__this.parentResource, elem, __this.route));
+                      deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
                   } else {
                       deferred.resolve();
                   }
@@ -207,9 +209,9 @@ module.provider('Restangular', function() {
           var service = {};
           
           service.one = function(route, id) {
-              return restangularize(null, {
-                  id: id
-              }, route);
+              var elem = {};
+              elem[__restangularFields.id] = id;
+              return restangularize(null, elem , route);
           }
           
           service.all = function(route) {
