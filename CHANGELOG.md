@@ -1,5 +1,8 @@
 # Releases Notes
 
+## 0.3.3
+* Restangular fields can now be configured. You can set the id, route and parentResource fields. They're not hardcoded anymore
+
 ## 0.3.2
 * Added ResponseExtractor for when the real data is wrapped in an envelope in the WebServer response.
 
