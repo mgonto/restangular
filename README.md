@@ -23,63 +23,6 @@ The first thing you need to do after adding link to script file, is mentioning i
 var app = angular.module('angularjs-starter', ['restangular']);
 ````
 
-## Configuring Restangular
-
-### Properties
-Restangular comes with some defaults for all of it's properties but you can configure them. All of this properties have setters so that you can change them.
-
-#### baseUrl
-The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is empty string
-
-#### extraFields
-This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
-
-#### urlCreator
-This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
-
-#### responseExtractor
-There are sometimes when the data from the response isn't the whole response, but it's wrapped in another object. For example, if your response is the following, you'd extract the data object:
-
-````javascript
-{
-    status: 200,
-    data: {
-        name: "Gonto"
-    }
-}
-````
-
-The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP method being run.
-
-#### restangularFields
-
-Restangular required 3 fields for every "Restangularized" element. This are:
-
-* id: Id of the element
-* route: name of the route of this element
-* parentResource: the reference to the parent resource
-
-All of this fields except for `id` are handled by Restangular. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property. By default, the values are id, route and parentResource respectively.
-
-### How to configure them
-You can configure this properties inside the config method of your app
-
-````javascript
-app.config(function(RestangularProvider) {
-    RestangularProvider.setBaseUrl('/api/v1');
-    RestangularProvider.setExtraFields(['name']);
-    RestangularProvider.setResponseExtractor(function(response, operation) {
-        return response.data;
-    });
-    // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
-    RestangularProvider.setRestangularFields({
-      id: "__id",
-      route: "restangularRoute"
-    });
-});
-
-````
-
 ## Using Restangular
 
 Now that you have everything configured, you can just inject this Service to any Controller or Directive like any other :)
@@ -161,6 +104,63 @@ var account = Restangular.one("accounts", 123);
 
 // GET /accounts/123?single=true
 $scope.account = account.get({single: true});
+````
+
+## Configuring Restangular
+
+### Properties
+Restangular comes with some defaults for all of it's properties but you can configure them. All of this properties have setters so that you can change them.
+
+#### baseUrl
+The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is empty string
+
+#### extraFields
+This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
+
+#### urlCreator
+This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
+
+#### responseExtractor
+There are sometimes when the data from the response isn't the whole response, but it's wrapped in another object. For example, if your response is the following, you'd extract the data object:
+
+````javascript
+{
+    status: 200,
+    data: {
+        name: "Gonto"
+    }
+}
+````
+
+The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP method being run.
+
+#### restangularFields
+
+Restangular required 3 fields for every "Restangularized" element. This are:
+
+* id: Id of the element
+* route: name of the route of this element
+* parentResource: the reference to the parent resource
+
+All of this fields except for `id` are handled by Restangular. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property. By default, the values are id, route and parentResource respectively.
+
+### How to configure them
+You can configure this properties inside the config method of your app
+
+````javascript
+app.config(function(RestangularProvider) {
+    RestangularProvider.setBaseUrl('/api/v1');
+    RestangularProvider.setExtraFields(['name']);
+    RestangularProvider.setResponseExtractor(function(response, operation) {
+        return response.data;
+    });
+    // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
+    RestangularProvider.setRestangularFields({
+      id: "__id",
+      route: "restangularRoute"
+    });
+});
+
 ````
 
 # Contribute
