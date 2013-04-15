@@ -6,6 +6,9 @@ module.provider('Restangular', function() {
          * Those are HTTP safe methods for which there is no need to pass any data with the request.
          */
         var safeMethods= ["get", "head", "options", "trace"];
+        function isSafe(operation) {
+          return _.contains(safeMethods, operation);
+        }
         /**
          * This is the BaseURL to be used with Restangular
          */
@@ -182,7 +185,12 @@ module.provider('Restangular', function() {
               var okCallback = function(resData) {
                   var elem = __responseExtractor(resData, operation);
                   if (elem) {
-                      deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
+                      if (isSafe(operation)) {
+                        deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
+                      } else {
+                        deferred.resolve(restangularize(__this, elem, resParams.what));
+                      }
+
                   } else {
                       deferred.resolve();
                   }
@@ -192,7 +200,7 @@ module.provider('Restangular', function() {
                   deferred.reject(arguments)
               };
 
-              if (_.contains(safeMethods, operation)) {
+              if (isSafe(operation)) {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, okCallback, errorCallback);
               } else {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, resObj, okCallback, errorCallback);
