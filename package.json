@@ -13,7 +13,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": ">= 0.4.0",
+    "grunt-cli": ">= 0.1.7",
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
