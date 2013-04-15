@@ -189,6 +189,10 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 # Releases Notes
 
+## 0.3.4
+* Added new HTTP methods to use: Patch, Head, Trace and Options (thanks @pauldijou)
+* Added tests with Karma for all functionality.
+
 ## 0.3.3
 * Restangular fields can now be configured. You can set the id, route and parentResource fields. They're not hardcoded anymore
 
