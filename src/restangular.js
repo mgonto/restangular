@@ -3,6 +3,10 @@ var module = angular.module('restangular', ['ngResource']);
 module.provider('Restangular', function() {
         // Configuration
         /**
+         * Those are HTTP safe methods for which there is no need to pass any data with the request.
+         */
+        var safeMethods= ["get", "head", "options", "trace"];
+        /**
          * This is the BaseURL to be used with Restangular
          */
         this.baseUrl = "";
@@ -105,7 +109,11 @@ module.provider('Restangular', function() {
                 get: {method: 'GET', params: {}, isArray: false, headers: headers || {}},
                 put: {method: 'PUT', params: {}, isArray: false, headers: headers || {}},
                 post: {method: 'POST', params: {}, isArray: false, headers: headers || {}},
-                remove: {method: 'DELETE', params: {}, isArray: false, headers: headers || {}}
+                remove: {method: 'DELETE', params: {}, isArray: false, headers: headers || {}},
+                head: {method: 'HEAD', params: {}, isArray: false, headers: headers || {}},
+                trace: {method: 'TRACE', params: {}, isArray: false, headers: headers || {}},
+                options: {method: 'OPTIONS', params: {}, isArray: false, headers: headers || {}},
+                patch: {method: 'PATCH', params: {}, isArray: false, headers: headers || {}}
             });
         }
         
@@ -126,6 +134,10 @@ module.provider('Restangular', function() {
               elem.put = _.bind(putFunction, elem);
               elem.post = _.bind(postFunction, elem);
               elem.remove = _.bind(deleteFunction, elem);
+              elem.head = _.bind(headFunction, elem);
+              elem.trace = _.bind(traceFunction, elem);
+              elem.options = _.bind(optionsFunction, elem);
+              elem.patch = _.bind(patchFunction, elem);
               
               if (parent) {
                   var restangularFieldsForParent = _.chain(__restangularFields)
@@ -179,8 +191,8 @@ module.provider('Restangular', function() {
               var errorCallback = function() {
                   deferred.reject(arguments)
               };
-              
-              if (operation === 'get') {
+
+              if (_.contains(safeMethods, operation)) {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, okCallback, errorCallback);
               } else {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, resObj, okCallback, errorCallback);
@@ -190,7 +202,7 @@ module.provider('Restangular', function() {
           }
           
           function getFunction(params, headers) {
-              return _.bind(elemFunction, this)("get", params, undefined, headers);;
+              return _.bind(elemFunction, this)("get", params, undefined, headers);
           }
           
           function deleteFunction(params, headers) {
@@ -204,6 +216,22 @@ module.provider('Restangular', function() {
           function postFunction(what, elem, params, headers) {
               return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem, headers);
           }
+
+         function headFunction(params, headers) {
+           return _.bind(elemFunction, this)("head", params, undefined, headers);
+         }
+
+         function traceFunction(params, headers) {
+           return _.bind(elemFunction, this)("trace", params, undefined, headers);
+         }
+
+         function optionsFunction(params, headers) {
+           return _.bind(elemFunction, this)("options", params, undefined, headers);
+         }
+
+         function patchFunction(params, headers) {
+           return _.bind(elemFunction, this)("patch", params, undefined, headers);
+         }
           
           
           var service = {};
