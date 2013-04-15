@@ -21,5 +21,7 @@
     "grunt-bower-task": "*",
     "grunt-karma": "*"
   },
-  "scripts": {}
+  "scripts": {
+    "test": "grunt test --verbose"
+  }
 }
