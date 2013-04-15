@@ -18,7 +18,8 @@
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
     "grunt-bower": "*",
-    "grunt-bower-task": "*"
+    "grunt-bower-task": "*",
+    "grunt-karma": "*"
   },
   "scripts": {}
 }

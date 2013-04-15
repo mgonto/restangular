@@ -66,6 +66,19 @@ module.exports = function(grunt) {
           $: false
         }
       }
+    },
+    karma: {
+      options: {
+        configFile: "karma.conf.js"
+      },
+      build: {
+        browsers: ['PhantomJS'],
+        singleRun: true
+      },
+      dev: {
+        browsers: ['PhantomJS'],
+        autoWatch: true
+      }
     }
   });
 
@@ -84,12 +97,14 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-bower');
 
+  grunt.loadNpmTasks('grunt-karma');
+
 
   // Default task.
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['bowerInstall', 'bower', 'concat', 'uglify']);
+  grunt.registerTask('build', ['bowerInstall', 'bower', 'karma:build', 'concat', 'uglify']);
 
 
   // Provides the "bump" task.
