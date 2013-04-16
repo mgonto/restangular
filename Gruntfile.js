@@ -106,7 +106,7 @@ module.exports = function(grunt) {
   // Build task.
   grunt.registerTask('build', ['bowerInstall', 'bower', 'karma:build', 'concat', 'uglify']);
 
-  grunt.registerTask('test', ['bowerInstall', 'bower', 'karma:build']);
+  grunt.registerTask('test', ['karma:build']);
 
   // Provides the "bump" task.
   grunt.registerTask('bump', 'Increment version number', function() {
