@@ -43,12 +43,12 @@ describe("Restangular", function() {
 
     $httpBackend.whenPOST("/accounts").respond(function(method, url, data, headers) {
       accountsModel.push(angular.fromJson(data));
-      return [201, "", ""];
+      return [201, JSON.stringify(data), ""];
     });
 
     $httpBackend.whenPUT("/accounts/1").respond(function(method, url, data, headers) {
       accountsModel[1] = angular.fromJson(data);
-      return [201, "", ""];
+      return [201, JSON.stringify(data), ""];
     });
 
     Restangular = $injector.get("Restangular");
