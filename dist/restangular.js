@@ -189,14 +189,14 @@ module.provider('Restangular', function() {
               urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(resData) {
                   var data = __responseExtractor(resData, 'get');
                   var processedData = _.map(data, function(elem) {
-                      if (what) {
+                      if (!__this[__restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
                       } else {
                           return restangularizeElem(null, elem, __this[__restangularFields.route]);
                       }
                       
                   });
-                  if (what) {
+                  if (!__this[__restangularFields.restangularCollection]) {
                       deferred.resolve(restangularizeCollection(__this, processedData, what));
                   } else {
                       deferred.resolve(restangularizeCollection(null, processedData, __this[__restangularFields.route]));
@@ -216,10 +216,10 @@ module.provider('Restangular', function() {
               
               var okCallback = function(resData) {
                   var elem = __responseExtractor(resData, operation) || resObj;
-                  if (operation !== "post") {
-                    deferred.resolve(restangularizeElem(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
-                  } else {
+                  if (operation === "post" && !__this[__restangularFields.restangularCollection]) {
                     deferred.resolve(restangularizeElem(__this, elem, resParams.what));
+                  } else {
+                    deferred.resolve(restangularizeElem(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
                   }
 
               };
