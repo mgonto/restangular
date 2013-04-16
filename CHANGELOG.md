@@ -1,6 +1,6 @@
 # Releases Notes
 
-## 0.4.4
+## 0.4.5
 * Fixed but that didn't let ID to be 0.
 * Added different Collection methods and Element methods
 * Added posibility po do a post in a collection to post an element to itself
