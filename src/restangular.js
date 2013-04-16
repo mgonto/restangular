@@ -162,7 +162,7 @@ module.provider('Restangular', function() {
               return localElem;
           }
           
-          function restangularizeCollection(parent, elem, route, root) {
+          function restangularizeCollection(parent, elem, route) {
               var localElem = restangularizeBase(parent, elem, route);
               localElem[__restangularFields.restangularCollection] = true;
               localElem.post = _.bind(postFunction, localElem, null);
@@ -170,9 +170,7 @@ module.provider('Restangular', function() {
               localElem.trace = _.bind(traceFunction, localElem);
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
-              if (root) {
-                  localElem.getList = _.bind(fetchFunction, localElem, null);
-              } 
+              localElem.getList = _.bind(fetchFunction, localElem, null);
               return localElem;
           }
           
