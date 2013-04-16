@@ -86,7 +86,7 @@ module.provider('Restangular', function() {
             var __restangularFields = this.restangularFields;
             return this.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
                 var currUrl = acum + "/" + elem[__restangularFields.route];
-                if (elem[__restangularFields.id]) {
+                if (_.has(elem, __restangularFields.id)) {
                     currUrl += "/" + elem[__restangularFields.id];
                 }
                 return currUrl;
