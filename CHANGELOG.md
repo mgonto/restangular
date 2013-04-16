@@ -1,5 +1,13 @@
 # Releases Notes
 
+## 0.4.4
+* Fixed but that didn't let ID to be 0.
+* Added different Collection methods and Element methods
+* Added posibility po do a post in a collection to post an element to itself
+* Added Travis CI for build
+* Fixed bug with parentResource after a post of a new element
+* When doing a post, if no element is returned, we enhance the object received as a parameter
+
 ## 0.3.4
 * Added new HTTP methods to use: Patch, Head, Trace and Options (thanks @pauldijou)
 * Added tests with Karma for all functionality.
