@@ -56,7 +56,13 @@ var baseAccounts = Restangular.all('accounts');
 // as soon as we get the information from the server, it will be shown in our template :)
 $scope.allAccounts = baseAccounts.getList();
 
+var newAccount = {name: "Gonto's account"};
+
+// POST /accounts
+baseAccounts.post(newAccount);
+
 //Here we use Promises then 
+// GET /accounts
 baseAccounts.getList().then(function (accounts) {
   // Here we can continue fetching the tree :).
 
@@ -90,11 +96,17 @@ baseAccounts.getList().then(function (accounts) {
 
   // GET /accounts/123/users?query=params
   firstAccount.getList("users", {query: params}).then(function(users) {
-
+    // Instead of posting nested element, a collection can post to itself
+    // POST /accounts/123/users
+    users.post({userName: 'unknown'});
     var firstUser = users[0];
 
     // GET /accounts/123/users/456. Just in case we want to update one user :)
     $scope.userFromServer = firstUser.get();
+    
+    // ALL http methods are available :)
+    // HEAD /accounts/123/users/456
+    firstUser.head()
 
   });
 
