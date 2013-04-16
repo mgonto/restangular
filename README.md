@@ -178,6 +178,29 @@ app.config(function(RestangularProvider) {
 
 ````
 
+# Methods description
+
+There're 2 sets of methods. Collections have some methods and elements have others.
+
+## Element methods
+* **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
+* **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. It's a st**ring with the name of the nested resource (and URL)**. For example `buildings`
+* **put([queryParams, headers])**: Does a put to the current element
+* **post(subElement, elementToPost, [queryParams, headers])**: Does a POST and creates a subElement. Subelement is mandatory and is the nested resource. Element to post is the object to post to the server
+* **remove([queryParams, headers])**: Does a DELETE
+* **head([queryParams, headers])**: Does a HEAD
+* **trace: ([queryParams, headers])**: Does a TRACE
+* **options: ([queryParams, headers])**: Does a OPTIONS
+* **patch([queryParams, headers])**: Does a PATCH
+
+## Collection methods
+* **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
+* **post(elementToPost, [queryParams, headers])**: Creates a new element of this collection.
+* **head([queryParams, headers])**: Does a HEAD
+* **trace: ([queryParams, headers])**: Does a TRACE
+* **options: ([queryParams, headers])**: Does a OPTIONS
+* **patch([queryParams, headers])**: Does a PATCH
+
 # Contribute
 
 In order to Contribute just git clone the repository and then run:
@@ -205,6 +228,15 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 
 # Releases Notes
+
+## 0.4.4
+* Fixed but that didn't let ID to be 0.
+* Added different Collection methods and Element methods
+* Added posibility po do a post in a collection to post an element to itself
+* Added Travis CI for build
+* Fixed bug with parentResource after a post of a new element
+* When doing a post, if no element is returned, we enhance the object received as a parameter
+
 
 ## 0.3.4
 * Added new HTTP methods to use: Patch, Head, Trace and Options (thanks @pauldijou)
