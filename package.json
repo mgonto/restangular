@@ -1,7 +1,7 @@
 {
   "name": "restangular",
   "description": "Restfull Resources service for AngularJS apps",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "homepage": "https://github.com/mgonto/restangular",
   "author": "Martin Gontovnikas <martin@gonto.com.ar>",
   "repository": {

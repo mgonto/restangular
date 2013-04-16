@@ -185,7 +185,7 @@ module.provider('Restangular', function() {
               var okCallback = function(resData) {
                   var elem = __responseExtractor(resData, operation);
                   if (elem) {
-                      if (isSafe(operation)) {
+                      if (operation !== "post") {
                         deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
                       } else {
                         deferred.resolve(restangularize(__this, elem, resParams.what));

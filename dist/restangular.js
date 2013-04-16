@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.4.1 - 2013-04-15
+ * @version v0.4.2 - 2013-04-15
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -192,7 +192,7 @@ module.provider('Restangular', function() {
               var okCallback = function(resData) {
                   var elem = __responseExtractor(resData, operation);
                   if (elem) {
-                      if (isSafe(operation)) {
+                      if (operation !== "post") {
                         deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
                       } else {
                         deferred.resolve(restangularize(__this, elem, resParams.what));

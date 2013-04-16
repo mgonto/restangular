@@ -27,7 +27,7 @@ describe("Restangular", function() {
     // Model
     accountsModel = [
       {id: 0, user: "Martin ", amount: 42, transactions: []},
-      {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3}, {from: "Anonymous", amount: 0.1416}]}
+      {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3, id: 0}, {from: "Anonymous", amount: 0.1416, id:1}]}
     ];
 
     $httpBackend = $injector.get("$httpBackend");
@@ -46,9 +46,21 @@ describe("Restangular", function() {
       return [201, JSON.stringify(data), ""];
     });
 
+    $httpBackend.whenPOST("/accounts/1/transactions").respond(function(method, url, data, headers) {
+      return [201, data, ""];
+    });
+
+    $httpBackend.whenDELETE("/accounts/1/transactions/1").respond(function(method, url, data, headers) {
+      return [200, "", ""];
+    });
+
+    $httpBackend.whenDELETE("/accounts/1").respond(function(method, url, data, headers) {
+      return [200, "", ""];
+    });
+
     $httpBackend.whenPUT("/accounts/1").respond(function(method, url, data, headers) {
       accountsModel[1] = angular.fromJson(data);
-      return [201, JSON.stringify(data), ""];
+      return [201, data, ""];
     });
 
     Restangular = $injector.get("Restangular");
@@ -80,11 +92,21 @@ describe("Restangular", function() {
 //      $httpBackend.flush();
 //    });
 
+    it("Doing a post and then other operation should call right URLs", function() {
+      restangularAccounts.getList().then(function(accounts) {
+        accounts[1].post('transactions', {id: 1, name: "Gonto"}).then(function(transaction) {
+          transaction.remove();
+          $httpBackend.expectDELETE('/accounts/1/transactions/1').respond(201, '');
+        });
+      });
+
+      $httpBackend.flush();
+    });
+
     it("head() should safely return", function() {
       restangularAccounts.head().then(function() {
         expect(true).toBe(true);
       });
-
       $httpBackend.flush();
     });
 
@@ -117,9 +139,13 @@ describe("Restangular", function() {
     it("put() should update the value", function() {
       restangularAccount1.get().then(function(account) {
         account.amount = 1.618;
-        account.put().then(function() {
+        account.put().then(function(newAc) {
           expect(accountsModel[1].amount).toEqual(1.618);
+          newAc.remove();
+          $httpBackend.expectDELETE("/accounts/1");
         });
+        $httpBackend.expectPUT("/accounts/1");        
+
 
       });
 
