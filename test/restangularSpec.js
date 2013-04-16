@@ -6,16 +6,17 @@ describe("Restangular", function() {
   // Utils
   // Apply "sanitizeRestangularOne" function to an array of items
   function sanitizeRestangularAll(items) {
-    return _.map(items, function(item) {
+    var all = _.map(items, function(item) {
       return sanitizeRestangularOne(item);
     });
+    return sanitizeRestangularOne(all);
   };
 
   // Remove all Restangular/AngularJS added methods in order to use Jasmine toEqual between the retrieve resource and the model
   function sanitizeRestangularOne(item) {
     return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
       "$get", "$getArray", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
-      "$then", "$resolved");
+      "$then", "$resolved", "restangularCollection");
   };
 
   // Load required modules
@@ -83,14 +84,14 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    // TODO: create issue in GitHub and see what happen
-//    it("post() should add a new item", function() {
-//      restangularAccounts.post({id: 2, user: "Someone"}).then(function() {
-//        expect(accountsModel.length).toEqual(2);
-//      });
-//
-//      $httpBackend.flush();
-//    });
+    it("post() should add a new item", function() {
+     restangularAccounts.post({id: 2, user: "Someone"}).then(function() {
+       expect(accountsModel.length).toEqual(2);
+     });
+
+    $httpBackend.expectPOST('/accounts').respond(201, '');
+    $httpBackend.flush();
+   });
 
     it("Doing a post and then other operation should call right URLs", function() {
       restangularAccounts.getList().then(function(accounts) {

@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.4.2 - 2013-04-16
+ * @version v0.4.3 - 2013-04-16
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -56,7 +56,8 @@ module.provider('Restangular', function() {
         this.restangularFields = {
             id: "id",
             route: "route",
-            parentResource: "parentResource"
+            parentResource: "parentResource",
+            restangularCollection: "restangularCollection"
         }
         this.setRestangularFields = function(resFields) {
             this.restangularFields = _.extend(this.restangularFields, resFields);
@@ -93,9 +94,11 @@ module.provider('Restangular', function() {
             var __restangularFields = this.restangularFields;
             return this.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
                 var currUrl = acum + "/" + elem[__restangularFields.route];
-                if (_.has(elem, __restangularFields.id)) {
+                
+                if (!elem[__restangularFields.restangularCollection]) {
                     currUrl += "/" + elem[__restangularFields.id];
                 }
+                
                 return currUrl;
             }, '');
         }
@@ -137,17 +140,8 @@ module.provider('Restangular', function() {
           var __responseExtractor = this.responseExtractor;
           var __restangularFields = this.restangularFields;
           
-          function restangularize(parent, elem, route) {
+          function restangularizeBase(parent, elem, route) {
               elem[__restangularFields.route] = route;
-              elem.getList = _.bind(fetchFunction, elem);
-              elem.get = _.bind(getFunction, elem);
-              elem.put = _.bind(putFunction, elem);
-              elem.post = _.bind(postFunction, elem);
-              elem.remove = _.bind(deleteFunction, elem);
-              elem.head = _.bind(headFunction, elem);
-              elem.trace = _.bind(traceFunction, elem);
-              elem.options = _.bind(optionsFunction, elem);
-              elem.patch = _.bind(patchFunction, elem);
               
               if (parent) {
                   var restangularFieldsForParent = _.chain(__restangularFields)
@@ -160,6 +154,35 @@ module.provider('Restangular', function() {
               return elem;
           }
           
+          function restangularizeElem(parent, elem, route) {
+              var localElem = restangularizeBase(parent, elem, route);
+              localElem[__restangularFields.restangularCollection] = false;
+              localElem.get = _.bind(getFunction, localElem);
+              localElem.getList = _.bind(fetchFunction, localElem);
+              localElem.put = _.bind(putFunction, localElem);
+              localElem.post = _.bind(postFunction, localElem);
+              localElem.remove = _.bind(deleteFunction, localElem);
+              localElem.head = _.bind(headFunction, localElem);
+              localElem.trace = _.bind(traceFunction, localElem);
+              localElem.options = _.bind(optionsFunction, localElem);
+              localElem.patch = _.bind(patchFunction, localElem);
+              return localElem;
+          }
+          
+          function restangularizeCollection(parent, elem, route, root) {
+              var localElem = restangularizeBase(parent, elem, route);
+              localElem[__restangularFields.restangularCollection] = true;
+              localElem.post = _.bind(postFunction, localElem, null);
+              localElem.head = _.bind(headFunction, localElem);
+              localElem.trace = _.bind(traceFunction, localElem);
+              localElem.options = _.bind(optionsFunction, localElem);
+              localElem.patch = _.bind(patchFunction, localElem);
+              if (root) {
+                  localElem.getList = _.bind(fetchFunction, localElem, null);
+              } 
+              return localElem;
+          }
+          
           function fetchFunction(what, params, headers) {
               var search = what ? {what: what} : {};
               var __this = this;
@@ -169,13 +192,17 @@ module.provider('Restangular', function() {
                   var data = __responseExtractor(resData, 'get');
                   var processedData = _.map(data, function(elem) {
                       if (what) {
-                          return restangularize(__this, elem, what);
+                          return restangularizeElem(__this, elem, what);
                       } else {
-                          return restangularize(null, elem, __this[__restangularFields.route]);
+                          return restangularizeElem(null, elem, __this[__restangularFields.route]);
                       }
                       
                   });
-                  deferred.resolve(processedData);
+                  if (what) {
+                      deferred.resolve(restangularizeCollection(__this, processedData, what));
+                  } else {
+                      deferred.resolve(restangularizeCollection(null, processedData, __this[__restangularFields.route]));
+                  }
               }, function error() {
                   deferred.reject(arguments)
               });
@@ -190,17 +217,13 @@ module.provider('Restangular', function() {
               var resObj = obj || this;
               
               var okCallback = function(resData) {
-                  var elem = __responseExtractor(resData, operation);
-                  if (elem) {
-                      if (operation !== "post") {
-                        deferred.resolve(restangularize(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
-                      } else {
-                        deferred.resolve(restangularize(__this, elem, resParams.what));
-                      }
-
+                  var elem = __responseExtractor(resData, operation) || resObj;
+                  if (operation !== "post") {
+                    deferred.resolve(restangularizeElem(__this[__restangularFields.parentResource], elem, __this[__restangularFields.route]));
                   } else {
-                      deferred.resolve();
+                    deferred.resolve(restangularizeElem(__this, elem, resParams.what));
                   }
+
               };
               
               var errorCallback = function() {
@@ -254,11 +277,11 @@ module.provider('Restangular', function() {
           service.one = function(route, id) {
               var elem = {};
               elem[__restangularFields.id] = id;
-              return restangularize(null, elem , route);
+              return restangularizeElem(null, elem , route);
           }
           
           service.all = function(route) {
-              return restangularize(null, {} , route);
+              return restangularizeCollection(null, {} , route, true);
           }
           
           return service;
