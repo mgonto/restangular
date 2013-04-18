@@ -2,6 +2,7 @@ describe("Restangular", function() {
   // API
   var Restangular, $httpBackend;
   var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
+  var messages;
 
   // Utils
   // Apply "sanitizeRestangularOne" function to an array of items
@@ -15,8 +16,9 @@ describe("Restangular", function() {
   // Remove all Restangular/AngularJS added methods in order to use Jasmine toEqual between the retrieve resource and the model
   function sanitizeRestangularOne(item) {
     return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
-      "$get", "$getArray", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
-      "$then", "$resolved", "restangularCollection");
+      "$get", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
+      "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
+      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection");
   };
 
   // Load required modules
@@ -31,6 +33,9 @@ describe("Restangular", function() {
       {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3, id: 0}, {from: "Anonymous", amount: 0.1416, id:1}]}
     ];
 
+    messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}]
+
+
     $httpBackend = $injector.get("$httpBackend");
 
     $httpBackend.when("HEAD", "/accounts").respond();
@@ -38,6 +43,8 @@ describe("Restangular", function() {
     $httpBackend.when("OPTIONS", "/accounts").respond();
 
     $httpBackend.whenGET("/accounts").respond(accountsModel);
+    $httpBackend.whenGET("/accounts/messages").respond(messages);
+    $httpBackend.whenGET("/accounts/1/message").respond(messages[0]);
     $httpBackend.whenGET("/accounts/0").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
@@ -79,6 +86,14 @@ describe("Restangular", function() {
     it("getList() should return an array of items", function() {
       restangularAccounts.getList().then(function(accounts) {
         expect(sanitizeRestangularAll(accounts)).toEqual(accountsModel);
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("Custom GET methods sohuld work", function() {
+      restangularAccounts.customGETLIST("messages").then(function(msgs) {
+        expect(sanitizeRestangularAll(msgs)).toEqual(messages);
       });
 
       $httpBackend.flush();
@@ -132,6 +147,15 @@ describe("Restangular", function() {
     it("get() should return a JSON item", function() {
       restangularAccount1.get().then(function(account) {
         expect(sanitizeRestangularOne(account)).toEqual(accountsModel[1]);
+      });
+
+      $httpBackend.flush();
+    });
+
+
+    it("Custom GET methods sohuld work", function() {
+      restangularAccount1.customGET("message").then(function(msg) {
+        expect(sanitizeRestangularOne(msg)).toEqual(messages[0]);
       });
 
       $httpBackend.flush();

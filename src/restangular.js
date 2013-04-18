@@ -111,7 +111,7 @@ module.provider('Restangular', function() {
         
         Path.prototype.resource = function(current, $resource, headers) {
             return $resource(this.base(current) + "/:what" , {}, {
-                getArray: {method: 'GET', params: {}, isArray: true, headers: headers || {}},
+                getList: {method: 'GET', params: {}, isArray: true, headers: headers || {}},
                 get: {method: 'GET', params: {}, isArray: false, headers: headers || {}},
                 put: {method: 'PUT', params: {}, isArray: false, headers: headers || {}},
                 post: {method: 'POST', params: {}, isArray: false, headers: headers || {}},
@@ -147,6 +147,15 @@ module.provider('Restangular', function() {
               return elem;
           }
           
+          function addCustomOperation(elem) {
+              elem.customOperation = _.bind(customFunction, elem);
+              _.each(["put", "post", "get", "delete"], function(oper) {
+                  var name = "custom" + oper.toUpperCase();
+                  elem[name] = _.bind(customFunction, elem, oper);
+              });
+              elem.customGETLIST = _.bind(fetchFunction, elem);
+          }
+          
           function restangularizeElem(parent, elem, route) {
               var localElem = restangularizeBase(parent, elem, route);
               localElem[__restangularFields.restangularCollection] = false;
@@ -159,6 +168,7 @@ module.provider('Restangular', function() {
               localElem.trace = _.bind(traceFunction, localElem);
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
+              addCustomOperation(elem);
               return localElem;
           }
           
@@ -171,6 +181,7 @@ module.provider('Restangular', function() {
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem, null);
+              addCustomOperation(elem);
               return localElem;
           }
           
@@ -179,7 +190,7 @@ module.provider('Restangular', function() {
               var __this = this;
               var deferred = $q.defer();
               
-              urlHandler.resource(this, $resource, headers).getArray(_.extend(search, params), function(resData) {
+              urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
                   var data = __responseExtractor(resData, 'get');
                   var processedData = _.map(data, function(elem) {
                       if (!__this[__restangularFields.restangularCollection]) {
@@ -260,6 +271,10 @@ module.provider('Restangular', function() {
 
          function patchFunction(params, headers) {
            return _.bind(elemFunction, this)("patch", params, undefined, headers);
+         }
+         
+         function customFunction(operation, path, params, headers, elem) {
+             return _.bind(elemFunction, this)(operation, _.extend({what: path}, params), elem, headers);
          }
           
           

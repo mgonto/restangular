@@ -99,6 +99,11 @@ baseAccounts.getList().then(function (accounts) {
     // Instead of posting nested element, a collection can post to itself
     // POST /accounts/123/users
     users.post({userName: 'unknown'});
+    
+    // Custom methods are available now :).
+    // GET /accounts/123/users/messages?param=myParam
+    users.customGET("messages", {param: "myParam"})
+    
     var firstUser = users[0];
 
     // GET /accounts/123/users/456. Just in case we want to update one user :)
@@ -119,6 +124,9 @@ var account = Restangular.one("accounts", 123);
 
 // GET /accounts/123?single=true
 $scope.account = account.get({single: true});
+
+// POST /accounts/123/messages?param=myParam with the body of name: "My Message"
+account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
 ````
 
 ## Configuring Restangular
@@ -180,7 +188,7 @@ app.config(function(RestangularProvider) {
 
 # Methods description
 
-There're 2 sets of methods. Collections have some methods and elements have others.
+There're 3 sets of methods. Collections have some methods and elements have others. There're are also some common methods for all of them
 
 ## Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
@@ -200,6 +208,24 @@ There're 2 sets of methods. Collections have some methods and elements have othe
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch([queryParams, headers])**: Does a PATCH
+
+## Custom methods
+* **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
+* **customGETLIST(path, [params, headers])**: Does a GET to the specific path. **In this case, you expect to get an array, not a single element**. Optionally you can set params and headers.
+* **customDELETE(path, [params, headers])**: Does a DELETE to the specific path. Optionally you can set params and headers.
+* **customPOST(path, [params, headers, elem])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
+* **customPUT(path, [params, headers, elem])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
+* **customOperation(operation, path, [params, headers, elem])**: This does a custom operation to the path that we specify. This method is actually used from all the others in this subsection. Operation can be one of: get, post, put, delete, head, options, patch, trace
+ 
+Let's see an example of this:
+
+````javascript
+//GET /accounts/123/messages
+Restangular.one("accounts", 123).customGET("messages")
+
+//GET /accounts/messages?param=param2
+Restangular.one("accounts", 123).customGET("messages", {param: "param2"})
+````
  
 # FAQ
 
