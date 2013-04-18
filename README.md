@@ -200,6 +200,58 @@ There're 2 sets of methods. Collections have some methods and elements have othe
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch([queryParams, headers])**: Does a PATCH
+ 
+# FAQ
+
+#### **I need to send one header in EVERY Restangular request, how do I do this?**
+
+Restangular uses $http inside, so you can actually set default headers by using $httpProvider. This also applies to XSRF headers as well
+
+````javascript
+app.config(["$httpProvider", function($httpProvider) {
+  $httpProvider.defaults.headers.common['Tenant-id'] = 'X';
+  $httpProvider.defaults.headers.get['Gonto-id'] = 'P';
+}]);
+````
+
+#### **After getting some List, when I want to add a new element to the array, it gives me an error saying that push method doesn't exist**
+
+When you actually get some list by doing
+
+````javascript
+$scope.owners = house.getList('owners')
+````
+
+You're actually assigning a Promise to the owners value of the $scope. You can actually iterate over owners and display its values in the template because AngularJS "understands" promises, and while the promise isn't resolved, it will return an empty array/value and once the value is returned, it will use that returned value.
+If you actually want to do something with the list of owners afterwards you can do the following:
+
+````javascript
+// Option 1
+$scope.owners = house.getList('owners')
+
+// Later in the code
+$scope.owners.then(function(owners) {
+  owners.push({name: "Gonto"});
+});
+
+// Option 2. I like this one better
+$scope.owners = [];
+house.getList('owners').then(function(owners) {
+  $scope.owners = owners;
+});
+
+// Later in the code
+$scope.owners.push({name: "Gonto"});
+
+````
+
+#### **Why does this depend on Lodash / Underscore? **
+
+This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc. 
+With these libraries, you always work with Inmutable stuff, you get compatibility for browsers which don't implement ECMA5 nor some of these cool methods, and they're actually quicker.
+So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
+
+
 
 # Contribute
 
