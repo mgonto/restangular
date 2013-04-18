@@ -127,7 +127,7 @@ $scope.account = account.get({single: true});
 Restangular comes with some defaults for all of it's properties but you can configure them. All of this properties have setters so that you can change them.
 
 #### baseUrl
-The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is empty string
+The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, so you can also set an absolute url like `http://api.example.com/api/v1` if you need do set another domain.
 
 #### extraFields
 This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
