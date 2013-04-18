@@ -18,7 +18,8 @@
     "browser",
     "restful",
     "resources",
-    "rest"
+    "rest",
+    "api"
   ],
   "maintainers": [
     {
