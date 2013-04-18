@@ -245,7 +245,7 @@ $scope.owners.push({name: "Gonto"});
 
 ````
 
-#### **Why does this depend on Lodash / Underscore? **
+#### Why does this depend on Lodash / Underscore?
 
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc. 
 With these libraries, you always work with Inmutable stuff, you get compatibility for browsers which don't implement ECMA5 nor some of these cool methods, and they're actually quicker.
