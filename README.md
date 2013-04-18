@@ -224,7 +224,7 @@ Let's see an example of this:
 Restangular.one("accounts", 123).customGET("messages")
 
 //GET /accounts/messages?param=param2
-Restangular.one("accounts", 123).customGET("messages", {param: "param2"})
+Restangular.all("accounts").customGET("messages", {param: "param2"})
 ````
  
 # FAQ
