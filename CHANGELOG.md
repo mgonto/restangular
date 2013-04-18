@@ -1,5 +1,8 @@
 # Releases Notes
 
+## 0.4.6
+* Added Custom methods to all Restangular objects. Check it out in the README
+
 ## 0.4.5
 * Fixed but that didn't let ID to be 0.
 * Added different Collection methods and Element methods
