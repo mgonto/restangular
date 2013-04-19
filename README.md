@@ -167,6 +167,10 @@ Restangular required 3 fields for every "Restangularized" element. This are:
 
 All of this fields except for `id` are handled by Restangular. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property. By default, the values are id, route and parentResource respectively.
 
+#### requestSuffix
+
+If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method
+
 ### How to configure them
 You can configure this properties inside the config method of your app
 
@@ -182,6 +186,8 @@ app.config(function(RestangularProvider) {
       id: "__id",
       route: "restangularRoute"
     });
+    
+    RestangularProvider.setRequestSuffix('.json');
 });
 
 ````

@@ -69,7 +69,20 @@ module.provider('Restangular', function() {
         this.setResponseExtractor = function(extractor) {
             responseExtractor = extractor;
         }
-
+        
+        /**
+         * This lets you set a suffix to every request.
+         * 
+         * For example, if your api requires that for JSon requests you do /users/123.json, you can set that
+         * in here.
+         * 
+         * 
+         * By default, the suffix is null
+         */
+        var suffix = null;
+        this.setRequestSuffix = function(newSuffix) {
+            suffix = newSuffix;
+        }
         //Internal values and functions
         var urlCreatorFactory = {};
         
@@ -107,16 +120,17 @@ module.provider('Restangular', function() {
         }
         
         Path.prototype.resource = function(current, $resource, headers) {
-            return $resource(this.base(current) + "/:what" , {}, {
-                getList: {method: 'GET', params: {}, isArray: true, headers: headers || {}},
-                get: {method: 'GET', params: {}, isArray: false, headers: headers || {}},
-                put: {method: 'PUT', params: {}, isArray: false, headers: headers || {}},
-                post: {method: 'POST', params: {}, isArray: false, headers: headers || {}},
-                remove: {method: 'DELETE', params: {}, isArray: false, headers: headers || {}},
-                head: {method: 'HEAD', params: {}, isArray: false, headers: headers || {}},
-                trace: {method: 'TRACE', params: {}, isArray: false, headers: headers || {}},
-                options: {method: 'OPTIONS', params: {}, isArray: false, headers: headers || {}},
-                patch: {method: 'PATCH', params: {}, isArray: false, headers: headers || {}}
+            var reqParams = suffix ? {restangularSuffix: suffix} : {};
+            return $resource(this.base(current) + "/:what:restangularSuffix" , {}, {
+                getList: {method: 'GET', params: reqParams, isArray: true, headers: headers || {}},
+                get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
+                put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
+                post: {method: 'POST', params: reqParams, isArray: false, headers: headers || {}},
+                remove: {method: 'DELETE', params: reqParams, isArray: false, headers: headers || {}},
+                head: {method: 'HEAD', params: reqParams, isArray: false, headers: headers || {}},
+                trace: {method: 'TRACE', params: reqParams, isArray: false, headers: headers || {}},
+                options: {method: 'OPTIONS', params: reqParams, isArray: false, headers: headers || {}},
+                patch: {method: 'PATCH', params: reqParams, isArray: false, headers: headers || {}}
             });
         }
         
