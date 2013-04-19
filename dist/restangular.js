@@ -57,7 +57,8 @@ module.provider('Restangular', function() {
             id: "id",
             route: "route",
             parentResource: "parentResource",
-            restangularCollection: "restangularCollection"
+            restangularCollection: "restangularCollection",
+            what: "restangularWhat"
         }
         this.setRestangularFields = function(resFields) {
             restangularFields = _.extend(restangularFields, resFields);
@@ -128,7 +129,7 @@ module.provider('Restangular', function() {
         
         Path.prototype.resource = function(current, $resource, headers) {
             var reqParams = suffix ? {restangularSuffix: suffix} : {};
-            return $resource(this.base(current) + "/:what:restangularSuffix" , {}, {
+            return $resource(this.base(current) + "/:" + restangularFields.what + ":restangularSuffix" , {}, {
                 getList: {method: 'GET', params: reqParams, isArray: true, headers: headers || {}},
                 get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
                 put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
@@ -200,8 +201,17 @@ module.provider('Restangular', function() {
               return localElem;
           }
           
+          function whatObject(what) {
+              var search = {};
+              if (what) {
+                  search[restangularFields.what] = what;
+              }
+              return search;
+          }
+          
+          
           function fetchFunction(what, params, headers) {
-              var search = what ? {what: what} : {};
+              var search = whatObject(what);
               var __this = this;
               var deferred = $q.defer();
               
@@ -236,7 +246,7 @@ module.provider('Restangular', function() {
               var okCallback = function(resData) {
                   var elem = responseExtractor(resData, operation) || resObj;
                   if (operation === "post" && !__this[restangularFields.restangularCollection]) {
-                    deferred.resolve(restangularizeElem(__this, elem, resParams.what));
+                    deferred.resolve(restangularizeElem(__this, elem, resParams[restangularFields.what]));
                   } else {
                     deferred.resolve(restangularizeElem(__this[restangularFields.parentResource], elem, __this[restangularFields.route]));
                   }
@@ -269,7 +279,7 @@ module.provider('Restangular', function() {
           }
 
           function postFunction(what, elem, params, headers) {
-              return _.bind(elemFunction, this)("post", _.extend({what: what}, params), elem, headers);
+              return _.bind(elemFunction, this)("post", _.extend(whatObject(what), params), elem, headers);
           }
 
          function headFunction(params, headers) {
@@ -289,7 +299,7 @@ module.provider('Restangular', function() {
          }
          
          function customFunction(operation, path, params, headers, elem) {
-             return _.bind(elemFunction, this)(operation, _.extend({what: path}, params), elem, headers);
+             return _.bind(elemFunction, this)(operation, _.extend(whatObject(path), params), elem, headers);
          }
           
           

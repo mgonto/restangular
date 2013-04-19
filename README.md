@@ -161,11 +161,13 @@ The responseExtractor is a function that will be called with every response from
 
 Restangular required 3 fields for every "Restangularized" element. This are:
 
-* id: Id of the element
-* route: name of the route of this element
-* parentResource: the reference to the parent resource
+* id: Id of the element. Default: id
+* route: Name of the route of this element. Default: route
+* parentResource: The reference to the parent resource. Default: parentResource
+* restangularCollection: A boolean indicating if this is a collection or an element. Default: restangularCollection
+* what: The name of the parameter to be used in inner $resource to handle the PATH of the url. For example, in `/users/123/messages`, `messages`represents the "what". Default: restangularWhat 
 
-All of this fields except for `id` are handled by Restangular. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property. By default, the values are id, route and parentResource respectively.
+All of this fields except for `id` are handled by Restangular, so most of the time you won't change them. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property.
 
 #### requestSuffix
 
