@@ -305,6 +305,7 @@ app.config(function(RestangularProvider) {
         // This is an element
         newResponse = response.data;
       }
+      return newResponse;
     });
 ````
 
