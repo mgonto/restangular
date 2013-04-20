@@ -8,9 +8,11 @@ This service is a perfect fit for any WebApp that uses Restfull Resources as the
 
 #How do I add this to my project?
 
-You can do this by manually downloading the file from dist folder in Github or by using bower and running `bower install restangular`
+You can download this by:
 
-You can click [here to download development unminified version](https://raw.github.com/mgonto/restangular/master/dist/restangular.js) or you can click [here to download minified production version](https://raw.github.com/mgonto/restangular/master/dist/restangular.min.js)
+* Using bower and running `bower install restangular`
+* Using npm and running `npm install restangular`
+* Downloading it manually by clicking [here to download development unminified version](https://raw.github.com/mgonto/restangular/master/dist/restangular.js) or [here to download minified production version](https://raw.github.com/mgonto/restangular/master/dist/restangular.min.js)
 
 #Dependencies
 
