@@ -155,7 +155,11 @@ There are sometimes when the data from the response isn't the whole response, bu
 }
 ````
 
-The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP method being run.
+The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP operation being run. Take into account that if we're doing a GET for a list of element, instead of returning `GET`as the operation, it returns `getList` so that you can distinguish it.
+
+#### listTypeIsArray
+
+You can set in this property wether the `getList` method will return an Array or not. Most of the times, it will return an array, as it returns a collection of values. However, sometimes this method returns first some metadata and inside it has the array. So this can be used together with `responseExtractor` to get the real array. The default value is true.
 
 #### restangularFields
 
@@ -183,6 +187,9 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setResponseExtractor(function(response, operation) {
         return response.data;
     });
+    
+    RestangularProvider.setListTypeIsArray(true);
+    
     // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
     RestangularProvider.setRestangularFields({
       id: "__id",
@@ -247,6 +254,58 @@ app.config(["$httpProvider", function($httpProvider) {
   $httpProvider.defaults.headers.get['Gonto-id'] = 'P';
 }]);
 ````
+
+#### **My response is actually wrapped with some metadata. How do I get the data in that case?**
+
+So, let's assume that your data is the following:
+
+````javascript
+ // When getting the list, this is the response.
+{
+  "status":"success",
+  "data": {
+    "data": [{
+      "id":1,
+      // More data
+    }],
+    "meta": {
+      "totalRecord":100
+    }
+  }
+}
+
+// When getting a single element, this is the response.
+{
+  "status":"success",
+  "data": {
+    "id" : 1
+    // More data
+  }
+}
+````
+
+In this case, you'd need to configure Restangular's `responseExtractor`and `listTypeIsArray`. See the following:
+
+````javascript
+app.config(function(RestangularProvider) {
+    // First let's set listTypeIsArray to false, as we have the array wrapped in some other object.
+    RestangularProvider.setListTypeIsArray(false);
+    
+    // Now let's configure the response extractor for each request
+    RestangularProvider.setResponseExtractor(function(response, operation) {
+      // This is a get for a list
+      var newResponse;
+      if (operation === "getList") {
+        // Here we're returning an Array which has one special property metadata with our extra information
+        newResponse = response.data.data;
+        newResponse.metadata = response.data.meta;
+      } else {
+        // This is an element
+        newResponse = response.data;
+      }
+    });
+````
+
 
 #### **After getting some List, when I want to add a new element to the array, it gives me an error saying that push method doesn't exist**
 
@@ -314,6 +373,9 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 
 # Releases Notes
+
+## 0.5.1
+* Added listTypeIsArray property to set getList as not an array.
 
 ## 0.5.0
 * Added `requestSuffix`configuration for requests ending en .json

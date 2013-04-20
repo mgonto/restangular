@@ -1,5 +1,8 @@
 # Releases Notes
 
+## 0.5.1
+* Added listTypeIsArray property to set getList as not an array.
+
 ## 0.5.0
 * Added `requestSuffix`configuration for requests ending en .json
 * `what` field is now configurable and not hardcoded anymore

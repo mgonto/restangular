@@ -72,6 +72,16 @@ module.provider('Restangular', function() {
         }
         
         /**
+         * Sets the getList type. The getList returns an Array most of the time as it's a collection of values.
+         * However, sometimes you have metadata and in that cases, the getList ISN'T an array.
+         * By default, it's going to be set as array
+         */
+        var listTypeIsArray = true;
+        this.setListTypeIsArray = function(val) {
+            listTypeIsArray = val;
+        };
+        
+        /**
          * This lets you set a suffix to every request.
          * 
          * For example, if your api requires that for JSon requests you do /users/123.json, you can set that
@@ -123,7 +133,7 @@ module.provider('Restangular', function() {
         Path.prototype.resource = function(current, $resource, headers) {
             var reqParams = suffix ? {restangularSuffix: suffix} : {};
             return $resource(this.base(current) + "/:" + restangularFields.what + ":restangularSuffix" , {}, {
-                getList: {method: 'GET', params: reqParams, isArray: true, headers: headers || {}},
+                getList: {method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}},
                 get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
                 put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
                 post: {method: 'POST', params: reqParams, isArray: false, headers: headers || {}},
@@ -209,7 +219,7 @@ module.provider('Restangular', function() {
               var deferred = $q.defer();
               
               urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
-                  var data = responseExtractor(resData, 'get');
+                  var data = responseExtractor(resData, 'getList');
                   var processedData = _.map(data, function(elem) {
                       if (!__this[restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
