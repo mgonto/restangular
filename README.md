@@ -246,6 +246,18 @@ Restangular.all("accounts").customGET("messages", {param: "param2"})
  
 # FAQ
 
+#### **How can I handle errors?**
+
+Errors can be checked on the second argument of the then.
+
+````javascript
+Restangular.all("accounts").getList().then(function() {
+  console.log("All ok");
+}, function(response) {
+  console.log("Error with status code", response.status);
+});
+````
+
 #### **I need to send one header in EVERY Restangular request, how do I do this?**
 
 Restangular uses $http inside, so you can actually set default headers by using $httpProvider. This also applies to XSRF headers as well

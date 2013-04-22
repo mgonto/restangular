@@ -233,8 +233,8 @@ module.provider('Restangular', function() {
                   } else {
                       deferred.resolve(restangularizeCollection(null, processedData, __this[restangularFields.route]));
                   }
-              }, function error() {
-                  deferred.reject(arguments)
+              }, function error(response) {
+                  deferred.reject(response);
               });
               
               return deferred.promise;
@@ -256,8 +256,8 @@ module.provider('Restangular', function() {
 
               };
               
-              var errorCallback = function() {
-                  deferred.reject(arguments)
+              var errorCallback = function(response) {
+                  deferred.reject(response);
               };
 
               if (isSafe(operation)) {
