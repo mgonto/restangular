@@ -18,6 +18,7 @@ You can download this by:
 ````html
 <!-- Use LATEST folder to always get the latest version-->
 <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
 
 <!-- Or use TAG number for specific version -->
 <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/0.5.3/restangular.js"></script>
