@@ -18,7 +18,8 @@ describe("Restangular", function() {
     return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
       "$get", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
       "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
-      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all");
+      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all","doGET", "doPOST",
+      "doPUT", "doDELETE", "doGETLIST");
   };
 
   // Load required modules

@@ -187,10 +187,13 @@ module.provider('Restangular', function() {
           function addCustomOperation(elem) {
               elem.customOperation = _.bind(customFunction, elem);
               _.each(["put", "post", "get", "delete"], function(oper) {
-                  var name = "custom" + oper.toUpperCase();
-                  elem[name] = _.bind(customFunction, elem, oper);
+                  _.each(["do", "custom"], function(alias) {
+                      var name = alias + oper.toUpperCase();
+                      elem[name] = _.bind(customFunction, elem, oper);
+                  });
               });
               elem.customGETLIST = _.bind(fetchFunction, elem);
+              elem.doGETLIST = elem.customGETLIST;
           }
           
           function restangularizeElem(parent, elem, route) {
