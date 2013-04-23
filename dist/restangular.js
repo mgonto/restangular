@@ -179,6 +179,18 @@ module.provider('Restangular', function() {
               return elem;
           }
           
+
+          
+          function one(parent, route, id) {
+              var elem = {};
+              elem[restangularFields.id] = id;
+              return restangularizeElem(parent, elem , route);
+          }
+          
+          function all(parent, route) {
+              return restangularizeCollection(parent, {} , route, true);
+          }
+          
           function addCustomOperation(elem) {
               elem.customOperation = _.bind(customFunction, elem);
               _.each(["put", "post", "get", "delete"], function(oper) {
@@ -200,6 +212,11 @@ module.provider('Restangular', function() {
               localElem.trace = _.bind(traceFunction, localElem);
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
+              
+              //RequestLess connection
+              localElem.one = _.bind(one, localElem, localElem);
+              localElem.all = _.bind(all, localElem, localElem);
+              
               addCustomOperation(elem);
               return localElem;
           }
@@ -320,15 +337,9 @@ module.provider('Restangular', function() {
           
           var service = {};
           
-          service.one = function(route, id) {
-              var elem = {};
-              elem[restangularFields.id] = id;
-              return restangularizeElem(null, elem , route);
-          }
+          service.one = _.bind(one, service, null);
           
-          service.all = function(route) {
-              return restangularizeCollection(null, {} , route, true);
-          }
+          service.all = _.bind(all, service, null);
           
           return service;
        

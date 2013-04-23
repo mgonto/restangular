@@ -1,5 +1,9 @@
 # Releases Notes
 
+## 0.5.3
+* Added the posibility to do URL Building and RequestLess tree navigations
+* Added alias to `do[method]`. For example, Now you can do `customPOST` as well as `doPOST`
+
 ## 0.5.2
 * responseExtractor renamed to responseInterceptor. Added alias from responseExtractor to responseInterceptor to mantain backwards compatibility
 * responseExtractor now receives 4 parameters. Response, operation, what (path of current element) and URL

@@ -55,7 +55,7 @@ Restangular.all('accounts')
 Restangular.one('accounts', 1234)
 ````
 
-### Fetching elements from Main object
+### Let's code!
 
 Now that we have our main Object lets's start playing with it.
 
@@ -71,6 +71,14 @@ var newAccount = {name: "Gonto's account"};
 
 // POST /accounts
 baseAccounts.post(newAccount);
+
+//You can do RequestLess "connections" if you need as well
+
+// Just ONE GET to /accounts/123/buildings/456
+Restangular.one('accounts', 123).one('buildings', 456).get()
+
+// Just ONE GET to /accounts/123/buildings
+Restangular.one('accounts', 123).all('buildings').getList()
 
 //Here we use Promises then 
 // GET /accounts
@@ -138,6 +146,8 @@ $scope.account = account.get({single: true});
 
 // POST /accounts/123/messages?param=myParam with the body of name: "My Message"
 account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
+
+
 ````
 
 ## Configuring Restangular
@@ -208,7 +218,7 @@ app.config(function(RestangularProvider) {
 
 ````
 
-# Methods description
+## Methods description
 
 There're 3 sets of methods. Collections have some methods and elements have others. There're are also some common methods for all of them
 
@@ -219,9 +229,11 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 * **post(subElement, elementToPost, [queryParams, headers])**: Does a POST and creates a subElement. Subelement is mandatory and is the nested resource. Element to post is the object to post to the server
 * **remove([queryParams, headers])**: Does a DELETE
 * **head([queryParams, headers])**: Does a HEAD
-* **trace: ([queryParams, headers])**: Does a TRACE
-* **options: ([queryParams, headers])**: Does a OPTIONS
+* **trace([queryParams, headers])**: Does a TRACE
+* **options([queryParams, headers])**: Does a OPTIONS
 * **patch([queryParams, headers])**: Does a PATCH
+* **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
+* **all(route)**: Used for RequestLess connections and URL Building. See section below.
 
 ## Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
@@ -247,6 +259,23 @@ Restangular.one("accounts", 123).customGET("messages")
 
 //GET /accounts/messages?param=param2
 Restangular.all("accounts").customGET("messages", {param: "param2"})
+````
+
+## URL Building
+Sometimes, we have a lot of entities names with their ids and we just want to fetch the later entity. In those cases, doing a request for everything to get the last entity is an overkill. For those cases, I've added the possibility to create URLs using the same API as creating a new Restangular object. This connections are created without doing any request. Let's see how to do this:
+
+````javascript
+
+var restangualrSpaces = Restangular.one("accounts",123).one("buildings", 456).all("spaces");
+
+// This will do ONE get to /accounts/123/buildings/456/spaces
+restangularSpaces.getList()
+
+// This will do ONE get to /accounts/123/buildings/456/spaces/789
+Restangular.one("accounts", 123).one("buildings", 456).one("spaces", 789).get()
+
+// POST /accounts/123/buildings/456/spaces
+Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name: "New Space"});
 ````
  
 # FAQ
@@ -393,6 +422,10 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 
 # Releases Notes
+
+## 0.5.3
+* Added the posibility to do URL Building and RequestLess tree navigations
+* Added alias to `do[method]`. For example, Now you can do `customPOST` as well as `doPOST`
 
 ## 0.5.2
 * responseExtractor renamed to responseInterceptor. Added alias from responseExtractor to responseInterceptor to mantain backwards compatibility

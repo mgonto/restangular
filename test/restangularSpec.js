@@ -18,7 +18,7 @@ describe("Restangular", function() {
     return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
       "$get", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
       "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
-      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection");
+      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all");
   };
 
   // Load required modules
@@ -48,6 +48,7 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts/0").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
+    $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
 
     $httpBackend.whenPOST("/accounts").respond(function(method, url, data, headers) {
       accountsModel.push(angular.fromJson(data));
@@ -147,6 +148,22 @@ describe("Restangular", function() {
     it("get() should return a JSON item", function() {
       restangularAccount1.get().then(function(account) {
         expect(sanitizeRestangularOne(account)).toEqual(accountsModel[1]);
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("Should make RequestLess connections with one", function() {
+      restangularAccount1.one("transactions", 1).get().then(function(transaction) {
+        expect(sanitizeRestangularOne(transaction)).toEqual(accountsModel[1].transactions[1]);
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("Should make RequestLess connections with all", function() {
+      restangularAccount1.all("transactions").getList().then(function(transactions) {
+        expect(sanitizeRestangularAll(transactions)).toEqual(accountsModel[1].transactions);
       });
 
       $httpBackend.flush();
