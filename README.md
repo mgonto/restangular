@@ -222,7 +222,7 @@ app.config(function(RestangularProvider) {
 
 There're 3 sets of methods. Collections have some methods and elements have others. There're are also some common methods for all of them
 
-## Element methods
+### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
 * **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. **It's a string with the name of the nested resource (and URL)**. For example `buildings`
 * **put([queryParams, headers])**: Does a put to the current element
@@ -235,7 +235,7 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 * **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
 * **all(route)**: Used for RequestLess connections and URL Building. See section below.
 
-## Collection methods
+### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
 * **post(elementToPost, [queryParams, headers])**: Creates a new element of this collection.
 * **head([queryParams, headers])**: Does a HEAD
@@ -243,7 +243,7 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch([queryParams, headers])**: Does a PATCH
 
-## Custom methods
+### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
 * **customGETLIST(path, [params, headers])**: Does a GET to the specific path. **In this case, you expect to get an array, not a single element**. Optionally you can set params and headers.
 * **customDELETE(path, [params, headers])**: Does a DELETE to the specific path. Optionally you can set params and headers.
