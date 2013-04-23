@@ -353,6 +353,7 @@ app.config(function(RestangularProvider) {
       }
       return newResponse;
     });
+});
 ````
 
 
