@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.5.1 - 2013-04-20
+ * @version v0.5.1 - 2013-04-23
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -71,13 +71,15 @@ module.provider('Restangular', function() {
          *
          * The ResponseExtractor is a function that receives the response and the method executed.
          */
-        var responseExtractor = function(response, method) {
+        var responseExtractor = function(response) {
             return response;
         }
         this.setResponseExtractor = function(extractor) {
             responseExtractor = extractor;
         }
         
+        this.setResponseInterceptor = this.setResponseExtractor;
+
         /**
          * Sets the getList type. The getList returns an Array most of the time as it's a collection of values.
          * However, sometimes you have metadata and in that cases, the getList ISN'T an array.
@@ -133,8 +135,12 @@ module.provider('Restangular', function() {
             return parents.reverse();
         }
         
-        Path.prototype.fetchUrl = function(what, current) {
-            return this.base(current) + "/" + what.toLowerCase();
+        Path.prototype.fetchUrl = function(current, params) {
+            var baseUrl = this.base(current);
+            if (params[restangularFields.what]) {
+                baseUrl += "/" + params[restangularFields.what];
+            }
+            return baseUrl;
         }
         
         Path.prototype.resource = function(current, $resource, headers) {
@@ -224,9 +230,8 @@ module.provider('Restangular', function() {
               var search = whatObject(what);
               var __this = this;
               var deferred = $q.defer();
-              
               urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
-                  var data = responseExtractor(resData, 'getList');
+                  var data = responseExtractor(resData, 'getList', what, urlHandler.fetchUrl(__this, search));
                   var processedData = _.map(data, function(elem) {
                       if (!__this[restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
@@ -240,8 +245,8 @@ module.provider('Restangular', function() {
                   } else {
                       deferred.resolve(restangularizeCollection(null, processedData, __this[restangularFields.route]));
                   }
-              }, function error() {
-                  deferred.reject(arguments)
+              }, function error(response) {
+                  deferred.reject(response);
               });
               
               return deferred.promise;
@@ -254,7 +259,7 @@ module.provider('Restangular', function() {
               var resObj = obj || this;
               
               var okCallback = function(resData) {
-                  var elem = responseExtractor(resData, operation) || resObj;
+                  var elem = responseExtractor(resData, operation, resParams[restangularFields.what] || __this[restangularFields.route], urlHandler.fetchUrl(__this, resParams)) || resObj;
                   if (operation === "post" && !__this[restangularFields.restangularCollection]) {
                     deferred.resolve(restangularizeElem(__this, elem, resParams[restangularFields.what]));
                   } else {
@@ -263,8 +268,8 @@ module.provider('Restangular', function() {
 
               };
               
-              var errorCallback = function() {
-                  deferred.reject(arguments)
+              var errorCallback = function(response) {
+                  deferred.reject(response);
               };
 
               if (isSafe(operation)) {

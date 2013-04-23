@@ -145,19 +145,15 @@ This are the fields that you want to save from your parent resources if you need
 #### urlCreator
 This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
 
-#### responseExtractor
-There are sometimes when the data from the response isn't the whole response, but it's wrapped in another object. For example, if your response is the following, you'd extract the data object:
+#### responseInterceptor (or responseExtractor. It's an Alias)
+The responseInterceptor is called after we get each response from the server. It's a function that receives 4 arguments:
 
-````javascript
-{
-    status: 200,
-    data: {
-        name: "Gonto"
-    }
-}
-````
+* **response**: The response got from the server
+* **operation**: The operation made. It'll be the HTTP method used except for a `GET` which returns a list of element which will return `getList` so that you can distinguish them.
+* **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
+* **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 
-The responseExtractor is a function that will be called with every response from the server that receives 2 arguments: The first one is the response itself, the second one is the HTTP operation being run. Take into account that if we're doing a GET for a list of element, instead of returning `GET`as the operation, it returns `getList` so that you can distinguish it.
+Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
 
 #### listTypeIsArray
 
