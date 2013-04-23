@@ -385,6 +385,11 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 # Releases Notes
 
+## 0.5.2
+* responseExtractor renamed to responseInterceptor. Added alias from responseExtractor to responseInterceptor to mantain backwards compatibility
+* responseExtractor now receives 4 parameters. Response, operation, what (path of current element) and URL
+* Error function for any Restangular action now receives a response to get StatusCode and other interesting stuff
+
 ## 0.5.1
 * Added listTypeIsArray property to set getList as not an array.
 
