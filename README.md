@@ -205,7 +205,7 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 
 ## Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
-* **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. It's a st**ring with the name of the nested resource (and URL)**. For example `buildings`
+* **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. **It's a string with the name of the nested resource (and URL)**. For example `buildings`
 * **put([queryParams, headers])**: Does a put to the current element
 * **post(subElement, elementToPost, [queryParams, headers])**: Does a POST and creates a subElement. Subelement is mandatory and is the nested resource. Element to post is the object to post to the server
 * **remove([queryParams, headers])**: Does a DELETE
