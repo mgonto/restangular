@@ -124,7 +124,7 @@ describe("Restangular", function() {
     $httpBackend.flush();
    });
 
-    it("Doing a post and then other operation should call right URLs", function() {
+    it("Doing a post and then other operation (delete) should call right URLs", function() {
       restangularAccounts.getList().then(function(accounts) {
         accounts[1].post('transactions', {id: 1, name: "Gonto"}).then(function(transaction) {
           transaction.remove();
