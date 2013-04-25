@@ -2,7 +2,7 @@ describe("Restangular", function() {
   // API
   var Restangular, $httpBackend;
   var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
-  var messages;
+  var messages, newAccount;
 
   // Utils
   // Apply "sanitizeRestangularOne" function to an array of items
@@ -34,6 +34,8 @@ describe("Restangular", function() {
       {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3, id: 0}, {from: "Anonymous", amount: 0.1416, id:1}]}
     ];
 
+    newAccount = {id: 44, user: "First User", amount: 45, transactions: []};
+
     messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}]
 
 
@@ -52,12 +54,14 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
 
     $httpBackend.whenPOST("/accounts").respond(function(method, url, data, headers) {
-      accountsModel.push(angular.fromJson(data));
-      return [201, JSON.stringify(data), ""];
+      var newData = angular.fromJson(data);
+      newData.fromServer = true;
+      accountsModel.push(newData);
+      return [201, JSON.stringify(newData), ""];
     });
 
     $httpBackend.whenPOST("/accounts/1/transactions").respond(function(method, url, data, headers) {
-      return [201, data, ""];
+      return [201, "", ""];
     });
 
     $httpBackend.whenDELETE("/accounts/1/transactions/1").respond(function(method, url, data, headers) {
@@ -110,11 +114,32 @@ describe("Restangular", function() {
     $httpBackend.flush();
    });
 
+    it("post() should add a new item with data and return the data from the server", function() {
+     restangularAccounts.post(newAccount).then(function(added) {
+       expect(added.fromServer).toEqual(true);
+       expect(added.id).toEqual(newAccount.id);
+     });
+
+    $httpBackend.expectPOST('/accounts');
+    $httpBackend.flush();
+   });
+
     it("Doing a post and then other operation should call right URLs", function() {
       restangularAccounts.getList().then(function(accounts) {
         accounts[1].post('transactions', {id: 1, name: "Gonto"}).then(function(transaction) {
           transaction.remove();
           $httpBackend.expectDELETE('/accounts/1/transactions/1').respond(201, '');
+        });
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("Doing a post to a server that returns no element will return the parameter of that post", function() {
+      restangularAccounts.getList().then(function(accounts) {
+        var newTransaction = {id: 1, name: "Gonto"};
+        accounts[1].post('transactions', newTransaction).then(function(transaction) {
+          expect(sanitizeRestangularOne(transaction)).toEqual(newTransaction);
         });
       });
 
