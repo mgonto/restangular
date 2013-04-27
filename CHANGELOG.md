@@ -1,5 +1,9 @@
 # Releases Notes
 
+## 0.5.4
+* Added onElemRestangularized hook
+* Added posibility to add your own Restangular methods
+
 ## 0.5.3
 * Added the posibility to do URL Building and RequestLess tree navigations
 * Added alias to `do[method]`. For example, Now you can do `customPOST` as well as `doPOST`

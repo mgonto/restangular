@@ -1,3 +1,10 @@
+/**
+ * Restfull Resources service for AngularJS apps
+ * @version v0.5.3 - 2013-04-23
+ * @link https://github.com/mgonto/restangular
+ * @author Martin Gontovnikas <martin@gonto.com.ar>
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
 var module = angular.module('restangular', ['ngResource']);
 
 module.provider('Restangular', function() {
@@ -72,6 +79,20 @@ module.provider('Restangular', function() {
         }
         
         this.setResponseInterceptor = this.setResponseExtractor;
+        
+        /**
+         * This method is called after an element has been "Restangularized".
+         * 
+         * It receives the element, a boolean indicating if it's an element or a collection 
+         * and the name of the model
+         * 
+         */
+        var onElemRestangularized = function(elem) {
+            return elem;
+        }
+        this.setOnElemRestangularized = function(post) {
+            onElemRestangularized = post;
+        }
 
         /**
          * Sets the getList type. The getList returns an Array most of the time as it's a collection of values.
@@ -160,6 +181,7 @@ module.provider('Restangular', function() {
           
           function restangularizeBase(parent, elem, route) {
               elem[restangularFields.route] = route;
+              elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {
                   var restangularFieldsForParent = _.chain(restangularFields)
@@ -213,8 +235,8 @@ module.provider('Restangular', function() {
               localElem.one = _.bind(one, localElem, localElem);
               localElem.all = _.bind(all, localElem, localElem);
               
-              addCustomOperation(elem);
-              return localElem;
+              addCustomOperation(localElem);
+              return onElemRestangularized(localElem, false, route);
           }
           
           function restangularizeCollection(parent, elem, route) {
@@ -226,8 +248,9 @@ module.provider('Restangular', function() {
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem, null);
-              addCustomOperation(elem);
-              return localElem;
+              
+              addCustomOperation(localElem);
+              return onElemRestangularized(localElem, true, route);
           }
           
           function whatObject(what) {
@@ -329,7 +352,29 @@ module.provider('Restangular', function() {
          function customFunction(operation, path, params, headers, elem) {
              return _.bind(elemFunction, this)(operation, _.extend(whatObject(path), params), elem, headers);
          }
-          
+         
+         function addRestangularMethodFunction(name, operation, path, defaultParams, defaultHeaders, defaultElem) {
+             var bindedFunction;
+             if (operation === 'getList') {
+                 bindedFunction = _.bind(fetchFunction, this, path); 
+             } else {
+                 bindedFunction = _.bind(customFunction, this, operation, path);
+             }
+             
+             this[name] = function(params, headers, elem) {
+                 var callParams = _.defaults({
+                     params: params,
+                     headers: headers,
+                     elem: elem
+                 }, {
+                     params: defaultParams,
+                     headers: defaultHeaders,
+                     elem: defaultElem
+                 });
+                 return bindedFunction(callParams.params, callParams.headers, callParams.elem);
+             }
+         }
+         
           
           var service = {};
           
@@ -342,4 +387,3 @@ module.provider('Restangular', function() {
         }];
     }
 );
-

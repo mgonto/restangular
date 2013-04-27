@@ -167,6 +167,16 @@ This are the fields that you want to save from your parent resources if you need
 #### urlCreator
 This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
 
+#### onElemRestangularized
+This is a hook. After each element has been "restangularized" (Added the new methods from Restangular), this will be called. It means that if you receive a list of objects in one call, this method will be called first for the collection and then for each element of the collection.
+This callback is a function that has 3 parameters:
+
+* **elem**: The element that has just been restangularized. Can be a collection or a single element.
+* **isCollection**: Boolean indicating if this is a collection or a single element.
+* **what**: The model that is being modified. This is the "path" of this resource. For example `buildings`
+ 
+This can be used together with `addRestangularMethod` (Explained later) to add custom methods to an element
+
 #### responseInterceptor (or responseExtractor. It's an Alias)
 The responseInterceptor is called after we get each response from the server. It's a function that receives 4 arguments:
 
@@ -253,6 +263,7 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 * **customPOST(path, [params, headers, elem])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
 * **customPUT(path, [params, headers, elem])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
 * **customOperation(operation, path, [params, headers, elem])**: This does a custom operation to the path that we specify. This method is actually used from all the others in this subsection. Operation can be one of: get, post, put, delete, head, options, patch, trace
+* **addRestangularMethod(name, operation, [path, params, headers, elem])**: This will add a new restangular method to this object with the name `name` to the operation and path specified (or current path otherwise). There's a section on how to do this later. 
  
 Let's see an example of this:
 
@@ -279,6 +290,35 @@ Restangular.one("accounts", 123).one("buildings", 456).one("spaces", 789).get()
 
 // POST /accounts/123/buildings/456/spaces
 Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name: "New Space"});
+````
+
+## Creating new Restangular Methods
+
+Let's assume that your API needs some custom methods to work. If that's the case, always calling customGET or customPOST for that method with all parameters is a pain in the ass. That's why every element has a `addRestangularMethod` method. This can be used together with the hook `setOnElemRestangularized` to do some neat stuff. Let's see an example to learn this:
+
+````javascript
+//In your app configuration (config method)
+RestangularProvider.setOnElemRestangularized(function(elem, isCollection, route) {
+    if (!isCollection && route === "buildings") {
+        // This will add a method called evaluate that will do a get to path evaluate with NO default
+        // query params and with some default header
+        // signature is (name, operation, path, params, headers, elementToPost)
+        elem.addRestangularMethod('evaluate', 'get', 'evaluate', undefined, {'myHeader': 'value'});
+    }
+    return elem;
+})
+
+// Then, later in your code you can do the following:
+
+//GET to /buildings/123/evaluate?myParam=param with headers myHeader: value
+//Signature for this "custom created" methods is (params, headers, elem)
+// If something is set to any of this variables, the default set in the method creation will be overrided
+// If nothing is set, then the defaults are sent
+building.evaluate({myParam: 'param'});
+
+//GET to /buildings/123/evaluate?myParam=param with headers myHeader: specialHeaderCase
+building.evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
+
 ````
  
 # FAQ
@@ -426,6 +466,10 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 
 # Releases Notes
+
+## 0.5.4
+* Added onElemRestangularized hook
+* Added posibility to add your own Restangular methods
 
 ## 0.5.3
 * Added the posibility to do URL Building and RequestLess tree navigations
