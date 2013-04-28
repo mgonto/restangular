@@ -13,7 +13,7 @@ files = [
   'http://code.angularjs.org/1.1.4/angular.js',
   'http://code.angularjs.org/1.1.4/angular-resource.js',
   'http://code.angularjs.org/1.1.4/angular-mocks.js',
-  'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.min.js',
+  'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js',
   'src/restangular.js',
   'test/*.js'
 ];
@@ -31,11 +31,11 @@ reporters = ['progress'];
 
 
 // web server port
-port = 9876;
+port = 9877;
 
 
 // cli runner port
-runnerPort = 9100;
+runnerPort = 9101;
 
 
 // enable / disable colors in the output (reporters and logs)

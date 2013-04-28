@@ -8,7 +8,7 @@
     "url": "git://github.com/mgonto/restangular.git"
   },
   "dependencies": {
-    "underscore": ">= 1.4.4",
+    "lodash": "~1.2.0",
     "angular": "*",
     "angular-resource": "*"
   },

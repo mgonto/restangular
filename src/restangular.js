@@ -184,11 +184,10 @@ module.provider('Restangular', function() {
               elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {
-                  var restangularFieldsForParent = _.chain(restangularFields)
-                          .pick(['id', 'route', 'parentResource'])
-                          .values()
-                          .union(extraFields)
-                          .value();
+                  var restangularFieldsForParent = _.union(
+                    _.values( _.pick(restangularFields, ['id', 'route', 'parentResource']) ),
+                    extraFields
+                  );
                   elem[restangularFields.parentResource]= _.pick(parent, restangularFieldsForParent);
               }
               return elem;
