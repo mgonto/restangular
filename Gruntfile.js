@@ -69,14 +69,18 @@ module.exports = function(grunt) {
     },
     karma: {
       options: {
-        configFile: "karma.conf.js"
+        configFile: 'karma.conf.js'
       },
       build: {
-        browsers: ['PhantomJS'],
-        singleRun: true
+        singleRun: true,
+        autoWatch: false
+      },
+      buildUnderscore: {
+        configFile: 'karma.underscore.conf.js',
+        singleRun: true,
+        autoWatch: false
       },
       dev: {
-        browsers: ['Chrome'],
         autoWatch: true
       }
     }
@@ -104,9 +108,9 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['bowerInstall', 'bower', 'karma:build', 'concat', 'uglify']);
+  grunt.registerTask('build', ['bowerInstall', 'bower', 'karma:build', 'karma:buildUnderscore', 'concat', 'uglify']);
 
-  grunt.registerTask('test', ['karma:build']);
+  grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
 
   // Provides the "bump" task.
   grunt.registerTask('bump', 'Increment version number', function() {
