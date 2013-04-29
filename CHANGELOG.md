@@ -1,5 +1,9 @@
 # Releases Notes
 
+## 0.5.5
+* Changed by default from Underscore to Lodash. They both can be used anyway. (thanks @pauldijou)
+* Added tests for both Underscore and Lodash to check it's working. (thanks @pauldijou)
+
 ## 0.5.4
 * Added onElemRestangularized hook
 * Added posibility to add your own Restangular methods
