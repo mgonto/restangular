@@ -383,7 +383,7 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setListTypeIsArray(false);
     
     // Now let's configure the response extractor for each request
-    RestangularProvider.setResponseExtractor(function(response, operation) {
+    RestangularProvider.setResponseExtractor(function(response, operation, what, url) {
       // This is a get for a list
       var newResponse;
       if (operation === "getList") {
