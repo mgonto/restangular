@@ -83,6 +83,11 @@ module.exports = function(grunt) {
       dev: {
         autoWatch: true
       }
+    },
+    changelog: {
+      options: {
+        dest: 'CHANGELOG.md'
+      }
     }
   });
 
@@ -102,6 +107,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bower');
 
   grunt.loadNpmTasks('grunt-karma');
+
+  grunt.loadNpmTasks('grunt-conventional-changelog');
 
 
   // Default task.

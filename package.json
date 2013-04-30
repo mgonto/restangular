@@ -35,7 +35,8 @@
     "grunt-contrib-uglify": "*",
     "grunt-bower": "*",
     "grunt-bower-task": "*",
-    "grunt-karma": "*"
+    "grunt-karma": "*",
+    "grunt-conventional-changelog": "0.0.12"
   },
   "scripts": {
     "test": "grunt test --verbose"
