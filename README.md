@@ -346,6 +346,10 @@ app.config(["$httpProvider", function($httpProvider) {
 }]);
 ````
 
+#### Can it be used in `$routeProvider.resolve`
+
+Yes, of course. Every method in Restangular returns a promise so this can be used without any problem.
+
 #### **My response is actually wrapped with some metadata. How do I get the data in that case?**
 
 So, let's assume that your data is the following:
