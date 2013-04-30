@@ -346,7 +346,7 @@ app.config(["$httpProvider", function($httpProvider) {
 }]);
 ````
 
-#### Can it be used in `$routeProvider.resolve`
+#### Can it be used in `$routeProvider.resolve`?
 
 Yes, of course. Every method in Restangular returns a promise so this can be used without any problem.
 
