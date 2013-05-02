@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.5.5 - 2013-04-28
+ * @version v0.5.5 - 2013-05-02
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -282,6 +282,8 @@ module.provider('Restangular', function() {
                       }
                       
                   });
+
+                  processedData = _.defaults(processedData, data);
                   if (!__this[restangularFields.restangularCollection]) {
                       deferred.resolve(restangularizeCollection(__this, processedData, what));
                   } else {
