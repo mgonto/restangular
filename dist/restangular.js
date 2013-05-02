@@ -283,7 +283,7 @@ module.provider('Restangular', function() {
                       
                   });
 
-                  processedData = _.defaults(processedData, data);
+                  processedData = _.extend(data, processedData);
                   if (!__this[restangularFields.restangularCollection]) {
                       deferred.resolve(restangularizeCollection(__this, processedData, what));
                   } else {
