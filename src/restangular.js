@@ -275,6 +275,8 @@ module.provider('Restangular', function() {
                       }
                       
                   });
+
+                  processedData = _.defaults(processedData, data);
                   if (!__this[restangularFields.restangularCollection]) {
                       deferred.resolve(restangularizeCollection(__this, processedData, what));
                   } else {
