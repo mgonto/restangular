@@ -451,6 +451,14 @@ $scope.owners = house.getList('owners');
 $scope.owners = $scope.owners.push({name: "gonto"});
 ````
 
+#### When I set baseUrl with a port, it's stripped out.
+
+Restangular uses `$resource` inside. `$resource` requires ports to be escaped to as not to think they are actually parameters. So the right way of setting a baseUrl with a port is the following:
+
+````javascript
+RestangularProvider.setBaseUrl('http://localhost\\:8080');
+````
+
 #### Why does this depend on Lodash / Underscore?
 
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc. 
