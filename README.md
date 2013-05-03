@@ -275,6 +275,32 @@ Restangular.one("accounts", 123).customGET("messages")
 Restangular.all("accounts").customGET("messages", {param: "param2"})
 ````
 
+## Enhanced promises
+
+Restangular uses enhanced promises when returning. What does this mean? All promises returned now have 2 additional methods and collection promises have 3. This are the methods:
+
+* **call(methodName, params*)**: This will return a new promise of the previous value, after calling the method called methodName with the parameters params.
+* **get(fieldName)**: This will return a new promise for the type of the field. The param of this new promise is the property `fieldName` from the original promise result.
+* **push(object)**: This method will only be in the promises of arrays. It's a sub set of the call method that does a push.
+ 
+I know this explanations are quite complicated, so let's see an example :D.
+
+````javascript
+var buildings = Restangular.all("buildings").getList();
+
+// New promise after adding the new building
+// Now you can show in scope this newBuildings promise and it'll show all the buildings 
+// received from server plus the new one added
+var newBuildings = buildings.push({name: "gonto"});
+
+// This is a promise of a number value. You can show it in the UI
+var lengthPromise = buildings.get("length");
+
+lengthPromise.then(function(length) {
+  // Here the length is the real length value of the returned collection of buildings
+});
+````
+
 ## URL Building
 Sometimes, we have a lot of entities names with their ids and we just want to fetch the later entity. In those cases, doing a request for everything to get the last entity is an overkill. For those cases, I've added the possibility to create URLs using the same API as creating a new Restangular object. This connections are created without doing any request. Let's see how to do this:
 
