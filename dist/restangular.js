@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.6.0 - 2013-05-02
+ * @version v0.6.0 - 2013-05-03
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -126,6 +126,22 @@ module.provider('Restangular', function() {
         }
         //Internal values and functions
         var urlCreatorFactory = {};
+
+        /**
+         * Base URL Creator. Base prototype for everything related to it
+         **/
+
+         var BaseCreator = function() {
+         };
+
+         BaseCreator.prototype.parentsArray = function(current) {
+            var parents = [];
+            while(!_.isUndefined(current)) {
+                parents.push(current);
+                current = current[restangularFields.parentResource];
+            }
+            return parents.reverse();
+        }
         
         /**
          * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
@@ -133,7 +149,9 @@ module.provider('Restangular', function() {
          * would be /accounts/123/buildings/456
         **/
         var Path = function() {
-        }
+        };
+
+        Path.prototype = new BaseCreator();
         
         Path.prototype.base = function(current) {
             return baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
@@ -147,14 +165,7 @@ module.provider('Restangular', function() {
             }, '');
         }
         
-        Path.prototype.parentsArray = function(current) {
-            var parents = [];
-            while(!_.isUndefined(current)) {
-                parents.push(current);
-                current = current[restangularFields.parentResource];
-            }
-            return parents.reverse();
-        }
+
         
         Path.prototype.fetchUrl = function(current, params) {
             var baseUrl = this.base(current);
