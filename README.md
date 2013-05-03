@@ -293,6 +293,8 @@ var buildings = Restangular.all("buildings").getList();
 // received from server plus the new one added
 var newBuildings = buildings.push({name: "gonto"});
 
+var newBuildingsSame = buildings.call("push", {name: "gonto"});
+
 // This is a promise of a number value. You can show it in the UI
 var lengthPromise = buildings.get("length");
 
