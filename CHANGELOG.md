@@ -1,5 +1,8 @@
 # Releases Notes
 
+## 0.6.1
+* Elements are striped from Restangular fields before being sent to the server
+
 ## 0.6.0
 * Fixed bug when adding metadata to response in ResopnseExtractor. It wasn't being added
 * Added enhanced promises. [Check the section in README](https://github.com/mgonto/restangular/blob/master/README.md#enhanced-promises).
