@@ -137,8 +137,8 @@ module.provider('Restangular', function() {
         }
 
         BaseCreator.prototype.resource = function(current, $resource, headers) {
-            var reqParams = suffix ? {restangularSuffix: suffix} : {};
-            return $resource(this.base(current) + "/:" + restangularFields.what + ":restangularSuffix" , {}, {
+            var reqParams = {};
+            return $resource(this.base(current) + "/:" + restangularFields.what + (suffix || '') , {}, {
                 getList: {method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}},
                 get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
                 put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
