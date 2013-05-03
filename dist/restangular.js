@@ -255,7 +255,11 @@ module.provider('Restangular', function() {
           
           
           // Elements
-          
+
+          function stripRestangular(elem) {
+            return _.omit(elem, _.values(_.omit(restangularFields, 'id')));
+          }
+
           function addCustomOperation(elem) {
               elem.customOperation = _.bind(customFunction, elem);
               _.each(["put", "post", "get", "delete"], function(oper) {
@@ -363,7 +367,7 @@ module.provider('Restangular', function() {
               if (isSafe(operation)) {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, okCallback, errorCallback);
               } else {
-                  urlHandler.resource(this, $resource, headers)[operation](resParams, resObj, okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, headers)[operation](resParams, obj || stripRestangular(this), okCallback, errorCallback);
               }
               
               return restangularizePromise(deferred.promise);
