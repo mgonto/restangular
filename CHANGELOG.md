@@ -1,3 +1,6 @@
+# 0.6.2
+* URL suffix is unescaped now
+
 # 0.6.1
 * Elements are striped from Restangular fields before being sent to the server
 
