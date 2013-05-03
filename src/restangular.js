@@ -204,6 +204,39 @@ module.provider('Restangular', function() {
           function all(parent, route) {
               return restangularizeCollection(parent, {} , route, true);
           }
+          // Promises
+          function restangularizePromise(promise, isCollection) {
+              promise.call = _.bind(promiseCall, promise);
+              promise.get = _.bind(promiseGet, promise);
+              promise[restangularFields.restangularCollection] = isCollection;
+              if (isCollection) {
+                  promise.push = _.bind(promiseCall, promise, "push");
+              }
+              return promise;
+          }
+          
+          function promiseCall(method) {
+              var deferred = $q.defer();
+              var callArgs = arguments;
+              this.then(function(val) {
+                  var params = Array.prototype.slice.call(callArgs, 1);
+                  var func = val[method];
+                  func.apply(val, params);
+                  deferred.resolve(val);
+              });
+              return restangularizePromise(deferred.promise, this[restangularFields.restangularCollection]);
+          }
+          
+          function promiseGet(what) {
+              var deferred = $q.defer();
+              this.then(function(val) {
+                  deferred.resolve(val[what]);
+              });
+              return restangularizePromise(deferred.promise, this[restangularFields.restangularCollection]);
+          }
+          
+          
+          // Elements
           
           function addCustomOperation(elem) {
               elem.customOperation = _.bind(customFunction, elem);
@@ -286,7 +319,7 @@ module.provider('Restangular', function() {
                   deferred.reject(response);
               });
               
-              return deferred.promise;
+              return restangularizePromise(deferred.promise, true);
           }
           
           function elemFunction(operation, params, obj, headers) {
@@ -315,7 +348,7 @@ module.provider('Restangular', function() {
                   urlHandler.resource(this, $resource, headers)[operation](resParams, resObj, okCallback, errorCallback);
               }
               
-              return deferred.promise;
+              return restangularizePromise(deferred.promise);
           }
           
           function getFunction(params, headers) {
