@@ -2,7 +2,7 @@
 
 ## 0.6.0
 * Fixed bug when adding metadata to response in ResopnseExtractor. It wasn't being added
-* Added enhanced promises. Check the section in README.
+* Added enhanced promises. [Check the section in README](https://github.com/mgonto/restangular/blob/master/README.md#enhanced-promises).
 
 ## 0.5.5
 * Changed by default from Underscore to Lodash. They both can be used anyway. (thanks @pauldijou)
