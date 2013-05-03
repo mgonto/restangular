@@ -432,7 +432,7 @@ app.config(function(RestangularProvider) {
 ````
 
 
-#### **After getting some List, when I want to add a new element to the array, it gives me an error saying that push method doesn't exist**
+#### **After getting some List, how do I add an object to the array?** **~~When I want to add a new element to the array, it gives me an error saying that push method doesn't exist~~**
 
 When you actually get some list by doing
 
@@ -440,27 +440,15 @@ When you actually get some list by doing
 $scope.owners = house.getList('owners')
 ````
 
-You're actually assigning a Promise to the owners value of the $scope. You can actually iterate over owners and display its values in the template because AngularJS "understands" promises, and while the promise isn't resolved, it will return an empty array/value and once the value is returned, it will use that returned value.
-If you actually want to do something with the list of owners afterwards you can do the following:
+You're actually assigning a Promise to the owners value of the $scope. As Angular knows how to process promises, if in your view you do an ng-repeat of this $scope variable, results will be shown once the promise is resolved (Response arrived).
+So, I've enhanced this promise from Angular and added a push method which will return a new promise with the list with the new elements. So you should do something like this:
 
 ````javascript
-// Option 1
-$scope.owners = house.getList('owners')
+// First
+$scope.owners = house.getList('owners');
 
-// Later in the code
-$scope.owners.then(function(owners) {
-  owners.push({name: "Gonto"});
-});
-
-// Option 2. I like this one better
-$scope.owners = [];
-house.getList('owners').then(function(owners) {
-  $scope.owners = owners;
-});
-
-// Later in the code
-$scope.owners.push({name: "Gonto"});
-
+// Then after some ng-click to add an item
+$scope.owners = $scope.owners.push({name: "gonto"});
 ````
 
 #### Why does this depend on Lodash / Underscore?
