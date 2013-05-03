@@ -135,6 +135,21 @@ module.provider('Restangular', function() {
             }
             return parents.reverse();
         }
+
+        BaseCreator.prototype.resource = function(current, $resource, headers) {
+            var reqParams = suffix ? {restangularSuffix: suffix} : {};
+            return $resource(this.base(current) + "/:" + restangularFields.what + ":restangularSuffix" , {}, {
+                getList: {method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}},
+                get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
+                put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
+                post: {method: 'POST', params: reqParams, isArray: false, headers: headers || {}},
+                remove: {method: 'DELETE', params: reqParams, isArray: false, headers: headers || {}},
+                head: {method: 'HEAD', params: reqParams, isArray: false, headers: headers || {}},
+                trace: {method: 'TRACE', params: reqParams, isArray: false, headers: headers || {}},
+                options: {method: 'OPTIONS', params: reqParams, isArray: false, headers: headers || {}},
+                patch: {method: 'PATCH', params: reqParams, isArray: false, headers: headers || {}}
+            });
+        }
         
         /**
          * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
@@ -168,20 +183,7 @@ module.provider('Restangular', function() {
             return baseUrl;
         }
         
-        Path.prototype.resource = function(current, $resource, headers) {
-            var reqParams = suffix ? {restangularSuffix: suffix} : {};
-            return $resource(this.base(current) + "/:" + restangularFields.what + ":restangularSuffix" , {}, {
-                getList: {method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}},
-                get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
-                put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
-                post: {method: 'POST', params: reqParams, isArray: false, headers: headers || {}},
-                remove: {method: 'DELETE', params: reqParams, isArray: false, headers: headers || {}},
-                head: {method: 'HEAD', params: reqParams, isArray: false, headers: headers || {}},
-                trace: {method: 'TRACE', params: reqParams, isArray: false, headers: headers || {}},
-                options: {method: 'OPTIONS', params: reqParams, isArray: false, headers: headers || {}},
-                patch: {method: 'PATCH', params: reqParams, isArray: false, headers: headers || {}}
-            });
-        }
+
         
         urlCreatorFactory.path = Path;
         
