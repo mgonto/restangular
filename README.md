@@ -466,23 +466,6 @@ With these libraries, you always work with Inmutable stuff, you get compatibilit
 So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
 
 
-
-# Contribute
-
-In order to Contribute just git clone the repository and then run:
-
-````
-npm install grunt-cli --global
-npm install
-grunt
-````
-
-Be sure to have PhantomJS installed as Karma tests use it. Otherwise, in mac just run `brew install phantomjs`
-
-All changes must be done in `src/restangular.js`and then after running `grunt`all changes will be submited to `dist/`
-
-Please submit a Pull Request or create issues for anything you want :).
-
 # Server Frameworks
 
 This server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
