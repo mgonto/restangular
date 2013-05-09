@@ -32,6 +32,8 @@ Restangular depends on Angular, Angular-Resources and (Underscore or Lodash).
 
 #Starter Guide
 
+Before starting, you can check out a Plunkr example working by [Clicking Here](http://plnkr.co/edit/Sh669ScCQRyD513bzsBx). You can also read some code examples below.
+
 ## Adding dependency to Restangular module in your app
 
 The first thing you need to do after adding link to script file, is mentioning in your app that you'll use Restangular.
