@@ -222,7 +222,7 @@ app.config(function(RestangularProvider) {
     
     RestangularProvider.setListTypeIsArray(true);
     
-    // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
+    // In this case we configure that the id of each element will be the _id field and we change the Restangular route. We leave the default value for parentResource
     RestangularProvider.setRestangularFields({
       id: "_id",
       route: "restangularRoute"
@@ -430,6 +430,16 @@ app.config(function(RestangularProvider) {
       }
       return newResponse;
     });
+});
+````
+
+#### **I use Mongo and the ID of the elements is `_id` not `id` as the default. Therefore requests are sent to undefined routes**
+
+What you need to do is to configure the `RestangularFields` and set the `id` field to `_id`. Let's see how:
+
+````javascript
+RestangularProvider.setRestangularFields({
+  id: "_id"
 });
 ````
 
