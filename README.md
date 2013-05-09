@@ -224,7 +224,7 @@ app.config(function(RestangularProvider) {
     
     // In this case we configure that the id of each element will be the __id field and we change the Restangular route. We leave the default value for parentResource
     RestangularProvider.setRestangularFields({
-      id: "__id",
+      id: "_id",
       route: "restangularRoute"
     });
     
