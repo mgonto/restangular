@@ -24,6 +24,18 @@ module.provider('Restangular', function() {
         this.setExtraFields = function(newExtraFields) {
             extraFields = newExtraFields;
         }
+
+        /**
+         * Some default $http parameter to be used in EVERY call
+        **/
+        var defaultHttpFields = {};
+        this.setDefaultHttpFields = function(values) {
+          defaultHttpFields = values;
+        }
+
+        function withHttpDefaults(obj) {
+          return _.defaults(obj, defaultHttpFields);
+        }
         
         /**
          * Sets the URL creator type. For now, only Path is created. In the future we'll have queryParams
@@ -132,15 +144,15 @@ module.provider('Restangular', function() {
         BaseCreator.prototype.resource = function(current, $resource, headers) {
             var reqParams = {};
             return $resource(this.base(current) + "/:" + restangularFields.what + (suffix || '') , {}, {
-                getList: {method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}},
-                get: {method: 'GET', params: reqParams, isArray: false, headers: headers || {}},
-                put: {method: 'PUT', params: reqParams, isArray: false, headers: headers || {}},
-                post: {method: 'POST', params: reqParams, isArray: false, headers: headers || {}},
-                remove: {method: 'DELETE', params: reqParams, isArray: false, headers: headers || {}},
-                head: {method: 'HEAD', params: reqParams, isArray: false, headers: headers || {}},
-                trace: {method: 'TRACE', params: reqParams, isArray: false, headers: headers || {}},
-                options: {method: 'OPTIONS', params: reqParams, isArray: false, headers: headers || {}},
-                patch: {method: 'PATCH', params: reqParams, isArray: false, headers: headers || {}}
+                getList: withHttpDefaults({method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}}),
+                get: withHttpDefaults({method: 'GET', params: reqParams, isArray: false, headers: headers || {}}),
+                put: withHttpDefaults({method: 'PUT', params: reqParams, isArray: false, headers: headers || {}}),
+                post: withHttpDefaults({method: 'POST', params: reqParams, isArray: false, headers: headers || {}}),
+                remove: withHttpDefaults({method: 'DELETE', params: reqParams, isArray: false, headers: headers || {}}),
+                head: withHttpDefaults({method: 'HEAD', params: reqParams, isArray: false, headers: headers || {}}),
+                trace: withHttpDefaults({method: 'TRACE', params: reqParams, isArray: false, headers: headers || {}}),
+                options: withHttpDefaults({method: 'OPTIONS', params: reqParams, isArray: false, headers: headers || {}}),
+                patch: withHttpDefaults({method: 'PATCH', params: reqParams, isArray: false, headers: headers || {}})
             });
         }
         

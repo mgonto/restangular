@@ -166,6 +166,9 @@ The base URL for all calls to your API. For example if your URL for fetching acc
 #### extraFields
 This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
 
+#### defaultHttpFields
+`$http` from AngularJS can receive a bunch of parameters like `cache`, `transformRequest` and so on. You can set all of those properties in the object sent on this setter so that they will be used in EVERY API call made by Restangular. This is very useful for caching for example. All properties that can be set can be checked here: http://docs.angularjs.org/api/ng.$http#Parameters
+
 #### urlCreator
 This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
 
@@ -219,6 +222,9 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setResponseExtractor(function(response, operation) {
         return response.data;
     });
+    
+    RestangularProvider.setDefaultHttpFields({cache: true});
+    
     
     RestangularProvider.setListTypeIsArray(true);
     
@@ -374,6 +380,14 @@ app.config(["$httpProvider", function($httpProvider) {
   $httpProvider.defaults.headers.common['Tenant-id'] = 'X';
   $httpProvider.defaults.headers.get['Gonto-id'] = 'P';
 }]);
+````
+
+#### Can I cache requests?
+
+`$http` can cache requests if you send the property `cache` to true. You can do that for every Restangular request by using `defaultHttpFields` property. This is the way:
+
+````javascript
+RestangularProvider.setDefaultHttpFields({cache: true});
 ````
 
 #### Can it be used in `$routeProvider.resolve`?

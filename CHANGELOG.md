@@ -1,3 +1,6 @@
+# 0.6.3
+* Added `defaultHttpFields` configuration property
+
 # 0.6.2
 * URL suffix is unescaped now
 
