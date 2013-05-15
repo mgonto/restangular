@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.6.3 - 2013-05-09
+ * @version v0.6.4 - 2013-05-15
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -43,7 +43,26 @@ module.provider('Restangular', function() {
         function withHttpDefaults(obj) {
           return _.defaults(obj, defaultHttpFields);
         }
-        
+
+        /**
+         * Method overriders will set which methods are sent via POST with an X-HTTP-Method-Override
+         **/
+        var methodOverriders = [];
+        this.setMethodOverriders = function(values) {
+          var overriders = _.extend([], values);
+          if (isOverridenMethod('delete')) {
+            overriders.push("remove");
+          }
+          methodOverriders = overriders;
+        }
+
+        var isOverridenMethod = function(method, values) {
+          var search = values || methodOverriders;
+          return !_.isUndefined(_.find(search, function(one) {
+            return one.toLowerCase() === method.toLowerCase();
+          }));
+        }
+
         /**
          * Sets the URL creator type. For now, only Path is created. In the future we'll have queryParams
         **/
@@ -91,6 +110,17 @@ module.provider('Restangular', function() {
         }
         
         this.setResponseInterceptor = this.setResponseExtractor;
+        
+        /**
+         * Request interceptor is called before sending an object to the server.
+         */
+        var requestInterceptor = function(element) {
+            return element;
+        } 
+        
+        this.setRequestInterceptor = function(interceptor) {
+            requestInterceptor = interceptor;
+        }
         
         /**
          * This method is called after an element has been "Restangularized".
@@ -356,9 +386,15 @@ module.provider('Restangular', function() {
               var deferred = $q.defer();
               var resParams = params || {};
               var resObj = obj || this;
+              var route = resParams[restangularFields.what] || this[restangularFields.route];
+              var fetchUrl = urlHandler.fetchUrl(this, resParams);
+              
+              var callObj = obj || stripRestangular(this);
+              callObj = requestInterceptor(callObj, operation, route, fetchUrl)
+              
               
               var okCallback = function(resData) {
-                  var elem = responseExtractor(resData, operation, resParams[restangularFields.what] || __this[restangularFields.route], urlHandler.fetchUrl(__this, resParams)) || resObj;
+                  var elem = responseExtractor(resData, operation, route, fetchUrl) || resObj;
                   if (operation === "post" && !__this[restangularFields.restangularCollection]) {
                     deferred.resolve(restangularizeElem(__this, elem, resParams[restangularFields.what]));
                   } else {
@@ -370,11 +406,23 @@ module.provider('Restangular', function() {
               var errorCallback = function(response) {
                   deferred.reject(response);
               };
-
+              // Overring HTTP Method
+              var callOperation = operation;
+              var callHeaders = _.extend({}, headers);
+              var isOverrideOperation = isOverridenMethod(operation);
+              if (isOverrideOperation) {
+                callOperation = 'post';
+                callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation});
+              }
+              
               if (isSafe(operation)) {
-                  urlHandler.resource(this, $resource, headers)[operation](resParams, okCallback, errorCallback);
+                if (isOverrideOperation) {
+                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, {}, okCallback, errorCallback);  
+                } else {
+                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, okCallback, errorCallback);  
+                }
               } else {
-                  urlHandler.resource(this, $resource, headers)[operation](resParams, obj || stripRestangular(this), okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, callObj, okCallback, errorCallback);
               }
               
               return restangularizePromise(deferred.promise);
