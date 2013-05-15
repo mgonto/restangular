@@ -105,6 +105,17 @@ module.provider('Restangular', function() {
         this.setResponseInterceptor = this.setResponseExtractor;
         
         /**
+         * Request interceptor is called before sending an object to the server.
+         */
+        var requestInterceptor = function(element) {
+            return element;
+        } 
+        
+        this.setRequestInterceptor = function(interceptor) {
+            requestInterceptor = interceptor;
+        }
+        
+        /**
          * This method is called after an element has been "Restangularized".
          * 
          * It receives the element, a boolean indicating if it's an element or a collection 
@@ -368,9 +379,15 @@ module.provider('Restangular', function() {
               var deferred = $q.defer();
               var resParams = params || {};
               var resObj = obj || this;
+              var route = resParams[restangularFields.what] || this[restangularFields.route];
+              var fetchUrl = urlHandler.fetchUrl(this, resParams);
+              
+              var callObj = obj || stripRestangular(this);
+              callObj = requestInterceptor(callObj, operation, route, fetchUrl)
+              
               
               var okCallback = function(resData) {
-                  var elem = responseExtractor(resData, operation, resParams[restangularFields.what] || __this[restangularFields.route], urlHandler.fetchUrl(__this, resParams)) || resObj;
+                  var elem = responseExtractor(resData, operation, route, fetchUrl) || resObj;
                   if (operation === "post" && !__this[restangularFields.restangularCollection]) {
                     deferred.resolve(restangularizeElem(__this, elem, resParams[restangularFields.what]));
                   } else {
@@ -382,7 +399,6 @@ module.provider('Restangular', function() {
               var errorCallback = function(response) {
                   deferred.reject(response);
               };
-
               // Overring HTTP Method
               var callOperation = operation;
               var callHeaders = _.extend({}, headers);
@@ -391,7 +407,7 @@ module.provider('Restangular', function() {
                 callOperation = 'post';
                 callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation});
               }
-
+              
               if (isSafe(operation)) {
                 if (isOverrideOperation) {
                   urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, {}, okCallback, errorCallback);  
@@ -399,7 +415,7 @@ module.provider('Restangular', function() {
                   urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, okCallback, errorCallback);  
                 }
               } else {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, obj || stripRestangular(this), okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, callObj, okCallback, errorCallback);
               }
               
               return restangularizePromise(deferred.promise);

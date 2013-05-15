@@ -192,6 +192,14 @@ The responseInterceptor is called after we get each response from the server. It
 
 Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
 
+#### requestInterceptor
+The requestInterceptor is called before sending any data to the server. It's a function that must return the element to be requested. This function receives the following arguments:
+
+* **element**: The element to send to the server.
+* **operation**: The operation made. It'll be the HTTP method used except for a `GET` which returns a list of element which will return `getList` so that you can distinguish them.
+* **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
+* **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
+
 #### listTypeIsArray
 
 You can set in this property wether the `getList` method will return an Array or not. Most of the times, it will return an array, as it returns a collection of values. However, sometimes this method returns first some metadata and inside it has the array. So this can be used together with `responseExtractor` to get the real array. The default value is true.
@@ -239,6 +247,11 @@ app.config(function(RestangularProvider) {
     });
     
     RestangularProvider.setRequestSuffix('.json');
+    
+    RestangularProvider.setRequestInterceptor(function(element, operation, route, url) {
+      delete elem.name;
+      return elem;
+    });
 });
 
 ````
