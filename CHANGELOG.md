@@ -1,3 +1,7 @@
+# 0.6.4
+* added methodOverriders to override any HTTP Method
+* Added requestInterceptor
+
 # 0.6.3
 * Added `defaultHttpFields` configuration property
 

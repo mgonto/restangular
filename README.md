@@ -208,6 +208,10 @@ Restangular required 3 fields for every "Restangularized" element. This are:
 
 All of this fields except for `id` are handled by Restangular, so most of the time you won't change them. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property.
 
+#### methodOverriders
+
+You can now Override HTTP Methods. You can set here the array of methods to override. All those methods will be sent as POST and Restangular will add an X-HTTP-Method-Override header with the real HTTP method we wanted to do.
+
 #### requestSuffix
 
 If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method
@@ -224,7 +228,7 @@ app.config(function(RestangularProvider) {
     });
     
     RestangularProvider.setDefaultHttpFields({cache: true});
-    
+    RestangularProvider.setMethodOverriders(["put", "patch"]);
     
     RestangularProvider.setListTypeIsArray(true);
     
