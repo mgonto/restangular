@@ -43,7 +43,7 @@ module.provider('Restangular', function() {
         var methodOverriders = [];
         this.setMethodOverriders = function(values) {
           var overriders = _.extend([], values);
-          if (isOverridenMethod('delete')) {
+          if (isOverridenMethod('delete', overriders)) {
             overriders.push("remove");
           }
           methodOverriders = overriders;
