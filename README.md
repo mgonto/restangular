@@ -99,9 +99,15 @@ baseAccounts.getList().then(function (accounts) {
 
   // This is a regular JS object, we can change anything we want :) 
   firstAccount.name = "Gonto"
+  
+  //If we wanted to keep the original as it's we can copy it to a new element
+  var editFirstAccount = Restangular.copy(firstAccount);
+  editFirstAccount.name = "New Name";
+  
 
-  // PUT /accounts/123. The name of this account will be Gonto from now on
+  // PUT /accounts/123. The name of this account will be changed from now on
   firstAccount.put();
+  editFirstAccount.put();
 
   // DELETE /accounts/123 We don't have first account anymore :(
   firstAccount.remove();
@@ -260,6 +266,12 @@ app.config(function(RestangularProvider) {
 
 There're 3 sets of methods. Collections have some methods and elements have others. There're are also some common methods for all of them
 
+### Restangular methods
+This are the methods that can be called in the Restangular object.
+* **one(route, id)**: This will create a new Restangular object that is just a pointer to one element with the route `route` and the specified id.
+* **all(route)**: This will create a new Restangular object that is just a pointer to a list of elements for the specified path.
+* **copy(fromElement)**: This will create a copy of the from element so that we can modified the copied one.
+
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
 * **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. **It's a string with the name of the nested resource (and URL)**. For example `buildings`
@@ -289,6 +301,7 @@ There're 3 sets of methods. Collections have some methods and elements have othe
 * **customPUT(path, [params, headers, elem])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
 * **customOperation(operation, path, [params, headers, elem])**: This does a custom operation to the path that we specify. This method is actually used from all the others in this subsection. Operation can be one of: get, post, put, delete, head, options, patch, trace
 * **addRestangularMethod(name, operation, [path, params, headers, elem])**: This will add a new restangular method to this object with the name `name` to the operation and path specified (or current path otherwise). There's a section on how to do this later. 
+
  
 Let's see an example of this:
 
@@ -299,6 +312,8 @@ Restangular.one("accounts", 123).customGET("messages")
 //GET /accounts/messages?param=param2
 Restangular.all("accounts").customGET("messages", {param: "param2"})
 ````
+## Copying elements
+Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
 
 ## Enhanced promises
 

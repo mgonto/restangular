@@ -302,6 +302,12 @@ module.provider('Restangular', function() {
               elem.doGETLIST = elem.customGETLIST;
           }
           
+          function copyRestangularizedElement(fromElement) {
+              var copiedElement = angular.copy(fromElement);
+              return restangularizeElem(copiedElement[restangularFields.parentResource], 
+                      copiedElement, copiedElement[restangularFields.route]);
+          }
+          
           function restangularizeElem(parent, elem, route) {
               var localElem = restangularizeBase(parent, elem, route);
               localElem[restangularFields.restangularCollection] = false;
@@ -481,6 +487,8 @@ module.provider('Restangular', function() {
          
           
           var service = {};
+          
+          service.copy = _.bind(copyRestangularizedElement, service);
           
           service.one = _.bind(one, service, null);
           

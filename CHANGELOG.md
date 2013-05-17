@@ -1,3 +1,6 @@
+# 0.6.5
+* Added `Restangular.copy` for copying objects
+
 # 0.6.4
 * added methodOverriders to override any HTTP Method
 * Added requestInterceptor
