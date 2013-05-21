@@ -152,6 +152,11 @@ module.provider('Restangular', function() {
         this.setRequestSuffix = function(newSuffix) {
             suffix = newSuffix;
         }
+        
+        
+        var resourceMethods = ['$delete','$get','$getList','$head','$options','$patch',
+                               '$post','$put','$query','$remove','$save', '$trace'];
+        
         //Internal values and functions
         var urlCreatorFactory = {};
 
@@ -310,6 +315,7 @@ module.provider('Restangular', function() {
           
           function restangularizeElem(parent, elem, route) {
               var localElem = restangularizeBase(parent, elem, route);
+              localElem = _.omit(localElem, resourceMethods);
               localElem[restangularFields.restangularCollection] = false;
               localElem.get = _.bind(getFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem);
