@@ -398,7 +398,7 @@ module.provider('Restangular', function() {
               var elemToPut = this[idx];
               var deferred = $q.defer();
               elemToPut.put(params, headers).then(function(serverElem) {
-                  var newArray = Restangular.copy(__this);
+                  var newArray = copyRestangularizedElement(__this);
                   newArray[idx] = serverElem;
                   deferred.resolve(newArray);
               }, function(response) {
