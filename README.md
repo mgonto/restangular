@@ -6,6 +6,35 @@
 Restangular is an AngularJS service that will help you get, delete and update Restfull Resources with very few lines in the Client side. 
 This service is a perfect fit for any WebApp that uses Restfull Resources as the API for your application.
 
+## Differences with $resource
+
+Restangular has several features that distinguish it from $resource:
+
+* **It uses promises**. Instead of doing the "magic" filling of objects like $resource, it uses promises.
+* **It supports all HTTP methods**.
+* **You don't have to create one $resource object per request**. Each time you want to do a request, you can just do it using the object that was returned by Restangular. You don't need to create a new object for this.
+* **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Tempalte. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
+* **Restangular lets you create your own methods**. You can create your own methods to run the operation that you want. The sky is the limit.
+
+Let's see a quick and short example of this features
+````javascript
+// It uses promises.
+Restangular.one('users').getList().then(function(users) {
+  $scope.user = users[0];
+})
+
+// Later in the code.
+
+// Requests /users/123/cars You don't have to know the URL. Just the name of the resource
+// This is a promise
+$scope.cars = $scope.user.getList('cars');
+
+// POST /users/123/sendMessage You've created your own method with the path & operation that you wanted
+$scope.user.sendMessage();
+
+
+````
+
 #How do I add this to my project?
 
 You can download this by:
