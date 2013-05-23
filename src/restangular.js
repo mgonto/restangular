@@ -376,6 +376,7 @@ module.provider('Restangular', function() {
               localElem.post = _.bind(postFunction, localElem, null);
               localElem.head = _.bind(headFunction, localElem);
               localElem.trace = _.bind(traceFunction, localElem);
+              localElem.putElement = _.bind(putElementFunction, localElem);
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem, null);
@@ -390,6 +391,21 @@ module.provider('Restangular', function() {
                   search[restangularFields.what] = what;
               }
               return search;
+          }
+          
+          function putElementFunction(idx, params, headers) {
+              var __this = this;
+              var elemToPut = this[idx];
+              var deferred = $q.defer();
+              elemToPut.put(params, headers).then(function(serverElem) {
+                  var newArray = Restangular.copy(__this);
+                  newArray[idx] = serverElem;
+                  deferred.resolve(newArray);
+              }, function(response) {
+                  deferred.reject(response);
+              });
+              
+              return restangularizePromise(deferred.promise, true)
           }
           
           

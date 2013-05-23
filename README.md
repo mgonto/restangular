@@ -304,6 +304,7 @@ This are the methods that can be called in the Restangular object.
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch([queryParams, headers])**: Does a PATCH
+* **putElement(idx, params, headers)**: Puts the element on the required index and returns a promise of the updated new array
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
