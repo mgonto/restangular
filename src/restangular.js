@@ -153,6 +153,45 @@ module.provider('Restangular', function() {
             suffix = newSuffix;
         }
         
+        /**
+         * Add element transformers for certain routes.
+         */
+        var transformers = {};
+        this.addElementTransformer = function(type, secondArg, thirdArg) {
+            var isCollection = null;
+            var transformer = null;
+            if (arguments.length === 2) {
+                transformer = secondArg;
+            } else {
+                transformer = thirdArg;
+                isCollection = secondArg;
+            }
+            
+            var typeTransformers = transformers[type];
+            if (!typeTransformers) {
+                typeTransformers = transformers[type] = [];
+            }
+            
+            typeTransformers.push(function(coll, elem) {
+                if (_.isNull(isCollection) || (coll == isCollection)) {
+                    return transformer(elem);
+                }
+                return elem;
+            })
+        }
+        
+        function transformElem(elem, isCollection, route) {
+            var typeTransformers = transformers[route];
+            var changedElem = elem;
+            if (typeTransformers) {
+                _.each(typeTransformers, function(transformer) {
+                   changedElem = transformer(isCollection, changedElem); 
+                });
+            }
+            return onElemRestangularized(changedElem, isCollection, route);
+        }
+        
+        
         
         //Internal values and functions
         var urlCreatorFactory = {};
@@ -328,7 +367,7 @@ module.provider('Restangular', function() {
               localElem.all = _.bind(all, localElem, localElem);
               
               addCustomOperation(localElem);
-              return onElemRestangularized(localElem, false, route);
+              return transformElem(localElem, false, route);
           }
           
           function restangularizeCollection(parent, elem, route) {
@@ -342,7 +381,7 @@ module.provider('Restangular', function() {
               localElem.getList = _.bind(fetchFunction, localElem, null);
               
               addCustomOperation(localElem);
-              return onElemRestangularized(localElem, true, route);
+              return transformElem(localElem, true, route);
           }
           
           function whatObject(what) {
