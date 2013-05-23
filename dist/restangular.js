@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.6.6 - 2013-05-21
+ * @version v0.6.6 - 2013-05-23
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -161,9 +161,6 @@ module.provider('Restangular', function() {
         }
         
         
-        var resourceMethods = ['$delete','$get','$getList','$head','$options','$patch',
-                               '$post','$put','$query','$remove','$save', '$trace'];
-        
         //Internal values and functions
         var urlCreatorFactory = {};
 
@@ -322,7 +319,6 @@ module.provider('Restangular', function() {
           
           function restangularizeElem(parent, elem, route) {
               var localElem = restangularizeBase(parent, elem, route);
-              localElem = _.omit(localElem, resourceMethods);
               localElem[restangularFields.restangularCollection] = false;
               localElem.get = _.bind(getFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem);
