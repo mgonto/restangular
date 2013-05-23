@@ -15,6 +15,7 @@ Restangular has several features that distinguish it from $resource:
 * **You don't have to create one $resource object per request**. Each time you want to do a request, you can just do it using the object that was returned by Restangular. You don't need to create a new object for this.
 * **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Tempalte. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
 * **Restangular lets you create your own methods**. You can create your own methods to run the operation that you want. The sky is the limit.
+* **Support for wrapped responses**. If your response for a list of element actually returns an object with some property inside which has the list, it's very hard to use $resource. Restangular knows that and it makes it easy on you. Check out https://github.com/mgonto/restangular#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case
 
 Let's see a quick and short example of this features
 ````javascript
