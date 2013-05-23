@@ -1,4 +1,4 @@
-# 0.6.6
+# 0.6.7
 * Bug fix for a regresion error using _.omit
 * Added element transformers to transform any Restangularized element.
 * Added putElement method to collection to put a certain element at an index and return a promise of the updated array.

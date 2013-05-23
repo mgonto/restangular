@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.6.6 - 2013-05-23
+ * @version v0.6.7 - 2013-05-23
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -159,6 +159,45 @@ module.provider('Restangular', function() {
         this.setRequestSuffix = function(newSuffix) {
             suffix = newSuffix;
         }
+        
+        /**
+         * Add element transformers for certain routes.
+         */
+        var transformers = {};
+        this.addElementTransformer = function(type, secondArg, thirdArg) {
+            var isCollection = null;
+            var transformer = null;
+            if (arguments.length === 2) {
+                transformer = secondArg;
+            } else {
+                transformer = thirdArg;
+                isCollection = secondArg;
+            }
+            
+            var typeTransformers = transformers[type];
+            if (!typeTransformers) {
+                typeTransformers = transformers[type] = [];
+            }
+            
+            typeTransformers.push(function(coll, elem) {
+                if (_.isNull(isCollection) || (coll == isCollection)) {
+                    return transformer(elem);
+                }
+                return elem;
+            })
+        }
+        
+        function transformElem(elem, isCollection, route) {
+            var typeTransformers = transformers[route];
+            var changedElem = elem;
+            if (typeTransformers) {
+                _.each(typeTransformers, function(transformer) {
+                   changedElem = transformer(isCollection, changedElem); 
+                });
+            }
+            return onElemRestangularized(changedElem, isCollection, route);
+        }
+        
         
         
         //Internal values and functions
@@ -335,7 +374,7 @@ module.provider('Restangular', function() {
               localElem.all = _.bind(all, localElem, localElem);
               
               addCustomOperation(localElem);
-              return onElemRestangularized(localElem, false, route);
+              return transformElem(localElem, false, route);
           }
           
           function restangularizeCollection(parent, elem, route) {
@@ -344,12 +383,13 @@ module.provider('Restangular', function() {
               localElem.post = _.bind(postFunction, localElem, null);
               localElem.head = _.bind(headFunction, localElem);
               localElem.trace = _.bind(traceFunction, localElem);
+              localElem.putElement = _.bind(putElementFunction, localElem);
               localElem.options = _.bind(optionsFunction, localElem);
               localElem.patch = _.bind(patchFunction, localElem);
               localElem.getList = _.bind(fetchFunction, localElem, null);
               
               addCustomOperation(localElem);
-              return onElemRestangularized(localElem, true, route);
+              return transformElem(localElem, true, route);
           }
           
           function whatObject(what) {
@@ -358,6 +398,21 @@ module.provider('Restangular', function() {
                   search[restangularFields.what] = what;
               }
               return search;
+          }
+          
+          function putElementFunction(idx, params, headers) {
+              var __this = this;
+              var elemToPut = this[idx];
+              var deferred = $q.defer();
+              elemToPut.put(params, headers).then(function(serverElem) {
+                  var newArray = Restangular.copy(__this);
+                  newArray[idx] = serverElem;
+                  deferred.resolve(newArray);
+              }, function(response) {
+                  deferred.reject(response);
+              });
+              
+              return restangularizePromise(deferred.promise, true)
           }
           
           
