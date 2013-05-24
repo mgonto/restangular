@@ -226,9 +226,9 @@ This can be used together with `addRestangularMethod` (Explained later) to add c
 #### addElementTransformer
 You can add as many element transformers as you want. The signature of this method can be one of the following:
 
-* addElementTransformer(route, transformer): Transformer is called with all elements that have been restangularized, no matter if they're collections or not.
+* **addElementTransformer(route, transformer)**: Transformer is called with all elements that have been restangularized, no matter if they're collections or not.
 
-* addElementTransformer(route, isCollection, transformer): Transformer is called with all elements that have been restangularized and match the specification regarding if it's a collection or not (true | false)
+* **addElementTransformer(route, isCollection, transformer)**: Transformer is called with all elements that have been restangularized and match the specification regarding if it's a collection or not (true | false)
 
 #### responseInterceptor (or responseExtractor. It's an Alias)
 The responseInterceptor is called after we get each response from the server. It's a function that receives 4 arguments:
