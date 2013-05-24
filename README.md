@@ -17,6 +17,7 @@ Restangular has several features that distinguish it from $resource:
 * **It supports nested RestFUL resources**. If you have Nested RestFUL resources, Restangular can handle them for you. You don't have to know the URL, the path, or anything to do all of the HTTP operations you want.
 * **Restangular lets you create your own methods**. You can create your own methods to run the operation that you want. The sky is the limit.
 * **Support for wrapped responses**. If your response for a list of element actually returns an object with some property inside which has the list, it's very hard to use $resource. Restangular knows that and it makes it easy on you. Check out https://github.com/mgonto/restangular#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case
+* **You can build your own URLs with Restangular objects easily**. Restangular lets you create a Restangular object for any url you want with a really nice builder.
 
 Let's see a quick and short example of this features
 ````javascript
@@ -33,6 +34,10 @@ $scope.cars = $scope.user.getList('cars');
 
 // POST /users/123/sendMessage You've created your own method with the path & operation that you wanted
 $scope.user.sendMessage();
+
+// URL Building
+// GET to /user/123/messages/123/unread
+$scope.user.one('message', 123).all('unread').getList()
 
 
 ````
