@@ -1,3 +1,5 @@
+(function(){
+
 var module = angular.module('restangular', ['ngResource']);
 
 module.provider('Restangular', function() {
@@ -556,3 +558,5 @@ module.provider('Restangular', function() {
         }];
     }
 );
+
+})();
