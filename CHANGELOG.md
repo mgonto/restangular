@@ -1,3 +1,6 @@
+# 0.6.9
+* Wrapping everything in an anonymous self executed function to not expose anything
+
 # 0.6.7
 * Bug fix for a regresion error using _.omit
 * Added element transformers to transform any Restangularized element.
