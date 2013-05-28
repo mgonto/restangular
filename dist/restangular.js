@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.6.9 - 2013-05-24
+ * @version v0.6.9 - 2013-05-28
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -221,9 +221,12 @@ module.provider('Restangular', function() {
             return parents.reverse();
         }
 
-        BaseCreator.prototype.resource = function(current, $resource, headers) {
+        BaseCreator.prototype.resource = function(current, $resource, headers, params) {
             var reqParams = {};
-            return $resource(this.base(current) + "/:" + restangularFields.what + (suffix || '') , {}, {
+            var url = this.base(current);
+            url += params[restangularFields.what] ? ("/:" + restangularFields.what) : '';
+            url += (suffix || '');
+            return $resource(url, {}, {
                 getList: withHttpDefaults({method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}}),
                 get: withHttpDefaults({method: 'GET', params: reqParams, isArray: false, headers: headers || {}}),
                 put: withHttpDefaults({method: 'PUT', params: reqParams, isArray: false, headers: headers || {}}),
@@ -262,7 +265,7 @@ module.provider('Restangular', function() {
         
         Path.prototype.fetchUrl = function(current, params) {
             var baseUrl = this.base(current);
-            if (params[restangularFields.what]) {
+            if (params && params[restangularFields.what]) {
                 baseUrl += "/" + params[restangularFields.what];
             }
             return baseUrl;
@@ -279,6 +282,7 @@ module.provider('Restangular', function() {
           
           function restangularizeBase(parent, elem, route) {
               elem[restangularFields.route] = route;
+              elem.url = _.bind(urlHandler.fetchUrl, urlHandler, elem);
               elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {
@@ -422,8 +426,15 @@ module.provider('Restangular', function() {
               var search = whatObject(what);
               var __this = this;
               var deferred = $q.defer();
-              urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
-                  var data = responseExtractor(resData, 'getList', what, urlHandler.fetchUrl(__this, search));
+              var operation = 'getList';
+              var url = urlHandler.fetchUrl(this, search);
+              var whatFetched = what || __this[restangularFields.route];
+              var reqParams = _.extend(search, params);
+
+              requestInterceptor(null, operation, whatFetched, url)
+
+              urlHandler.resource(this, $resource, headers, reqParams).getList(reqParams, function(resData) {
+                  var data = responseExtractor(resData, operation, whatFetched, url);
                   var processedData = _.map(data, function(elem) {
                       if (!__this[restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
@@ -482,12 +493,12 @@ module.provider('Restangular', function() {
               
               if (isSafe(operation)) {
                 if (isOverrideOperation) {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, {}, okCallback, errorCallback);  
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, {}, okCallback, errorCallback);
                 } else {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, okCallback, errorCallback);  
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, okCallback, errorCallback);
                 }
               } else {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, callObj, okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, callObj, okCallback, errorCallback);
               }
               
               return restangularizePromise(deferred.promise);
