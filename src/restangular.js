@@ -255,7 +255,7 @@ module.provider('Restangular', function() {
         
         Path.prototype.fetchUrl = function(current, params) {
             var baseUrl = this.base(current);
-            if (params[restangularFields.what]) {
+            if (params && params[restangularFields.what]) {
                 baseUrl += "/" + params[restangularFields.what];
             }
             return baseUrl;
@@ -272,6 +272,7 @@ module.provider('Restangular', function() {
           
           function restangularizeBase(parent, elem, route) {
               elem[restangularFields.route] = route;
+              elem.url = _.bind(urlHandler.fetchUrl, urlHandler, elem);
               elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {
