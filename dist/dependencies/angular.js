@@ -203,7 +203,7 @@ function nextUid() {
 
 /**
  * Set or clear the hashkey for an object.
- * @param obj object
+ * @param obj object 
  * @param h the hashkey (!truthy to delete the hashkey)
  */
 function setHashKey(obj, h) {
@@ -2051,21 +2051,21 @@ forEach({
                 }
               }
               return false;
-            };
+            };	
 
           events[type] = [];
-
-                  // Refer to jQuery's implementation of mouseenter & mouseleave
+		
+		  // Refer to jQuery's implementation of mouseenter & mouseleave
           // Read about mouseenter and mouseleave:
           // http://www.quirksmode.org/js/events_mouse.html#link8
-          var eventmap = { mouseleave : "mouseout", mouseenter : "mouseover"}
+          var eventmap = { mouseleave : "mouseout", mouseenter : "mouseover"}          
           bindFn(element, eventmap[type], function(event) {
             var ret, target = this, related = event.relatedTarget;
             // For mousenter/leave call the handler if related is outside the target.
             // NB: No relatedTarget if the mouse left/entered the browser window
             if ( !related || (related !== target && !contains(target, related)) ){
               handle(event, type);
-            }
+            }	
 
           });
 
@@ -12905,20 +12905,20 @@ var ngControllerDirective = [function() {
  * @element html
  * @description
  * Enables [CSP (Content Security Policy)](https://developer.mozilla.org/en/Security/CSP) support.
- *
+ * 
  * This is necessary when developing things like Google Chrome Extensions.
- *
+ * 
  * CSP forbids apps to use `eval` or `Function(string)` generated functions (among other things).
  * For us to be compatible, we just need to implement the "getterFn" in $parse without violating
  * any of these restrictions.
- *
+ * 
  * AngularJS uses `Function(string)` generated functions as a speed optimization. By applying `ngCsp`
  * it is be possible to opt into the CSP compatible mode. When this mode is on AngularJS will
  * evaluate all expressions up to 30% slower than in non-CSP mode, but no security violations will
  * be raised.
- *
+ * 
  * In order to use this feature put `ngCsp` directive on the root element of the application.
- *
+ * 
  * @example
  * This example shows how to apply the `ngCsp` directive to the `html` tag.
    <pre>

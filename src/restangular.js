@@ -214,9 +214,12 @@ module.provider('Restangular', function() {
             return parents.reverse();
         }
 
-        BaseCreator.prototype.resource = function(current, $resource, headers) {
+        BaseCreator.prototype.resource = function(current, $resource, headers, params) {
             var reqParams = {};
-            return $resource(this.base(current) + "/:" + restangularFields.what + (suffix || '') , {}, {
+            var url = this.base(current);
+            url += params[restangularFields.what] ? ("/:" + restangularFields.what) : '';
+            url += (suffix || '');
+            return $resource(url, {}, {
                 getList: withHttpDefaults({method: 'GET', params: reqParams, isArray: listTypeIsArray, headers: headers || {}}),
                 get: withHttpDefaults({method: 'GET', params: reqParams, isArray: false, headers: headers || {}}),
                 put: withHttpDefaults({method: 'PUT', params: reqParams, isArray: false, headers: headers || {}}),
@@ -418,10 +421,13 @@ module.provider('Restangular', function() {
               var deferred = $q.defer();
               var operation = 'getList';
               var url = urlHandler.fetchUrl(this, search);
-              requestInterceptor(null, operation, what, url)
+              var whatFetched = what || __this[restangularFields.route];
+              var reqParams = _.extend(search, params);
               
-              urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
-                  var data = responseExtractor(resData, operation, what, url);
+              requestInterceptor(null, operation, whatFetched, url)
+              
+              urlHandler.resource(this, $resource, headers, reqParams).getList(reqParams, function(resData) {
+                  var data = responseExtractor(resData, operation, whatFetched, url);
                   var processedData = _.map(data, function(elem) {
                       if (!__this[restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
@@ -480,12 +486,12 @@ module.provider('Restangular', function() {
               
               if (isSafe(operation)) {
                 if (isOverrideOperation) {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, {}, okCallback, errorCallback);  
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, {}, okCallback, errorCallback);  
                 } else {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, okCallback, errorCallback);  
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, okCallback, errorCallback);  
                 }
               } else {
-                  urlHandler.resource(this, $resource, callHeaders)[callOperation](resParams, callObj, okCallback, errorCallback);
+                  urlHandler.resource(this, $resource, callHeaders, resParams)[callOperation](resParams, callObj, okCallback, errorCallback);
               }
               
               return restangularizePromise(deferred.promise);
