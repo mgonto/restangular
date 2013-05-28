@@ -572,6 +572,17 @@ With these libraries, you always work with immutable stuff, you get compatibilit
 So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
 
 
+# Supported Angular's version
+
+Restangular supports both 1.0.X and 1.1.X up to versions 1.0.7 and 1.1.5.
+
+When using Restangular with 1.1.X you get the following extra features:
+* You can send custom headers using the `headers` parameter in all API calls
+* You can use the `setHttpDefault` configuration method to set some $http defaults like `{cache: true}`
+
+Also, when using Restangular with version >= 1.1.4, in case you're using Restangular inside a callback not handled by Angular, you've to wrap this all request with a `$scope.apply` to make it work or you need to run one extra `$digest` manually. Check out https://github.com/mgonto/restangular/issues/71
+
+
 # Server Frameworks
 
 This server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
