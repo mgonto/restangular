@@ -1,3 +1,9 @@
+#0.7.0
+* RequestInterceptor wasn't being called in getList
+* Removed extra `/` when no restangularWhat is provided
+* Added documentation for supported AngularJS versions
+* Added url method to elements which returns the URL of the current object
+
 # 0.6.9
 * Wrapping everything in an anonymous self executed function to not expose anything
 
