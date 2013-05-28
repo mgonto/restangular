@@ -416,8 +416,12 @@ module.provider('Restangular', function() {
               var search = whatObject(what);
               var __this = this;
               var deferred = $q.defer();
+              var operation = 'getList';
+              var url = urlHandler.fetchUrl(this, search);
+              requestInterceptor(null, operation, what, url)
+
               urlHandler.resource(this, $resource, headers).getList(_.extend(search, params), function(resData) {
-                  var data = responseExtractor(resData, 'getList', what, urlHandler.fetchUrl(__this, search));
+                  var data = responseExtractor(resData, operation, what, url);
                   var processedData = _.map(data, function(elem) {
                       if (!__this[restangularFields.restangularCollection]) {
                           return restangularizeElem(__this, elem, what);
