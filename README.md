@@ -269,6 +269,10 @@ All of this fields except for `id` are handled by Restangular, so most of the ti
 
 You can now Override HTTP Methods. You can set here the array of methods to override. All those methods will be sent as POST and Restangular will add an X-HTTP-Method-Override header with the real HTTP method we wanted to do.
 
+#### defaultRequestParams
+
+You can set default Query parameters to be sent with every request
+
 #### requestSuffix
 
 If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method

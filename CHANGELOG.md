@@ -1,3 +1,6 @@
+#0.7.1
+* Added `defaultRequestParams` to set default request query parameters
+
 #0.7.0
 * RequestInterceptor wasn't being called in getList
 * Removed extra `/` when no restangularWhat is provided. This is fixed by Angular's team since version 1.1.5 but this fixes it for all versions including 1.0.X
