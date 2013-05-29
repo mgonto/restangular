@@ -94,6 +94,25 @@ module.provider('Restangular', function() {
         this.setRestangularFields = function(resFields) {
             restangularFields = _.extend(restangularFields, resFields);
         }
+
+        var setIdToElem = function(elem, id) {
+          var properties = restangularFields.id.split('.');
+          var idValue = elem;
+          _.each(_.initial(properties), function(prop) {
+            idValue[prop] = {};
+            idValue = idValue[prop];
+          });
+          idValue[_.last(properties)] = id;
+        } 
+
+        var getIdFromElem = function(elem) {
+          var properties = restangularFields.id.split('.');
+          var idValue = angular.copy(elem);
+          _.each(properties, function(prop) {
+            idValue = idValue[prop];
+          });
+          return idValue;
+        }
         
         /**
          * Sets the Response parser. This is used in case your response isn't directly the data.
@@ -251,7 +270,7 @@ module.provider('Restangular', function() {
                 var currUrl = acum + "/" + elem[restangularFields.route];
                 
                 if (!elem[restangularFields.restangularCollection]) {
-                    currUrl += "/" + elem[restangularFields.id];
+                    currUrl += "/" + getIdFromElem(elem);
                 }
                 
                 return currUrl;
@@ -296,7 +315,7 @@ module.provider('Restangular', function() {
           
           function one(parent, route, id) {
               var elem = {};
-              elem[restangularFields.id] = id;
+              setIdToElem(elem, id);
               return restangularizeElem(parent, elem , route);
           }
           
