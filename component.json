@@ -1,6 +1,6 @@
 {
   "name": "restangular",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "main": "./dist/restangular.min.js",
   "description": "Restfull Resources service for AngularJS apps",
   "repository": {
