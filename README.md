@@ -6,7 +6,7 @@
 Restangular is an AngularJS service that will help you get, delete and update Restfull Resources with very few lines in the Client side. 
 This service is a perfect fit for any WebApp that uses Restfull Resources as the API for your application.
 
-**If you want to check a live example, [please click this link to plunkr](http://plnkr.co/edit/bs5Qu8D6mYXzJXR74b87?p=preview).** It's the same example as Angular's Javascript Projects but Restangularized.
+**If you want to check a live example, [please click this link to plunkr](http://plnkr.co/edit/8W9dOU).** It's the same example as Angular's Javascript Projects but Restangularized.
 
 ## Differences with $resource
 
