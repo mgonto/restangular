@@ -525,7 +525,7 @@ module.provider('Restangular', function() {
           }
           
           function deleteFunction(params, headers) {
-              return _.bind(elemFunction, this)("remove", params, {}, headers);
+              return _.bind(elemFunction, this)("remove", params, undefined, headers);
           }
           
           function putFunction(params, headers) {

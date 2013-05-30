@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.7.2 - 2013-05-28
+ * @version v0.7.2 - 2013-05-30
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -532,7 +532,7 @@ module.provider('Restangular', function() {
           }
           
           function deleteFunction(params, headers) {
-              return _.bind(elemFunction, this)("remove", params, {}, headers);
+              return _.bind(elemFunction, this)("remove", params, undefined, headers);
           }
           
           function putFunction(params, headers) {
