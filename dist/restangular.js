@@ -11,6 +11,8 @@ var module = angular.module('restangular', ['ngResource']);
 
 module.provider('Restangular', function() {
         // Configuration
+
+        var provider = this;
         /**
          * Those are HTTP safe methods for which there is no need to pass any data with the request.
          */
@@ -588,6 +590,8 @@ module.provider('Restangular', function() {
           
           var service = {};
           
+          _.extend(service, _.omit(provider, '$get'));
+
           service.copy = _.bind(copyRestangularizedElement, service);
           
           service.one = _.bind(one, service, null);

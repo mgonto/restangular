@@ -202,6 +202,7 @@ account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
 
 ### Properties
 Restangular comes with defaults for all of it's properties but you can configure them. **So, if you don't need to configure something, there's no need to add the configuration.**
+All of this properties **can be configured in either `RestangularProvider` in the app config or in `Restangular` service.**
 All of this properties have setters so that you can change them.
 
 #### baseUrl
