@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.7.2 - 2013-05-30
+ * @version v0.7.2 - 2013-05-31
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -305,7 +305,7 @@ module.provider('Restangular', function() {
           
           function restangularizeBase(parent, elem, route) {
               elem[restangularFields.route] = route;
-              elem.url = _.bind(urlHandler.fetchUrl, urlHandler, elem);
+              elem.getRestangularUrl = _.bind(urlHandler.fetchUrl, urlHandler, elem);
               elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {

@@ -19,7 +19,7 @@ describe("Restangular", function() {
       "$get", "$save", "$query", "$remove", "$delete", "$put", "$post", "$head", "$trace", "$options", "$patch",
       "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
       "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all","doGET", "doPOST",
-      "doPUT", "doDELETE", "doGETLIST", "addRestangularMethod", "url");
+      "doPUT", "doDELETE", "doGETLIST", "addRestangularMethod", "getRestangularUrl");
   };
 
   // Load required modules

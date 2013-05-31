@@ -298,7 +298,7 @@ module.provider('Restangular', function() {
           
           function restangularizeBase(parent, elem, route) {
               elem[restangularFields.route] = route;
-              elem.url = _.bind(urlHandler.fetchUrl, urlHandler, elem);
+              elem.getRestangularUrl = _.bind(urlHandler.fetchUrl, urlHandler, elem);
               elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
               
               if (parent) {
