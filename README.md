@@ -69,6 +69,20 @@ You can download this by:
 
 Restangular depends on Angular, Angular-Resources and (Underscore or Lodash).
 
+# Quick configuration
+This is the quick configuration to bootstrap all. Read the rest of the documentation for further configuration and understanding
+
+````javascript
+angular.module('sample-app', ['restangular'])
+  .config(function(RestangularProvider) {
+    RestangularProvider.setBaseUrl("/api/v1");
+  });
+  
+angular.module('sample-app').controller('MainCtrl', function($scope, Restangular) {
+  $scope.projects = Restangular.all('projects').getList();
+});
+````
+
 #Starter Guide
 
 ## Adding dependency to Restangular module in your app
