@@ -1,3 +1,8 @@
+#0.7.3
+* All configuration can be done via either `Restangular` or `RestangularProvider`
+* url field now is called getRestangularUrl
+* `id` configuration from `restangularFields` now accepts nested (dotted) properties
+
 #0.7.1
 * Added `defaultRequestParams` to set default request query parameters
 
