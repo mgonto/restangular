@@ -1,7 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.2.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modern -o ./dist/lodash.js`
+ * Lo-Dash 1.2.1 <http://lodash.com/>
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -85,6 +84,12 @@
     'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
     'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
     'setImmediate', 'setTimeout'
+  ];
+
+  /** Used to fix the JScript [[DontEnum]] bug */
+  var shadowedProps = [
+    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
+    'toLocaleString', 'toString', 'valueOf'
   ];
 
   /** Used to make template sourceURLs easier to identify */
@@ -290,13 +295,119 @@
      */
     var support = lodash.support = {};
 
-    /**
-     * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
-     *
-     * @memberOf _.support
-     * @type Boolean
-     */
-    support.fastBind = nativeBind && !isV8;
+    (function() {
+      var ctor = function() { this.x = 1; },
+          object = { '0': 1, 'length': 1 },
+          props = [];
+
+      ctor.prototype = { 'valueOf': 1, 'y': 1 };
+      for (var prop in new ctor) { props.push(prop); }
+      for (prop in arguments) { }
+
+      /**
+       * Detect if `arguments` objects are `Object` objects (all but Narwhal and Opera < 10.5).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.argsObject = arguments.constructor == Object && !(arguments instanceof Array);
+
+      /**
+       * Detect if an `arguments` object's [[Class]] is resolvable (all but Firefox < 4, IE < 9).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.argsClass = isArguments(arguments);
+
+      /**
+       * Detect if `prototype` properties are enumerable by default.
+       *
+       * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+       * (if the prototype or a property on the prototype has been set)
+       * incorrectly sets a function's `prototype` property [[Enumerable]]
+       * value to `true`.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.enumPrototypes = ctor.propertyIsEnumerable('prototype');
+
+      /**
+       * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.fastBind = nativeBind && !isV8;
+
+      /**
+       * Detect if own properties are iterated after inherited properties (all but IE < 9).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.ownLast = props[0] != 'x';
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.nonEnumArgs = prop != 0;
+
+      /**
+       * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
+       *
+       * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
+       * made non-enumerable as well (a.k.a the JScript [[DontEnum]] bug).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.nonEnumShadows = !/valueOf/.test(props);
+
+      /**
+       * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
+       *
+       * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+       * and `splice()` functions that fail to remove the last element, `value[0]`,
+       * of array-like objects even though the `length` property is set to `0`.
+       * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+
+      /**
+       * Detect lack of support for accessing string characters by index.
+       *
+       * IE < 8 can't access characters by index and IE 8 can only access
+       * characters by index on string literals.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
+
+      /**
+       * Detect if a DOM node's [[Class]] is resolvable (all but IE < 9)
+       * and that the JS engine errors when attempting to coerce an object to
+       * a string without a `toString` function.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      try {
+        support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
+      } catch(e) {
+        support.nodeClass = true;
+      }
+    }(1));
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -357,6 +468,139 @@
          */
         '_': lodash
       }
+    };
+
+    /*--------------------------------------------------------------------------*/
+
+    /**
+     * The template used to create iterator functions.
+     *
+     * @private
+     * @param {Object} data The data object used to populate the text.
+     * @returns {String} Returns the interpolated text.
+     */
+    var iteratorTemplate = template(
+      // the `iterable` may be reassigned by the `top` snippet
+      'var index, iterable = <%= firstArg %>, ' +
+      // assign the `result` variable an initial value
+      'result = <%= init %>;\n' +
+      // exit early if the first argument is falsey
+      'if (!iterable) return result;\n' +
+      // add code before the iteration branches
+      '<%= top %>;\n' +
+
+      // array-like iteration:
+      '<% if (arrays) { %>' +
+      'var length = iterable.length; index = -1;\n' +
+      'if (<%= arrays %>) {' +
+
+      // add support for accessing string characters by index if needed
+      '  <% if (support.unindexedChars) { %>\n' +
+      '  if (isString(iterable)) {\n' +
+      "    iterable = iterable.split('')\n" +
+      '  }' +
+      '  <% } %>\n' +
+
+      // iterate over the array-like value
+      '  while (++index < length) {\n' +
+      '    <%= loop %>\n' +
+      '  }\n' +
+      '}\n' +
+      'else {' +
+
+      // object iteration:
+      // add support for iterating over `arguments` objects if needed
+      '  <%  } else if (support.nonEnumArgs) { %>\n' +
+      '  var length = iterable.length; index = -1;\n' +
+      '  if (length && isArguments(iterable)) {\n' +
+      '    while (++index < length) {\n' +
+      "      index += '';\n" +
+      '      <%= loop %>\n' +
+      '    }\n' +
+      '  } else {' +
+      '  <% } %>' +
+
+      // avoid iterating over `prototype` properties in older Firefox, Opera, and Safari
+      '  <% if (support.enumPrototypes) { %>\n' +
+      "  var skipProto = typeof iterable == 'function';\n" +
+      '  <% } %>' +
+
+      // iterate own properties using `Object.keys` if it's fast
+      '  <% if (useHas && useKeys) { %>\n' +
+      '  var ownIndex = -1,\n' +
+      '      ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],\n' +
+      '      length = ownProps.length;\n\n' +
+      '  while (++ownIndex < length) {\n' +
+      '    index = ownProps[ownIndex];\n' +
+      "    <% if (support.enumPrototypes) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
+      '    <%= loop %>\n' +
+      '    <% if (support.enumPrototypes) { %>}\n<% } %>' +
+      '  }' +
+
+      // else using a for-in loop
+      '  <% } else { %>\n' +
+      '  for (index in iterable) {<%' +
+      '    if (support.enumPrototypes || useHas) { %>\n    if (<%' +
+      "      if (support.enumPrototypes) { %>!(skipProto && index == 'prototype')<% }" +
+      '      if (support.enumPrototypes && useHas) { %> && <% }' +
+      '      if (useHas) { %>hasOwnProperty.call(iterable, index)<% }' +
+      '    %>) {' +
+      '    <% } %>\n' +
+      '    <%= loop %>;' +
+      '    <% if (support.enumPrototypes || useHas) { %>\n    }<% } %>\n' +
+      '  }' +
+
+      // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
+      // existing property and the `constructor` property of a prototype
+      // defaults to non-enumerable, Lo-Dash skips the `constructor`
+      // property when it infers it's iterating over a `prototype` object.
+      '    <% if (support.nonEnumShadows) { %>\n\n' +
+      '  var ctor = iterable.constructor;\n' +
+      '      <% for (var k = 0; k < 7; k++) { %>\n' +
+      "  index = '<%= shadowedProps[k] %>';\n" +
+      '  if (<%' +
+      "      if (shadowedProps[k] == 'constructor') {" +
+      '        %>!(ctor && ctor.prototype === iterable) && <%' +
+      '      } %>hasOwnProperty.call(iterable, index)) {\n' +
+      '    <%= loop %>\n' +
+      '  }' +
+      '      <% } %>' +
+      '    <% } %>' +
+      '  <% } %>' +
+      '  <% if (arrays || support.nonEnumArgs) { %>\n}<% } %>\n' +
+
+      // add code to the bottom of the iteration function
+      '<%= bottom %>;\n' +
+      // finally, return the `result`
+      'return result'
+    );
+
+    /** Reusable iterator options for `assign` and `defaults` */
+    var defaultsIteratorOptions = {
+      'args': 'object, source, guard',
+      'top':
+        'var args = arguments,\n' +
+        '    argsIndex = 0,\n' +
+        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
+        'while (++argsIndex < argsLength) {\n' +
+        '  iterable = args[argsIndex];\n' +
+        '  if (iterable && objectTypes[typeof iterable]) {',
+      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
+      'bottom': '  }\n}'
+    };
+
+    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
+    var eachIteratorOptions = {
+      'args': 'collection, callback, thisArg',
+      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg)",
+      'arrays': "typeof length == 'number'",
+      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
+    };
+
+    /** Reusable iterator options for `forIn` and `forOwn` */
+    var forOwnIteratorOptions = {
+      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
+      'arrays': false
     };
 
     /*--------------------------------------------------------------------------*/
@@ -494,6 +738,58 @@
     }
 
     /**
+     * Creates compiled iteration functions.
+     *
+     * @private
+     * @param {Object} [options1, options2, ...] The compile options object(s).
+     *  arrays - A string of code to determine if the iterable is an array or array-like.
+     *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
+     *  useKeys - A boolean to specify using `_.keys` for own property iteration.
+     *  args - A string of comma separated arguments the iteration function will accept.
+     *  top - A string of code to execute before the iteration branches.
+     *  loop - A string of code to execute in the object loop.
+     *  bottom - A string of code to execute after the iteration branches.
+     * @returns {Function} Returns the compiled function.
+     */
+    function createIterator() {
+      var data = {
+        // data properties
+        'shadowedProps': shadowedProps,
+        'support': support,
+
+        // iterator options
+        'arrays': 'isArray(iterable)',
+        'bottom': '',
+        'init': 'iterable',
+        'loop': '',
+        'top': '',
+        'useHas': true,
+        'useKeys': !!keys
+      };
+
+      // merge options into a template data object
+      for (var object, index = 0; object = arguments[index]; index++) {
+        for (var key in object) {
+          data[key] = object[key];
+        }
+      }
+      var args = data.args;
+      data.firstArg = /^[^,]+/.exec(args)[0];
+
+      // create the function factory
+      var factory = Function(
+          'hasOwnProperty, isArguments, isArray, isString, keys, ' +
+          'lodash, objectTypes',
+        'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
+      );
+      // return the compiled function
+      return factory(
+        hasOwnProperty, isArguments, isArray, isString, keys,
+        lodash, objectTypes
+      );
+    }
+
+    /**
      * Used by `template` to escape characters for inclusion in compiled
      * string literals.
      *
@@ -514,6 +810,19 @@
      */
     function escapeHtmlChar(match) {
       return htmlEscapes[match];
+    }
+
+    /**
+     * Checks if `value` is a DOM node in IE < 9.
+     *
+     * @private
+     * @param {Mixed} value The value to check.
+     * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
+     */
+    function isNode(value) {
+      // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+      // methods that are `typeof` "string" and still can coerce nodes to strings
+      return typeof value.toString != 'function' && typeof (value + '') == 'string';
     }
 
     /**
@@ -551,13 +860,23 @@
     function shimIsPlainObject(value) {
       // avoid non-objects and false positives for `arguments` objects
       var result = false;
-      if (!(value && toString.call(value) == objectClass)) {
+      if (!(value && toString.call(value) == objectClass) || (!support.argsClass && isArguments(value))) {
         return result;
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
 
-      if (isFunction(ctor) ? ctor instanceof ctor : true) {
+      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
+        // IE < 9 iterates inherited properties before own properties. If the first
+        // iterated property is an object's own property then there are no inherited
+        // enumerable properties.
+        if (support.ownLast) {
+          forIn(value, function(value, key, object) {
+            result = hasOwnProperty.call(object, key);
+            return false;
+          });
+          return result === true;
+        }
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
         // own property then there are no inherited enumerable properties.
@@ -629,6 +948,12 @@
     function isArguments(value) {
       return toString.call(value) == argsClass;
     }
+    // fallback for browsers that can't detect `arguments` objects by [[Class]]
+    if (!support.argsClass) {
+      isArguments = function(value) {
+        return value ? hasOwnProperty.call(value, 'callee') : false;
+      };
+    }
 
     /**
      * Checks if `value` is an array.
@@ -646,7 +971,9 @@
      * _.isArray([1, 2, 3]);
      * // => true
      */
-    var isArray = nativeIsArray;
+    var isArray = nativeIsArray || function(value) {
+      return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
+    };
 
     /**
      * A fallback implementation of `Object.keys` which produces an array of the
@@ -657,18 +984,13 @@
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns a new array of property names.
      */
-    var shimKeys = function (object) {
-      var index, iterable = object, result = [];
-      if (!iterable) return result;
-      if (!(objectTypes[typeof object])) return result;
-
-        for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
-          result.push(index);    
-          }
-        }    
-      return result
-    };
+    var shimKeys = createIterator({
+      'args': 'object',
+      'init': '[]',
+      'top': 'if (!(objectTypes[typeof object])) return result',
+      'loop': 'result.push(index)',
+      'arrays': false
+    });
 
     /**
      * Creates an array composed of the own enumerable property names of `object`.
@@ -687,8 +1009,28 @@
       if (!isObject(object)) {
         return [];
       }
+      if ((support.enumPrototypes && typeof object == 'function') ||
+          (support.nonEnumArgs && object.length && isArguments(object))) {
+        return shimKeys(object);
+      }
       return nativeKeys(object);
     };
+
+    /**
+     * A function compiled to iterate `arguments` objects, arrays, objects, and
+     * strings consistenly across environments, executing the `callback` for each
+     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
+     * with three arguments; (value, index|key, collection). Callbacks may exit
+     * iteration early by explicitly returning `false`.
+     *
+     * @private
+     * @type Function
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|String} Returns `collection`.
+     */
+    var each = createIterator(eachIteratorOptions);
 
     /**
      * Used to convert characters to HTML entities:
@@ -741,40 +1083,18 @@
      * defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var assign = function (object, source, guard) {
-      var index, iterable = object, result = iterable;
-      if (!iterable) return result;
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = typeof guard == 'number' ? 2 : args.length;
-      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
-        var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);
-      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
-        callback = args[--argsLength];
-      }
-      while (++argsIndex < argsLength) {
-        iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
-      var length = iterable.length; index = -1;
-      if (isArray(iterable)) {
-        while (++index < length) {
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
-        }
-      }
-      else {    
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
-            length = ownProps.length;
-
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
-        }    
-      }
-        }
-      };
-      return result
-    };
+    var assign = createIterator(defaultsIteratorOptions, {
+      'top':
+        defaultsIteratorOptions.top.replace(';',
+          ';\n' +
+          "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
+          '  var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+          "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
+          '  callback = args[--argsLength];\n' +
+          '}'
+        ),
+      'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
+    });
 
     /**
      * Creates a clone of `value`. If `deep` is `true`, nested objects will also
@@ -843,7 +1163,7 @@
       var isObj = isObject(result);
       if (isObj) {
         var className = toString.call(result);
-        if (!cloneableClasses[className]) {
+        if (!cloneableClasses[className] || (!support.nodeClass && isNode(result))) {
           return result;
         }
         var isArr = isArray(result);
@@ -967,35 +1287,7 @@
      * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var defaults = function (object, source, guard) {
-      var index, iterable = object, result = iterable;
-      if (!iterable) return result;
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = typeof guard == 'number' ? 2 : args.length;
-      while (++argsIndex < argsLength) {
-        iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
-      var length = iterable.length; index = -1;
-      if (isArray(iterable)) {
-        while (++index < length) {
-          if (typeof result[index] == 'undefined') result[index] = iterable[index]
-        }
-      }
-      else {    
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
-            length = ownProps.length;
-
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          if (typeof result[index] == 'undefined') result[index] = iterable[index]
-        }    
-      }
-        }
-      };
-      return result
-    };
+    var defaults = createIterator(defaultsIteratorOptions);
 
     /**
      * This method is similar to `_.find`, except that it returns the key of the
@@ -1058,17 +1350,9 @@
      * });
      * // => alerts 'name' and 'bark' (order is not guaranteed)
      */
-    var forIn = function (collection, callback, thisArg) {
-      var index, iterable = collection, result = iterable;
-      if (!iterable) return result;
-      if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-
-        for (index in iterable) {
-          if (callback(iterable[index], index, collection) === false) return result;    
-        }    
-      return result
-    };
+    var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
+      'useHas': false
+    });
 
     /**
      * Iterates over an object's own enumerable properties, executing the `callback`
@@ -1091,22 +1375,7 @@
      * });
      * // => alerts '0', '1', and 'length' (order is not guaranteed)
      */
-    var forOwn = function (collection, callback, thisArg) {
-      var index, iterable = collection, result = iterable;
-      if (!iterable) return result;
-      if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
-            length = ownProps.length;
-
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          if (callback(iterable[index], index, collection) === false) return result
-        }    
-      return result
-    };
+    var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
 
     /**
      * Creates a sorted array of all enumerable properties, own and inherited,
@@ -1258,7 +1527,8 @@
       var className = toString.call(value),
           length = value.length;
 
-      if ((className == arrayClass || className == stringClass || className == argsClass ) ||
+      if ((className == arrayClass || className == stringClass ||
+          (support.argsClass ? className == argsClass : isArguments(value))) ||
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
@@ -1377,12 +1647,12 @@
           return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, thisArg, stackA, stackB);
         }
         // exit for functions and DOM nodes
-        if (className != objectClass) {
+        if (className != objectClass || (!support.nodeClass && (isNode(a) || isNode(b)))) {
           return false;
         }
         // in older versions of Opera, `arguments` objects have `Array` constructors
-        var ctorA = a.constructor,
-            ctorB = b.constructor;
+        var ctorA = !support.argsObject && isArguments(a) ? Object : a.constructor,
+            ctorB = !support.argsObject && isArguments(b) ? Object : b.constructor;
 
         // non `Object` object instances with different constructors are not equal
         if (ctorA != ctorB && !(
@@ -1509,6 +1779,12 @@
     function isFunction(value) {
       return typeof value == 'function';
     }
+    // fallback for older versions of Chrome and Safari
+    if (isFunction(/x/)) {
+      isFunction = function(value) {
+        return typeof value == 'function' && toString.call(value) == funcClass;
+      };
+    }
 
     /**
      * Checks if `value` is the language type of Object.
@@ -1630,8 +1906,8 @@
      * _.isPlainObject({ 'name': 'moe', 'age': 40 });
      * // => true
      */
-    var isPlainObject = function(value) {
-      if (!(value && toString.call(value) == objectClass)) {
+    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
+      if (!(value && toString.call(value) == objectClass) || (!support.argsClass && isArguments(value))) {
         return false;
       }
       var valueOf = value.valueOf,
@@ -1656,7 +1932,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;
+      return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
     }
 
     /**
@@ -2007,6 +2283,9 @@
           length = props.length,
           result = Array(length);
 
+      if (support.unindexedChars && isString(collection)) {
+        collection = collection.split('');
+      }
       while(++index < length) {
         result[index] = collection[props[index]];
       }
@@ -2052,7 +2331,7 @@
           : indexOf(collection, target, fromIndex)
         ) > -1;
       } else {
-        forOwn(collection, function(value) {
+        each(collection, function(value) {
           if (++index >= fromIndex) {
             return !(result = value === target);
           }
@@ -2150,17 +2429,17 @@
       var result = true;
       callback = lodash.createCallback(callback, thisArg);
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number') {
         while (++index < length) {
           if (!(result = !!callback(collection[index], index, collection))) {
             break;
           }
         }
       } else {
-        forOwn(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           return (result = !!callback(value, index, collection));
         });
       }
@@ -2211,10 +2490,10 @@
       var result = [];
       callback = lodash.createCallback(callback, thisArg);
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (callback(value, index, collection)) {
@@ -2222,7 +2501,7 @@
           }
         }
       } else {
-        forOwn(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           if (callback(value, index, collection)) {
             result.push(value);
           }
@@ -2277,10 +2556,10 @@
     function find(collection, callback, thisArg) {
       callback = lodash.createCallback(callback, thisArg);
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (callback(value, index, collection)) {
@@ -2289,7 +2568,7 @@
         }
       } else {
         var result;
-        forOwn(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           if (callback(value, index, collection)) {
             result = value;
             return false;
@@ -2322,18 +2601,17 @@
      * // => alerts each number value (order is not guaranteed)
      */
     function forEach(collection, callback, thisArg) {
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-      if (typeof length == 'number') {
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
           }
         }
       } else {
-        forOwn(collection, callback);
+        each(collection, callback, thisArg);
       }
       return collection;
     }
@@ -2459,17 +2737,16 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length : 0;
+          length = collection ? collection.length : 0,
+          result = Array(typeof length == 'number' ? length : 0);
 
       callback = lodash.createCallback(callback, thisArg);
-      if (typeof length == 'number') {
-        var result = Array(length);
+      if (isArray(collection)) {
         while (++index < length) {
           result[index] = callback(collection[index], index, collection);
         }
       } else {
-        result = [];
-        forOwn(collection, function(value, key, collection) {
+        each(collection, function(value, key, collection) {
           result[++index] = callback(value, key, collection);
         });
       }
@@ -2534,7 +2811,7 @@
           ? charAtCallback
           : lodash.createCallback(callback, thisArg);
 
-        forEach(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
           if (current > computed) {
             computed = current;
@@ -2603,7 +2880,7 @@
           ? charAtCallback
           : lodash.createCallback(callback, thisArg);
 
-        forEach(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
           if (current < computed) {
             computed = current;
@@ -2634,18 +2911,7 @@
      * _.pluck(stooges, 'name');
      * // => ['moe', 'larry']
      */
-    function pluck(collection, property) {
-      var index = -1,
-          length = collection ? collection.length : 0;
-
-      if (typeof length == 'number') {
-        var result = Array(length);
-        while (++index < length) {
-          result[index] = collection[index][property];
-        }
-      }
-      return result || map(collection, property);
-    }
+    var pluck = map;
 
     /**
      * Reduces a `collection` to a value which is the accumulated result of running
@@ -2678,14 +2944,13 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function reduce(collection, callback, accumulator, thisArg) {
-      if (!collection) return accumulator;
       var noaccum = arguments.length < 3;
       callback = lodash.createCallback(callback, thisArg, 4);
 
-      var index = -1,
-          length = collection.length;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number') {
         if (noaccum) {
           accumulator = collection[++index];
         }
@@ -2693,7 +2958,7 @@
           accumulator = callback(accumulator, collection[index], index, collection);
         }
       } else {
-        forOwn(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           accumulator = noaccum
             ? (noaccum = false, value)
             : callback(accumulator, value, index, collection)
@@ -2729,6 +2994,8 @@
       if (typeof length != 'number') {
         var props = keys(collection);
         length = props.length;
+      } else if (support.unindexedChars && isString(collection)) {
+        iterable = collection.split('');
       }
       callback = lodash.createCallback(callback, thisArg, 4);
       forEach(collection, function(value, index, collection) {
@@ -2884,17 +3151,17 @@
       var result;
       callback = lodash.createCallback(callback, thisArg);
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number') {
         while (++index < length) {
           if ((result = callback(collection[index], index, collection))) {
             break;
           }
         }
       } else {
-        forOwn(collection, function(value, index, collection) {
+        each(collection, function(value, index, collection) {
           return !(result = callback(value, index, collection));
         });
       }
@@ -2973,7 +3240,9 @@
      */
     function toArray(collection) {
       if (collection && typeof collection.length == 'number') {
-        return slice(collection);
+        return (support.unindexedChars && isString(collection))
+          ? collection.split('')
+          : slice(collection);
       }
       return values(collection);
     }
@@ -4792,11 +5061,11 @@
       text || (text = '');
 
       // avoid missing dependencies when `iteratorTemplate` is not defined
-      options = defaults({}, options, settings);
+      options = iteratorTemplate ? defaults({}, options, settings) : settings;
 
-      var imports = defaults({}, options.imports, settings.imports),
-          importsKeys = keys(imports),
-          importsValues = values(imports);
+      var imports = iteratorTemplate && defaults({}, options.imports, settings.imports),
+          importsKeys = iteratorTemplate ? keys(imports) : ['_'],
+          importsValues = iteratorTemplate ? values(imports) : [lodash];
 
       var isEvaluating,
           index = 0,
@@ -5200,7 +5469,7 @@
     lodash.prototype.valueOf = wrapperValueOf;
 
     // add `Array` functions that return unwrapped values
-    forEach(['join', 'pop', 'shift'], function(methodName) {
+    each(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
@@ -5208,7 +5477,7 @@
     });
 
     // add `Array` functions that return the wrapped value
-    forEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    each(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
@@ -5217,12 +5486,36 @@
     });
 
     // add `Array` functions that return new wrapped values
-    forEach(['concat', 'slice', 'splice'], function(methodName) {
+    each(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };
     });
+
+    // avoid array-like object bugs with `Array#shift` and `Array#splice`
+    // in Firefox < 10 and IE < 9
+    if (!support.spliceObjects) {
+      each(['pop', 'shift', 'splice'], function(methodName) {
+        var func = arrayRef[methodName],
+            isSplice = methodName == 'splice';
+
+        lodash.prototype[methodName] = function() {
+          var value = this.__wrapped__,
+              result = func.apply(value, arguments);
+
+          if (value.length === 0) {
+            delete value[0];
+          }
+          return isSplice ? new lodashWrapper(result) : result;
+        };
+      });
+    }
+
+    // add pseudo private property to be used and removed during the build process
+    lodash._each = each;
+    lodash._iteratorTemplate = iteratorTemplate;
+    lodash._shimKeys = shimKeys;
 
     return lodash;
   }
