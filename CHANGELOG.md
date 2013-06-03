@@ -1,3 +1,7 @@
+#0.8.0
+* Big refactor to use scoped configurations
+
+
 #0.7.3
 * All configuration can be done via either `Restangular` or `RestangularProvider`
 * url field now is called getRestangularUrl

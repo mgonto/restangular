@@ -216,8 +216,7 @@ account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
 
 ### Properties
 Restangular comes with defaults for all of it's properties but you can configure them. **So, if you don't need to configure something, there's no need to add the configuration.**
-All of this properties **can be configured in either `RestangularProvider` in the app config or in `Restangular` service.**
-All of this properties have setters so that you can change them.
+You can set all this configurations in **`RestangularProvider` to change the global configuration** or you can **use the withConfig method in Restangular service to create a new Restangular service with some scoped configuration**. Check the section on this later.
 
 #### baseUrl
 The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, so you can also set an absolute url like `http://api.example.com/api/v1` if you need do set another domain.
@@ -294,7 +293,7 @@ You can set default Query parameters to be sent with every request
 
 If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method
 
-### How to configure them
+### How to configure them globally
 You can configure this properties inside the config method of your app
 
 ````javascript
@@ -329,6 +328,35 @@ app.config(function(RestangularProvider) {
     });
 });
 
+````
+
+### How to create a Restangular service with a different configuration from the global one
+Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. Let's see how.
+
+````javascript
+// Global configuration
+app.config(function(RestangularProvider) {
+  RestangularProvider.setBaseUrl('http://www.google.com');
+});
+
+//Restangular service that uses Bing
+app.factory('BingRestangular', function(Restangular) {
+  return Restangular.withConfig(function(RestangularConfigurer) {
+    RestangularConfigurer.setBaseUrl('http://www.bing.com');
+  });
+});
+
+// Let's use them from a controller
+app.controller('MainCtrl', function(Restangular, BingRestangular) {
+  
+  // GET to http://www.google.com/users
+  // Uses global configuration
+  Restangular.all('users').getList()
+  
+  // GET to http://www.bing.com/users
+  // Uses Bing configuration
+  BingRestangular.all('users').getList()
+});
 ````
 
 ## Methods description
