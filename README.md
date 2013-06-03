@@ -331,7 +331,7 @@ app.config(function(RestangularProvider) {
 ````
 
 ### How to create a Restangular service with a different configuration from the global one
-Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. Let's see how.
+Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. This scoped configuration will inherit all defaults from the global one. Let's see how.
 
 ````javascript
 // Global configuration
