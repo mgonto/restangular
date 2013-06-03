@@ -337,6 +337,7 @@ Let's assume that for most requests you need some configuration (The global one)
 // Global configuration
 app.config(function(RestangularProvider) {
   RestangularProvider.setBaseUrl('http://www.google.com');
+  RestangularProvider.setRequestSuffix('.json');
 });
 
 //Restangular service that uses Bing
@@ -349,12 +350,12 @@ app.factory('BingRestangular', function(Restangular) {
 // Let's use them from a controller
 app.controller('MainCtrl', function(Restangular, BingRestangular) {
   
-  // GET to http://www.google.com/users
+  // GET to http://www.google.com/users.json
   // Uses global configuration
   Restangular.all('users').getList()
   
-  // GET to http://www.bing.com/users
-  // Uses Bing configuration
+  // GET to http://www.bing.com/users.json
+  // Uses Bing configuration which is based on Global one, therefore .json is added.
   BingRestangular.all('users').getList()
 });
 ````
