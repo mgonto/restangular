@@ -459,6 +459,9 @@ Restangular.one("accounts", 123).one("buildings", 456).one("spaces", 789).get()
 
 // POST /accounts/123/buildings/456/spaces
 Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name: "New Space"});
+
+// DELETE /accounts/123/buildings/456
+Restangular.one("accounts", 123).one("buildings", 456).delete();
 ````
 
 ## Creating new Restangular Methods
