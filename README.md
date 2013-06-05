@@ -16,7 +16,7 @@ Restangular has several features that distinguish it from $resource:
 * **You can use this in $routeProvider.resolve**. As Restangular returns promises, you can return any of the methods in the `$routeProvider.resolve` and you'll get the real object injected into your controller if you want.
 * **It supports all HTTP methods**.
 * **You don't have to create one $resource object per request**. Each time you want to do a request, you can just do it using the object that was returned by Restangular. You don't need to create a new object for this.
-* **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Tempalte. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
+* **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Template. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
 * **It supports nested RestFUL resources**. If you have Nested RestFUL resources, Restangular can handle them for you. You don't have to know the URL, the path, or anything to do all of the HTTP operations you want.
 * **Restangular lets you create your own methods**. You can create your own methods to run the operation that you want. The sky is the limit.
 * **Support for wrapped responses**. If your response for a list of element actually returns an object with some property inside which has the list, it's very hard to use $resource. Restangular knows that and it makes it easy on you. Check out https://github.com/mgonto/restangular#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case
