@@ -35,7 +35,7 @@ Restangular.one('users').getList().then(function(users) {
 // This is a promise
 $scope.cars = $scope.user.getList('cars');
 
-// POST /users/123/sendMessage You've created your own method with the path & operation that you wanted
+// POST /users/123/sendMessage You've creat.ed your own method with the path & operation that you wanted
 $scope.user.sendMessage();
 
 // URL Building
@@ -134,7 +134,7 @@ baseAccounts.post(newAccount);
 Restangular.one('accounts', 123).one('buildings', 456).get()
 
 // Just ONE GET to /accounts/123/buildings
-Restangular.one('accounts', 123).all('buildings').getList()
+Restangular.one('accounts', 123).getList('buildings')
 
 //Here we use Promises then 
 // GET /accounts
