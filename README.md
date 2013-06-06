@@ -627,15 +627,7 @@ $scope.owners = house.getList('owners')
 ````
 
 You're actually assigning a Promise to the owners value of the $scope. As Angular knows how to process promises, if in your view you do an ng-repeat of this $scope variable, results will be shown once the promise is resolved (Response arrived).
-So, I've enhanced this promise from Angular and added a push method which will return a new promise with the list with the new elements. So you should do something like this:
-
-````javascript
-// First
-$scope.owners = house.getList('owners');
-
-// Then after some ng-click to add an item
-$scope.owners = $scope.owners.push({name: "gonto"});
-````
+However, changes to that promise that you do from your HTML won't be seen in the scope, as it's not a real array. It's just a promise of an array.
 
 #### When I set baseUrl with a port, it's stripped out.
 
