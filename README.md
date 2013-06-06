@@ -594,7 +594,31 @@ RestangularProvider.setRestangularFields({
 ````
 
 
-#### **After getting some List, how do I add an object to the array?** **~~When I want to add a new element to the array, it gives me an error saying that push method doesn't exist~~**
+#### **How do I handle CRUD operations in a List returned by Restangular?**
+
+The best option for doing CRUD operations with a list, is to actually use the "real" list, and not the promise. It makes it easy to interact with it.
+
+Let's see an example :).
+
+````javascript
+// Here we use then to resolve the promise.
+Restangular.all('users').getList().then(function(users) {
+  $scope.users = users;
+  var userWithId = _.find(users, function(user) {
+    return user.id === 123;
+  });
+
+  userWithId.name = "Gonto";
+  userWithId.put();
+  
+  // ALternatively delete element from list when finished
+  userWithId.remove().then(function() {
+    // Updating the list and removing the user after the response is OK.
+    $scope.users = _.without($scope.users, userWithId);
+  });
+
+});
+````
 
 When you actually get some list by doing
 
