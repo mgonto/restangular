@@ -237,6 +237,7 @@ This callback is a function that has 3 parameters:
 * **elem**: The element that has just been restangularized. Can be a collection or a single element.
 * **isCollection**: Boolean indicating if this is a collection or a single element.
 * **what**: The model that is being modified. This is the "path" of this resource. For example `buildings`
+* **Restangular**: The instanced service to use any of its methods
  
 This can be used together with `addRestangularMethod` (Explained later) to add custom methods to an element
 
@@ -369,6 +370,8 @@ This are the methods that can be called in the Restangular object.
 * **one(route, id)**: This will create a new Restangular object that is just a pointer to one element with the route `route` and the specified id.
 * **all(route)**: This will create a new Restangular object that is just a pointer to a list of elements for the specified path.
 * **copy(fromElement)**: This will create a copy of the from element so that we can modified the copied one.
+* **restangularizeElement(parent, element, route)**: Restangularizes a new element
+* **restangularizeCollection(parent, element, route)**: Restangularizes a new collection
 
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
