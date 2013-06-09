@@ -504,7 +504,8 @@ module.provider('Restangular', function() {
                           if (!__this[config.restangularFields.restangularCollection]) {
                               return restangularizeElem(__this, elem, what);
                           } else {
-                              return restangularizeElem(null, elem, __this[config.restangularFields.route]);
+                              return restangularizeElem(__this[config.restangularFields.parentResource], 
+                                elem, __this[config.restangularFields.route]);
                           }
                           
                       });

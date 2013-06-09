@@ -48,6 +48,7 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts").respond(accountsModel);
     $httpBackend.whenGET("/accounts/messages").respond(messages);
     $httpBackend.whenGET("/accounts/1/message").respond(messages[0]);
+    $httpBackend.whenGET("/accounts/1/messages").respond(messages);
     $httpBackend.whenGET("/accounts/0").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
@@ -94,6 +95,12 @@ describe("Restangular", function() {
         expect(sanitizeRestangularAll(accounts)).toEqual(accountsModel);
       });
 
+      $httpBackend.flush();
+    });
+
+    it('uses all to get the list without parameters', function() {
+      Restangular.one('accounts', 1).all('messages').getList();
+      $httpBackend.expectGET('/accounts/1/messages');
       $httpBackend.flush();
     });
 
