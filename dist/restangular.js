@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.0 - 2013-06-03
+ * @version v0.8.0 - 2013-06-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -511,7 +511,8 @@ module.provider('Restangular', function() {
                           if (!__this[config.restangularFields.restangularCollection]) {
                               return restangularizeElem(__this, elem, what);
                           } else {
-                              return restangularizeElem(null, elem, __this[config.restangularFields.route]);
+                              return restangularizeElem(__this[config.restangularFields.parentResource],
+                                elem, __this[config.restangularFields.route]);
                           }
                           
                       });
