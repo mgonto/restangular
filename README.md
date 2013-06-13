@@ -266,6 +266,9 @@ The requestInterceptor is called before sending any data to the server. It's a f
 * **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
 * **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 
+#### errorInterceptor
+The errorInterceptor is called whenever there's an error. It's a function that receives the response as a parameter.
+
 #### listTypeIsArray
 
 You can set in this property wether the `getList` method will return an Array or not. Most of the times, it will return an array, as it returns a collection of values. However, sometimes this method returns first some metadata and inside it has the array. So this can be used together with `responseExtractor` to get the real array. The default value is true.

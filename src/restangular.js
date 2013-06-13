@@ -143,6 +143,12 @@ module.provider('Restangular', function() {
             object.setRequestInterceptor = function(interceptor) {
                 config.requestInterceptor = interceptor;
             }
+
+            config.errorInterceptor = config.errorInterceptor || function() {};
+
+            object.setErrorInterceptor = function(interceptor) {
+              config.errorInterceptor = interceptor;
+            }
             
             /**
              * This method is called after an element has been "Restangularized".
@@ -520,6 +526,7 @@ module.provider('Restangular', function() {
                           deferred.resolve(restangularizeCollection(null, processedData, __this[config.restangularFields.route]));
                       }
                   }, function error(response) {
+                      config.errorInterceptor(response);
                       deferred.reject(response);
                   });
                   
@@ -549,6 +556,7 @@ module.provider('Restangular', function() {
                   };
                   
                   var errorCallback = function(response) {
+                      config.errorInterceptor(response);
                       deferred.reject(response);
                   };
                   // Overring HTTP Method

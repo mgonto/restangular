@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.2 - 2013-06-09
+ * @version v0.8.2 - 2013-06-13
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -149,6 +149,12 @@ module.provider('Restangular', function() {
             
             object.setRequestInterceptor = function(interceptor) {
                 config.requestInterceptor = interceptor;
+            }
+
+            config.errorInterceptor = config.errorInterceptor || function() {};
+
+            object.setErrorInterceptor = function(interceptor) {
+              config.errorInterceptor = interceptor;
             }
             
             /**
@@ -527,6 +533,7 @@ module.provider('Restangular', function() {
                           deferred.resolve(restangularizeCollection(null, processedData, __this[config.restangularFields.route]));
                       }
                   }, function error(response) {
+                      config.errorInterceptor(response);
                       deferred.reject(response);
                   });
                   
@@ -556,6 +563,7 @@ module.provider('Restangular', function() {
                   };
                   
                   var errorCallback = function(response) {
+                      config.errorInterceptor(response);
                       deferred.reject(response);
                   };
                   // Overring HTTP Method
