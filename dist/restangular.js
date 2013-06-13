@@ -246,63 +246,67 @@ module.provider('Restangular', function() {
              var BaseCreator = function() {
              };
 
+             BaseCreator.prototype.setConfig = function(config) {
+                 this.config = config;
+             }
+
              BaseCreator.prototype.parentsArray = function(current) {
                 var parents = [];
                 while(!_.isUndefined(current)) {
                     parents.push(current);
-                    current = current[config.restangularFields.parentResource];
+                    current = current[this.config.restangularFields.parentResource];
                 }
                 return parents.reverse();
             }
 
             BaseCreator.prototype.resource = function(current, $resource, headers, params) {
                 var url = this.base(current);
-                url += params[config.restangularFields.what] ? 
-                  ("/:" + config.restangularFields.what) : '';
-                url += (config.suffix || '');
+                url += params[this.config.restangularFields.what] ?
+                  ("/:" + this.config.restangularFields.what) : '';
+                url += (this.config.suffix || '');
                 return $resource(url, {}, {
-                    getList: config.withHttpDefaults({method: 'GET', 
-                      params: config.defaultRequestParams, 
-                      isArray: config.listTypeIsArray, 
+                    getList: this.config.withHttpDefaults({method: 'GET',
+                      params: this.config.defaultRequestParams,
+                      isArray: this.config.listTypeIsArray,
                       headers: headers || {}}),
 
-                    get: config.withHttpDefaults({method: 'GET', 
-                      params: config.defaultRequestParams, 
+                    get: this.config.withHttpDefaults({method: 'GET',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    put: config.withHttpDefaults({method: 'PUT', 
-                      params: config.defaultRequestParams, 
+                    put: this.config.withHttpDefaults({method: 'PUT',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    post: config.withHttpDefaults({method: 'POST', 
-                      params: config.defaultRequestParams, 
+                    post: this.config.withHttpDefaults({method: 'POST',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    remove: config.withHttpDefaults({method: 'DELETE', 
-                      params: config.defaultRequestParams, 
+                    remove: this.config.withHttpDefaults({method: 'DELETE',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    head: config.withHttpDefaults({method: 'HEAD', 
-                      params: config.defaultRequestParams, 
+                    head: this.config.withHttpDefaults({method: 'HEAD',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    trace: config.withHttpDefaults({method: 'TRACE', 
-                      params: config.defaultRequestParams, 
+                    trace: this.config.withHttpDefaults({method: 'TRACE',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    options: config.withHttpDefaults({method: 'OPTIONS', 
-                      params: config.defaultRequestParams, 
+                    options: this.config.withHttpDefaults({method: 'OPTIONS',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}}),
 
-                    patch: config.withHttpDefaults({method: 'PATCH', 
-                      params: config.defaultRequestParams, 
+                    patch: this.config.withHttpDefaults({method: 'PATCH',
+                      params: this.config.defaultRequestParams,
                       isArray: false, 
                       headers: headers || {}})
                 });
@@ -319,11 +323,12 @@ module.provider('Restangular', function() {
             Path.prototype = new BaseCreator();
             
             Path.prototype.base = function(current) {
-                return config.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
-                    var currUrl = acum + "/" + elem[config.restangularFields.route];
+                var __this = this;
+                return this.config.baseUrl + _.reduce(this.parentsArray(current), function(acum, elem) {
+                    var currUrl = acum + "/" + elem[__this.config.restangularFields.route];
                     
-                    if (!elem[config.restangularFields.restangularCollection]) {
-                        currUrl += "/" + config.getIdFromElem(elem);
+                    if (!elem[__this.config.restangularFields.restangularCollection]) {
+                        currUrl += "/" + __this.config.getIdFromElem(elem);
                     }
                     
                     return currUrl;
@@ -334,8 +339,8 @@ module.provider('Restangular', function() {
             
             Path.prototype.fetchUrl = function(current, params) {
                 var baseUrl = this.base(current);
-                if (params && params[config.restangularFields.what]) {
-                    baseUrl += "/" + params[config.restangularFields.what];
+                if (params && params[this.config.restangularFields.what]) {
+                    baseUrl += "/" + params[this.config.restangularFields.what];
                 }
                 return baseUrl;
             }
@@ -359,7 +364,8 @@ module.provider('Restangular', function() {
               var service = {};
 
               var urlHandler = new config.urlCreatorFactory[config.urlCreator]();
-          
+              urlHandler.setConfig(config);
+
               function restangularizeBase(parent, elem, route) {
                   elem[config.restangularFields.route] = route;
                   elem.getRestangularUrl = _.bind(urlHandler.fetchUrl, urlHandler, elem);
