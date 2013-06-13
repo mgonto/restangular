@@ -1,6 +1,11 @@
+#0.8.3
+* Fixed bug with URLHandler. Now it uses local configuration as well
+* Added error interceptor
+* Fixed minor bugs
+
+
 #0.8.0
 * Big refactor to use scoped configurations
-
 
 #0.7.3
 * All configuration can be done via either `Restangular` or `RestangularProvider`
