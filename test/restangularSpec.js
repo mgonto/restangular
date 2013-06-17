@@ -203,7 +203,7 @@ describe("Restangular", function() {
     });
 
 
-    it("Custom GET methods sohuld work", function() {
+    it("Custom GET methods should work", function() {
       restangularAccount1.customGET("message").then(function(msg) {
         expect(sanitizeRestangularOne(msg)).toEqual(messages[0]);
       });
