@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.6 - 2013-06-20
+ * @version v0.8.7 - 2013-06-20
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -295,8 +295,8 @@ module.provider('Restangular', function() {
 
             BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what) {
                 
-                var params = _.defaults(callParams, this.config.defaultRequestParams);
-                var headers = _.defaults(callHeaders, this.config.defaultHeaders);
+                var params = _.defaults(callParams || {}, this.config.defaultRequestParams);
+                var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
                 
                 var url = this.base(current);
                 url += what ? ("/" +  what): '';

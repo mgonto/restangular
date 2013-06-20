@@ -288,8 +288,8 @@ module.provider('Restangular', function() {
 
             BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what) {
                 
-                var params = _.defaults(callParams, this.config.defaultRequestParams);
-                var headers = _.defaults(callHeaders, this.config.defaultHeaders);
+                var params = _.defaults(callParams || {}, this.config.defaultRequestParams);
+                var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
                 
                 var url = this.base(current);
                 url += what ? ("/" +  what): '';

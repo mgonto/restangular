@@ -1,3 +1,6 @@
+#0.8.7
+* Bugfix for Refactor
+
 #0.8.6
 * Ditched the buggy `$resource` and using `$http` inside :D
 
