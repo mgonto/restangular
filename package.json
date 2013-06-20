@@ -40,6 +40,6 @@
     "grunt-zip": "*"
   },
   "scripts": {
-    "test": "grunt test --verbose"
+    "test": "grunt travis --verbose"
   }
 }
