@@ -67,7 +67,7 @@ You can download this by:
 
 #Dependencies
 
-Restangular depends on Angular, Angular-Resources and (Underscore or Lodash).
+Restangular depends on Angular and (Underscore or Lodash). **angular-resource is no longer needed, now this uses `$http` instead of `$resource*`*
 
 #Starter Guide
 
@@ -271,7 +271,9 @@ The errorInterceptor is called whenever there's an error. It's a function that r
 
 #### listTypeIsArray
 
-You can set in this property wether the `getList` method will return an Array or not. Most of the times, it will return an array, as it returns a collection of values. However, sometimes this method returns first some metadata and inside it has the array. So this can be used together with `responseExtractor` to get the real array. The default value is true.
+We don't use `$resource` anymore so this property is depracated. I've left it with an empty setter per now to avoid errors, but it'll be removed in the future.
+
+~~You can set in this property wether the `getList` method will return an Array or not. Most of the times, it will return an array, as it returns a collection of values. However, sometimes this method returns first some metadata and inside it has the array. So this can be used together with `responseExtractor` to get the real array. The default value is true.~~
 
 #### restangularFields
 
@@ -281,7 +283,6 @@ Restangular required 3 fields for every "Restangularized" element. This are:
 * route: Name of the route of this element. Default: route
 * parentResource: The reference to the parent resource. Default: parentResource
 * restangularCollection: A boolean indicating if this is a collection or an element. Default: restangularCollection
-* what: The name of the parameter to be used in inner $resource to handle the PATH of the url. For example, in `/users/123/messages`, `messages`represents the "what". Default: restangularWhat 
 
 All of this fields except for `id` are handled by Restangular, so most of the time you won't change them. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property.
 
@@ -314,8 +315,6 @@ app.config(function(RestangularProvider) {
     
     RestangularProvider.setDefaultHttpFields({cache: true});
     RestangularProvider.setMethodOverriders(["put", "patch"]);
-    
-    RestangularProvider.setListTypeIsArray(true);
     
     // In this case we configure that the id of each element will be the _id field and we change the Restangular route. We leave the default value for parentResource
     RestangularProvider.setRestangularFields({
@@ -519,14 +518,7 @@ Restangular.all("accounts").getList().then(function() {
 
 #### **I need to send one header in EVERY Restangular request, how do I do this?**
 
-Restangular uses $http inside, so you can actually set default headers by using $httpProvider. This also applies to XSRF headers as well
-
-````javascript
-app.config(["$httpProvider", function($httpProvider) {
-  $httpProvider.defaults.headers.common['Tenant-id'] = 'X';
-  $httpProvider.defaults.headers.get['Gonto-id'] = 'P';
-}]);
-````
+You can use `defaultHeaders` property for this or `$httpProvider.defaults.headers`, whichever suits you better. `defaultsHeaders` can be scoped with `withConfig` so it's really cool.
 
 #### Can I cache requests?
 
@@ -573,8 +565,6 @@ In this case, you'd need to configure Restangular's `responseExtractor`and `list
 
 ````javascript
 app.config(function(RestangularProvider) {
-    // First let's set listTypeIsArray to false, as we have the array wrapped in some other object.
-    RestangularProvider.setListTypeIsArray(false);
     
     // Now let's configure the response extractor for each request
     RestangularProvider.setResponseExtractor(function(response, operation, what, url) {
@@ -641,11 +631,7 @@ However, changes to that promise that you do from your HTML won't be seen in the
 
 #### When I set baseUrl with a port, it's stripped out.
 
-Restangular uses `$resource` inside. `$resource` requires ports to be escaped to as not to think they are actually parameters. So the right way of setting a baseUrl with a port is the following:
-
-````javascript
-RestangularProvider.setBaseUrl('http://localhost\\:8080');
-````
+It won't be stripped out anymore as I've ditched `$resource` :). Now you can happily put the port :).
 
 #### Why does this depend on Lodash / Underscore?
 
@@ -657,10 +643,6 @@ So, why not use it? If you've never heard of them, by using Restangular, you cou
 # Supported Angular's version
 
 Restangular supports both 1.0.X and 1.1.X up to versions 1.0.7 and 1.1.5.
-
-When using Restangular with 1.1.X you get the following extra features:
-* You can send custom headers using the `headers` parameter in all API calls
-* You can use the `setHttpDefault` configuration method to set some $http defaults like `{cache: true}`
 
 Also, when using Restangular with version >= 1.1.4, in case you're using Restangular inside a callback not handled by Angular, you've to wrap this all request with a `$scope.apply` to make it work or you need to run one extra `$digest` manually. Check out https://github.com/mgonto/restangular/issues/71
 

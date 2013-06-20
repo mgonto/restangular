@@ -1,3 +1,6 @@
+#0.8.5
+* Ditched the buggy `$resource` and using `$http` inside :D
+
 #0.8.4
 * Fixed bug with defaultHttpFields for scoped configuration
 * Added `defaultHeaders`
