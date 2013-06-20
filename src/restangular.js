@@ -37,13 +37,18 @@ module.provider('Restangular', function() {
               config.defaultHttpFields = values;
             }
 
-            config.withHttpDefaults = config.withHttpDefaults || function(obj) {
+            config.withHttpDefaults = function(obj) {
               return _.defaults(obj, config.defaultHttpFields);
             }
 
             config.defaultRequestParams = config.defaultRequestParams || {};
             object.setDefaultRequestParams = function(values) {
               config.defaultRequestParams = values;
+            }
+
+            config.defaultHeaders = config.defaultHeaders || {};
+            object.setDefaultHeaders = function(headers) {
+              config.defaultHeaders = headers;
             }
 
             /**
@@ -252,11 +257,15 @@ module.provider('Restangular', function() {
                 return parents.reverse();
             }
 
-            BaseCreator.prototype.resource = function(current, $resource, headers, params) {
+            BaseCreator.prototype.resource = function(current, $resource, callHeaders, params) {
+                
                 var url = this.base(current);
                 url += params[this.config.restangularFields.what] ?
                   ("/:" + this.config.restangularFields.what) : '';
                 url += (this.config.suffix || '');
+
+                var headers = _.defaults(callHeaders, this.config.defaultHeaders);
+                
                 return $resource(url, {}, {
                     getList: this.config.withHttpDefaults({method: 'GET',
                       params: this.config.defaultRequestParams,

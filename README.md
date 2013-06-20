@@ -293,6 +293,10 @@ You can now Override HTTP Methods. You can set here the array of methods to over
 
 You can set default Query parameters to be sent with every request
 
+#### defaultHeaders
+
+You can set default Headers to be sent with every request.
+
 #### requestSuffix
 
 If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method
