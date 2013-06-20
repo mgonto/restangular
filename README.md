@@ -14,6 +14,7 @@ Restangular has several features that distinguish it from $resource:
 
 * **It uses promises**. Instead of doing the "magic" filling of objects like $resource, it uses promises.
 * **You can use this in $routeProvider.resolve**. As Restangular returns promises, you can return any of the methods in the `$routeProvider.resolve` and you'll get the real object injected into your controller if you want.
+* **It doesn't have all those `$resource` bugs**. Restangular doesn't have problem with trailling slashes, additional `:` in the URL, escapaing information, expecting only arrays for getting lists, etc.
 * **It supports all HTTP methods**.
 * **You don't have to create one $resource object per request**. Each time you want to do a request, you can just do it using the object that was returned by Restangular. You don't need to create a new object for this.
 * **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Template. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
