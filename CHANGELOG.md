@@ -1,3 +1,7 @@
+#0.8.4
+* Fixed bug with defaultHttpFields for scoped configuration
+* Added `defaultHeaders`
+
 #0.8.3
 * Fixed bug with URLHandler. Now it uses local configuration as well
 * Added error interceptor
