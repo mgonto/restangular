@@ -350,9 +350,12 @@ module.provider('Restangular', function() {
                     var currUrl = acum + "/" + elem[__this.config.restangularFields.route];
                     
                     if (!elem[__this.config.restangularFields.restangularCollection]) {
-                        currUrl += "/" + __this.config.getIdFromElem(elem);
+                        var elemId = __this.config.getIdFromElem(elem);
+                        if (elemId) {
+                            currUrl += "/" + elemId;
+                        }
                     }
-                    
+
                     return currUrl;
                 }, '');
             }
