@@ -1,3 +1,6 @@
+#0.8.9
+* Fix call to `isOverridenMethod` in `setMethodOverriders`.
+
 #0.8.8
 * Removed extra trailling slash for elements without ID. Thanks @cboden
 
