@@ -1,3 +1,6 @@
+#0.8.8
+* Removed extra trailling slash for elements without ID. Thanks @cboden
+
 #0.8.7
 * Bugfix for Refactor
 
