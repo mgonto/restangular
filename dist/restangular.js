@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.8 - 2013-06-20
+ * @version v0.8.9 - 2013-06-20
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -64,7 +64,7 @@ module.provider('Restangular', function() {
             config.methodOverriders = config.methodOverriders || [];
             object.setMethodOverriders = function(values) {
               var overriders = _.extend([], values);
-              if (isOverridenMethod('delete', overriders)) {
+              if (config.isOverridenMethod('delete', overriders)) {
                 overriders.push("remove");
               }
               config.methodOverriders = overriders;
