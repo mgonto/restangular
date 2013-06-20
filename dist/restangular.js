@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.4 - 2013-06-20
+ * @version v0.8.6 - 2013-06-20
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -176,13 +176,10 @@ module.provider('Restangular', function() {
             }
 
             /**
-             * Sets the getList type. The getList returns an Array most of the time as it's a collection of values.
-             * However, sometimes you have metadata and in that cases, the getList ISN'T an array.
-             * By default, it's going to be set as array
+             * Depracated. Don't use this!!
              */
-            config.listTypeIsArray = _.isUndefined(config.listTypeIsArray) ? true : config.listTypeIsArray;
             object.setListTypeIsArray = function(val) {
-                config.listTypeIsArray = val;
+                
             };
             
             /**

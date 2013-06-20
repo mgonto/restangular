@@ -1,4 +1,4 @@
-#0.8.5
+#0.8.6
 * Ditched the buggy `$resource` and using `$http` inside :D
 
 #0.8.4
