@@ -656,6 +656,7 @@ This server frameworks play real nice with Restangular, as they let you create a
 * CakePHP for PHP
 * Play1 & 2 for Java & scala
 * Restify and Express for NodeJS
+* Tastypie for Django 
 
 
 # Releases Notes
