@@ -267,6 +267,16 @@ The requestInterceptor is called before sending any data to the server. It's a f
 * **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
 * **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 
+#### fullRequestInterceptor
+The fullRequestInterceptor is similar to the `requestInterceptor` but more powerful. It lets you change the element, the request parameters and the headers as well.
+
+It's a function that receives the same as the `requestInterceptor` plus the headers and the query parameters (in that order).
+
+It must return an object with the following properties:
+* **headers**: The headers to send
+* **params**: The request parameters to send
+* **element**: The element to send
+
 #### errorInterceptor
 The errorInterceptor is called whenever there's an error. It's a function that receives the response as a parameter.
 
@@ -329,9 +339,20 @@ app.config(function(RestangularProvider) {
     
     RestangularProvider.setRequestSuffix('.json');
     
+    // Use Request interceptor
     RestangularProvider.setRequestInterceptor(function(element, operation, route, url) {
       delete elem.name;
       return elem;
+    });
+    
+    // Or full request interceptor, its powerfull brother
+    RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params) {
+      delete elem.name;      
+      return {
+        element: elem,
+        params: _.extend(params, {single: true}),
+        headers: headers
+      };
     });
     
     RestangularProvider.addElementTransformer('accounts', false,function(elem) {
