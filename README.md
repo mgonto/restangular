@@ -217,7 +217,7 @@ account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
 
 ### Properties
 Restangular comes with defaults for all of it's properties but you can configure them. **So, if you don't need to configure something, there's no need to add the configuration.**
-You can set all this configurations in **`RestangularProvider` to change the global configuration** or you can **use the withConfig method in Restangular service to create a new Restangular service with some scoped configuration**. Check the section on this later.
+You can set all this configurations in **`RestangularProvider` or `Restangular` service to change the global configuration** or you can **use the withConfig method in Restangular service to create a new Restangular service with some scoped configuration**. Check the section on this later.
 
 #### baseUrl
 The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, so you can also set an absolute url like `http://api.example.com/api/v1` if you need do set another domain.

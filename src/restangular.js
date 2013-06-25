@@ -715,7 +715,7 @@ module.provider('Restangular', function() {
              }
              
               
-              
+              Configurer.init(service, globalConfiguration);
               
               service.copy = _.bind(copyRestangularizedElement, service);
 
