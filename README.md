@@ -295,6 +295,10 @@ You can now Override HTTP Methods. You can set here the array of methods to over
 
 You can set default Query parameters to be sent with every request
 
+#### fullResponse
+
+You can set fullResponse to true to get the whole response every time you do any request. The full response has the restangularized data in the `data` field, and also has the headers and config sent. By default, it's set to false.
+
 #### defaultHeaders
 
 You can set default Headers to be sent with every request.

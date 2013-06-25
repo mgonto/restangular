@@ -1,7 +1,8 @@
 #1.0.0
 * First final release
 * Added `one` and `all` to all collection methods
-* 
+* Added `fullResponse` for getting the full `$http` response in every call
+* Improved documentation on `addElemTransformer`
 
 #0.8.9
 * Fix call to `isOverridenMethod` in `setMethodOverriders`.
