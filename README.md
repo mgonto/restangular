@@ -231,8 +231,24 @@ This are the fields that you want to save from your parent resources if you need
 #### urlCreator
 This is the factory that will create URLs based on the resources. For the time being, only Path UrlCreator is implemented. This means that if you have a resource names Building which is a child of Account, the URL to fetch this will be `/accounts/123/buildings`. In the future, I'll implement more UrlCreator like QueryParams UrlCreator.
 
+#### addElementTransformer
+This is a hook. After each element has been "restangularized" (Added the new methods from Restangular), the corresponding transformer will be called if it fits. 
+
+This should be used to add your own methods / functions to entities of certain types.
+
+You can add as many element transformers as you want. The signature of this method can be one of the following:
+
+* **addElementTransformer(route, transformer)**: Transformer is called with all elements that have been restangularized, no matter if they're collections or not.
+
+* **addElementTransformer(route, isCollection, transformer)**: Transformer is called with all elements that have been restangularized and match the specification regarding if it's a collection or not (true | false)
+
+
 #### onElemRestangularized
 This is a hook. After each element has been "restangularized" (Added the new methods from Restangular), this will be called. It means that if you receive a list of objects in one call, this method will be called first for the collection and then for each element of the collection.
+
+**I favor the usage of `addElementTransformer` instead of `onElemRestangularized` whenever possible as the implementation is much cleaner.**
+
+
 This callback is a function that has 3 parameters:
 
 * **elem**: The element that has just been restangularized. Can be a collection or a single element.
@@ -242,12 +258,6 @@ This callback is a function that has 3 parameters:
  
 This can be used together with `addRestangularMethod` (Explained later) to add custom methods to an element
 
-#### addElementTransformer
-You can add as many element transformers as you want. The signature of this method can be one of the following:
-
-* **addElementTransformer(route, transformer)**: Transformer is called with all elements that have been restangularized, no matter if they're collections or not.
-
-* **addElementTransformer(route, isCollection, transformer)**: Transformer is called with all elements that have been restangularized and match the specification regarding if it's a collection or not (true | false)
 
 #### responseInterceptor (or responseExtractor. It's an Alias)
 The responseInterceptor is called after we get each response from the server. It's a function that receives 4 arguments:
@@ -328,6 +338,11 @@ app.config(function(RestangularProvider) {
         return response.data;
     });
     
+    RestangularProvider.addElementTransformer('accounts', false, function(elem) {
+       elem.accountName = 'Changed';
+       return elem;
+    });
+    
     RestangularProvider.setDefaultHttpFields({cache: true});
     RestangularProvider.setMethodOverriders(["put", "patch"]);
     
@@ -355,10 +370,6 @@ app.config(function(RestangularProvider) {
       };
     });
     
-    RestangularProvider.addElementTransformer('accounts', false,function(elem) {
-       elem.accountName = 'Changed';
-       return elem;
-    });
 });
 
 ````
@@ -503,19 +514,29 @@ Restangular.one("accounts", 123).one("buildings", 456).remove();
 
 ## Creating new Restangular Methods
 
-Let's assume that your API needs some custom methods to work. If that's the case, always calling customGET or customPOST for that method with all parameters is a pain in the ass. That's why every element has a `addRestangularMethod` method. This can be used together with the hook `setOnElemRestangularized` to do some neat stuff. Let's see an example to learn this:
+Let's assume that your API needs some custom methods to work. If that's the case, always calling customGET or customPOST for that method with all parameters is a pain in the ass. That's why every element has a `addRestangularMethod` method. 
+
+This can be used together with the hook `addElementTransformer` to do some neat stuff. Let's see an example to learn this:
 
 ````javascript
 //In your app configuration (config method)
-RestangularProvider.setOnElemRestangularized(function(elem, isCollection, route) {
-    if (!isCollection && route === "buildings") {
+
+// It will transform all building elements, NOT collections
+RestangularProvider.addElementTransformer('buildings', false, function(building) {
         // This will add a method called evaluate that will do a get to path evaluate with NO default
         // query params and with some default header
         // signature is (name, operation, path, params, headers, elementToPost)
-        elem.addRestangularMethod('evaluate', 'get', 'evaluate', undefined, {'myHeader': 'value'});
-    }
-    return elem;
-})
+        
+        building.addRestangularMethod('evaluate', 'get', 'evaluate', undefined, {'myHeader': 'value'});
+});
+
+RestangularProvider.addElementTransformer('users', true, function(users) {
+        // This will add a method called evaluate that will do a get to path evaluate with NO default
+        // query params and with some default header
+        // signature is (name, operation, path, params, headers, elementToPost)
+        
+        users.addRestangularMethod('login', 'post', 'login');
+});
 
 // Then, later in your code you can do the following:
 
@@ -523,10 +544,14 @@ RestangularProvider.setOnElemRestangularized(function(elem, isCollection, route)
 //Signature for this "custom created" methods is (params, headers, elem)
 // If something is set to any of this variables, the default set in the method creation will be overrided
 // If nothing is set, then the defaults are sent
-building.evaluate({myParam: 'param'});
+Restangular.one('building', 123).evaluate({myParam: 'param'});
 
 //GET to /buildings/123/evaluate?myParam=param with headers myHeader: specialHeaderCase
-building.evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
+Restangular.one('building', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
+
+Restangular.all('users').login();
+
+
 
 ````
  
