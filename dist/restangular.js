@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v0.8.9 - 2013-06-20
+ * @version v0.8.9 - 2013-06-25
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -403,6 +403,10 @@ module.provider('Restangular', function() {
                   elem.getRestangularUrl = _.bind(urlHandler.fetchUrl, urlHandler, elem);
                   elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
                   
+                  // RequestLess connection
+                  elem.one = _.bind(one, elem, elem);
+                  elem.all = _.bind(all, elem, elem);
+                  
                   if (parent) {
                       var restangularFieldsForParent = _.union(
                         _.values( _.pick(config.restangularFields, ['id', 'route', 'parentResource']) ),
@@ -493,10 +497,6 @@ module.provider('Restangular', function() {
                   localElem.trace = _.bind(traceFunction, localElem);
                   localElem.options = _.bind(optionsFunction, localElem);
                   localElem.patch = _.bind(patchFunction, localElem);
-                  
-                  //RequestLess connection
-                  localElem.one = _.bind(one, localElem, localElem);
-                  localElem.all = _.bind(all, localElem, localElem);
                   
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, false, route, service);
