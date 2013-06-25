@@ -1,8 +1,9 @@
-#1.0.1
+#1.0.2
 * First final release
 * Added `one` and `all` to all collection methods
 * Added `fullResponse` for getting the full `$http` response in every call
 * Improved documentation on `addElemTransformer`
+* Configuration can be set globally on either `RestangularProvider` or `Restangular`
 
 #0.8.9
 * Fix call to `isOverridenMethod` in `setMethodOverriders`.
