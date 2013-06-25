@@ -1,4 +1,4 @@
-#1.0.0
+#1.0.1
 * First final release
 * Added `one` and `all` to all collection methods
 * Added `fullResponse` for getting the full `$http` response in every call
