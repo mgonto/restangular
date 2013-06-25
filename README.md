@@ -403,6 +403,8 @@ This are the methods that can be called in the Restangular object.
 * **patch([queryParams, headers])**: Does a PATCH
 * **putElement(idx, params, headers)**: Puts the element on the required index and returns a promise of the updated new array
 * **getRestangularUrl()**: Gets the URL of the current object.
+* **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
+* **all(route)**: Used for RequestLess connections and URL Building. See section below.
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.

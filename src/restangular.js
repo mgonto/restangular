@@ -464,8 +464,9 @@ module.provider('Restangular', function() {
                   elem.customOperation = _.bind(customFunction, elem);
                   _.each(["put", "post", "get", "delete"], function(oper) {
                       _.each(["do", "custom"], function(alias) {
+                          var callOperation = oper === 'delete' ? 'remove' : oper;
                           var name = alias + oper.toUpperCase();
-                          elem[name] = _.bind(customFunction, elem, oper);
+                          elem[name] = _.bind(customFunction, elem, callOperation);
                       });
                   });
                   elem.customGETLIST = _.bind(fetchFunction, elem);

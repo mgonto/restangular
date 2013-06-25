@@ -1,3 +1,8 @@
+#1.0.0
+* First final release
+* Added `one` and `all` to all collection methods
+* 
+
 #0.8.9
 * Fix call to `isOverridenMethod` in `setMethodOverriders`.
 
