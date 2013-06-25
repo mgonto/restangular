@@ -328,8 +328,10 @@ You can set default Headers to be sent with every request.
 If all of your requests require to send some suffix to work, you can set it here. For example, if you need to send the format like `/users/123.json`you can add that `.json` to the suffix using the `setRequestSuffix`method
 
 ### How to configure them globally
-You can configure this properties inside the config method of your app
 
+You can do this configurations in either the `config` or the `run` method. If your configurations don't need any other services, then I'd recommend you do them in the `config`. If your configurations depend on other services, you can configure them in the `run` using `Restangular` instead of `RestangularProvider` 
+
+#### Configuring in the `config`
 ````javascript
 app.config(function(RestangularProvider) {
     RestangularProvider.setBaseUrl('/api/v1');
@@ -372,6 +374,15 @@ app.config(function(RestangularProvider) {
     
 });
 
+````
+
+#### Configuring in the `run`
+
+````javascript
+// Here I inject the service BaseUrlCalculator which I need
+app.run(function(Restangular, BaseUrlCalculator) {
+    Restangular.setBaseUrl(BaseUrlCalculator.calculate());
+});
 ````
 
 ### How to create a Restangular service with a different configuration from the global one
