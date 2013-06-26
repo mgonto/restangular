@@ -268,7 +268,7 @@ module.provider('Restangular', function() {
 
              BaseCreator.prototype.parentsArray = function(current) {
                 var parents = [];
-                while(!_.isUndefined(current)) {
+                while(current) {
                     parents.push(current);
                     current = current[this.config.restangularFields.parentResource];
                 }
@@ -427,7 +427,9 @@ module.provider('Restangular', function() {
                         _.values( _.pick(config.restangularFields, ['id', 'route', 'parentResource']) ),
                         config.extraFields
                       );
-                      elem[config.restangularFields.parentResource]= _.pick(parent, restangularFieldsForParent);
+                      elem[config.restangularFields.parentResource] = _.pick(parent, restangularFieldsForParent);
+                  } else {
+                    elem[config.restangularFields.parentResource] = null;
                   }
                   return elem;
               }

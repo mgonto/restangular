@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v1.0.2 - 2013-06-25
+ * @version v1.0.3 - 2013-06-26
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -275,7 +275,7 @@ module.provider('Restangular', function() {
 
              BaseCreator.prototype.parentsArray = function(current) {
                 var parents = [];
-                while(!_.isUndefined(current)) {
+                while(current) {
                     parents.push(current);
                     current = current[this.config.restangularFields.parentResource];
                 }
@@ -434,7 +434,9 @@ module.provider('Restangular', function() {
                         _.values( _.pick(config.restangularFields, ['id', 'route', 'parentResource']) ),
                         config.extraFields
                       );
-                      elem[config.restangularFields.parentResource]= _.pick(parent, restangularFieldsForParent);
+                      elem[config.restangularFields.parentResource] = _.pick(parent, restangularFieldsForParent);
+                  } else {
+                    elem[config.restangularFields.parentResource] = null;
                   }
                   return elem;
               }
