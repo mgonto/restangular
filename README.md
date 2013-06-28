@@ -697,6 +697,18 @@ However, changes to that promise that you do from your HTML won't be seen in the
 
 It won't be stripped out anymore as I've ditched `$resource` :). Now you can happily put the port :).
 
+#### How can I access the `unrestangularized` element as well as the `restangularized` one?
+
+In order to get this done, you need to use the `responseExtractor`. You need to set a property there that will point to the original response received. Also, you need to actually copy this response as that response is the one that's going to be `restangularized` later
+
+````javascript
+RestangularProvider.setResponseExtractor(function(response) {
+  var newResponse = response;
+  newResponse.originalElement = angular.copy(response);
+  return newResponse;
+});
+````
+
 #### Why does this depend on Lodash / Underscore?
 
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc. 
