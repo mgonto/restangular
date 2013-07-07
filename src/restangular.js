@@ -1,3 +1,5 @@
+'use strict';
+
 (function(){
 
 var module = angular.module('restangular', []);
@@ -569,7 +571,7 @@ module.provider('Restangular', function() {
                   var whatFetched = what || __this[config.restangularFields.route];
                   
 
-                  var request = config.fullRequestInterceptor(null, operation, 
+                  var request = config.fullRequestInterceptor(null, operation,
                       whatFetched, url, headers || {}, reqParams || {});
 
                   urlHandler.resource(this, $http, request.headers, request.params, what).getList().then(function(response) {
@@ -608,7 +610,7 @@ module.provider('Restangular', function() {
                   var fetchUrl = urlHandler.fetchUrl(this, what);
                   
                   var callObj = obj || stripRestangular(this);
-                  request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
+                  var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
                     headers || {}, resParams || {});
                   
                   var okCallback = function(response) {
