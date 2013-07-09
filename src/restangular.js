@@ -194,6 +194,21 @@ module.provider('Restangular', function() {
                 
             };
             
+            config.shouldSaveParent = config.shouldSaveParent || function() {
+                return true;
+            }
+            object.setParentless = function(values) {
+                if (_.isArray(values)) {
+                    config.shouldSaveParent = function(route) {
+                        return !_.contains(values, route);
+                    }
+                } else if (_.isBoolean(values)) {
+                    config.shouldSaveParent = function() {
+                        return !values;
+                    }
+                }
+            }
+
             /**
              * This lets you set a suffix to every request.
              * 
@@ -423,8 +438,7 @@ module.provider('Restangular', function() {
                   // RequestLess connection
                   elem.one = _.bind(one, elem, elem);
                   elem.all = _.bind(all, elem, elem);
-                  
-                  if (parent) {
+                  if (parent && config.shouldSaveParent(route)) {
                       var restangularFieldsForParent = _.union(
                         _.values( _.pick(config.restangularFields, ['id', 'route', 'parentResource']) ),
                         config.extraFields
