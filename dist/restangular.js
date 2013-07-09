@@ -686,8 +686,8 @@ module.provider('Restangular', function() {
                return _.bind(elemFunction, this)("options", undefined, params, undefined, headers);
              }
 
-             function patchFunction(params, headers) {
-               return _.bind(elemFunction, this)("patch", undefined, params, undefined, headers);
+             function patchFunction(elem, params, headers) {
+               return _.bind(elemFunction, this)("patch", undefined, params, elem, headers);
              }
              
              function customFunction(operation, path, params, headers, elem) {
