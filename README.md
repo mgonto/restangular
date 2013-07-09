@@ -225,6 +225,14 @@ The base URL for all calls to your API. For example if your URL for fetching acc
 #### extraFields
 This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
 
+#### parentless
+With this property, you can set if you want Restangularized elements to have a parent or not. So, for example if you get an account and then get a nested list of buildings, you may want the buildings URL to be simple `/buildings/123` instead of `/accounts/123/buildings/123`. This configuration lets you do that.
+
+This method accepts 2 parameters:
+
+* Boolean: Specifies if all elements should be parentless or not
+* Array: Specified the routes (types) of all elements that should be parentless. For example `['buildings']`
+
 #### defaultHttpFields
 `$http` from AngularJS can receive a bunch of parameters like `cache`, `transformRequest` and so on. You can set all of those properties in the object sent on this setter so that they will be used in EVERY API call made by Restangular. This is very useful for caching for example. All properties that can be set can be checked here: http://docs.angularjs.org/api/ng.$http#Parameters
 
