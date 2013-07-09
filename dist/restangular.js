@@ -1,6 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v1.0.4 - 2013-06-28
+ * @version v1.0.4 - 2013-07-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -724,7 +724,7 @@ module.provider('Restangular', function() {
              }
              
               
-              Configurer.init(service, globalConfiguration);
+              Configurer.init(service, config);
               
               service.copy = _.bind(copyRestangularizedElement, service);
 
