@@ -1,3 +1,7 @@
+#1.0.5
+* Several bug fixes
+* Added `parentless` configuration to ignore nested restful URLs
+
 #1.0.2
 * First final release
 * Added `one` and `all` to all collection methods
