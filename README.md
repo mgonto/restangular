@@ -549,12 +549,11 @@ RestangularProvider.addElementTransformer('buildings', false, function(building)
         building.addRestangularMethod('evaluate', 'get', 'evaluate', undefined, {'myHeader': 'value'});
 });
 
-RestangularProvider.addElementTransformer('users', true, function(users) {
-        // This will add a method called evaluate that will do a get to path evaluate with NO default
-        // query params and with some default header
+RestangularProvider.addElementTransformer('users', true, function(user) {
+        // This will add a method called login that will do a POST to the path login
         // signature is (name, operation, path, params, headers, elementToPost)
         
-        users.addRestangularMethod('login', 'post', 'login');
+        user.addRestangularMethod('login', 'post', 'login');
 });
 
 // Then, later in your code you can do the following:
