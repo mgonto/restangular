@@ -20,7 +20,9 @@ module.provider('Restangular', function() {
              */
             config.baseUrl = _.isUndefined(config.baseUrl) ? "" : config.baseUrl;
             object.setBaseUrl = function(newBaseUrl) {
-                config.baseUrl = newBaseUrl;
+                config.baseUrl = _.last(newBaseUrl) === "/"
+                  ? _.initial(newBaseUrl).join("")
+                  : newBaseUrl;
             }
             
             /**
