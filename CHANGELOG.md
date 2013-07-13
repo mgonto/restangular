@@ -1,3 +1,6 @@
+#1.0.7
+* `baseUrl` can now be set either with or without ending `/` and it'll work
+
 #1.0.5
 * Several bug fixes
 * Added `parentless` configuration to ignore nested restful URLs
