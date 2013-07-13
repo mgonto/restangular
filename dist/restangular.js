@@ -1,10 +1,12 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v1.0.5 - 2013-07-09
+ * @version v1.0.7 - 2013-07-13
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
+'use strict';
+
 (function(){
 
 var module = angular.module('restangular', []);
@@ -25,7 +27,9 @@ module.provider('Restangular', function() {
              */
             config.baseUrl = _.isUndefined(config.baseUrl) ? "" : config.baseUrl;
             object.setBaseUrl = function(newBaseUrl) {
-                config.baseUrl = newBaseUrl;
+                config.baseUrl = _.last(newBaseUrl) === "/"
+                  ? _.initial(newBaseUrl).join("")
+                  : newBaseUrl;
             }
             
             /**
@@ -590,7 +594,7 @@ module.provider('Restangular', function() {
                   var whatFetched = what || __this[config.restangularFields.route];
                   
 
-                  var request = config.fullRequestInterceptor(null, operation, 
+                  var request = config.fullRequestInterceptor(null, operation,
                       whatFetched, url, headers || {}, reqParams || {});
 
                   urlHandler.resource(this, $http, request.headers, request.params, what).getList().then(function(response) {
@@ -629,7 +633,7 @@ module.provider('Restangular', function() {
                   var fetchUrl = urlHandler.fetchUrl(this, what);
                   
                   var callObj = obj || stripRestangular(this);
-                  request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
+                  var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
                     headers || {}, resParams || {});
                   
                   var okCallback = function(response) {
