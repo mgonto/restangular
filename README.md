@@ -348,15 +348,17 @@ app.config(function(RestangularProvider) {
         return response.data;
     });
     
-    RestangularProvider.addElementTransformer('accounts', false, function(elem) {
-       elem.accountName = 'Changed';
-       return elem;
+    RestangularProvider.addElementTransformer('accounts', false, function(element) {
+       element.accountName = 'Changed';
+       return element;
     });
     
     RestangularProvider.setDefaultHttpFields({cache: true});
     RestangularProvider.setMethodOverriders(["put", "patch"]);
     
-    // In this case we configure that the id of each element will be the _id field and we change the Restangular route. We leave the default value for parentResource
+    // In this case we are maping the id of each element to the _id field.
+    // We also change the Restangular route. 
+    // The default value for parentResource remains the same.
     RestangularProvider.setRestangularFields({
       id: "_id",
       route: "restangularRoute"
@@ -366,15 +368,15 @@ app.config(function(RestangularProvider) {
     
     // Use Request interceptor
     RestangularProvider.setRequestInterceptor(function(element, operation, route, url) {
-      delete elem.name;
-      return elem;
+      delete element.name;
+      return element;
     });
     
-    // Or full request interceptor, its powerfull brother
+    // ..or use the full request interceptor, setRequestInterceptor's more powerful brother!
     RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params) {
-      delete elem.name;      
+      delete element.name;      
       return {
-        element: elem,
+        element: element,
         params: _.extend(params, {single: true}),
         headers: headers
       };
