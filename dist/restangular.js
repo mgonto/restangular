@@ -399,7 +399,7 @@ module.provider('Restangular', function() {
                     
                     if (!elem[__this.config.restangularFields.restangularCollection]) {
                         var elemId = __this.config.getIdFromElem(elem);
-                        if (!_.isUndefined(elemId) && !_.isNull(elemId)) {
+                        if (elemId) {
                             currUrl += "/" + elemId;
                         }
                     }
