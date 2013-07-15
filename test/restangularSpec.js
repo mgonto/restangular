@@ -102,7 +102,7 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it("Custom GET methods sohuld work", function() {
+    it("Custom GET methods should work", function() {
       restangularAccounts.customGETLIST("messages").then(function(msgs) {
         expect(sanitizeRestangularAll(msgs)).toEqual(sanitizeRestangularAll(messages));
       });
