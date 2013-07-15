@@ -549,6 +549,8 @@ RestangularProvider.addElementTransformer('buildings', false, function(building)
         // signature is (name, operation, path, params, headers, elementToPost)
         
         building.addRestangularMethod('evaluate', 'get', 'evaluate', undefined, {'myHeader': 'value'});
+        
+        return building;
 });
 
 RestangularProvider.addElementTransformer('users', true, function(user) {
@@ -556,6 +558,8 @@ RestangularProvider.addElementTransformer('users', true, function(user) {
         // signature is (name, operation, path, params, headers, elementToPost)
         
         user.addRestangularMethod('login', 'post', 'login');
+        
+        return user;
 });
 
 // Then, later in your code you can do the following:
