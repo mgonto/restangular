@@ -259,4 +259,11 @@ describe("Restangular", function() {
     });
   });
 
+  describe("getRestangularUrl", function() {
+    it("should return the generated URL when you chain Restangular methods together", function() {
+      var restangularSpaces = Restangular.one("accounts",123).one("buildings", 456).all("spaces");
+      expect(restangularSpaces.getRestangularUrl()).toEqual("/accounts/123/buildings/456/spaces");
+    });
+  });
+
 });
