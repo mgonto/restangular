@@ -152,7 +152,7 @@ baseAccounts.getList().then(function (accounts) {
   // This is a regular JS object, we can change anything we want :) 
   firstAccount.name = "Gonto"
   
-  //If we wanted to keep the original as it's we can copy it to a new element
+  //If we wanted to keep the original as it is, we can copy it to a new element
   var editFirstAccount = Restangular.copy(firstAccount);
   editFirstAccount.name = "New Name";
   
