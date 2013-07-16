@@ -266,4 +266,24 @@ describe("Restangular", function() {
     });
   });
 
+  describe("addElementTransformer", function() {
+    it("should allow for a custom method to be placed at the collection level", function() {
+      var accountsPromise;
+      
+      Restangular.addElementTransformer('accounts', true, function(obj) {
+         obj.totalAmount = function() {};
+         return obj;
+      });
+
+      accountsPromise = Restangular.all('accounts').getList();
+      
+      accountsPromise.then(function(accounts) {
+        expect(typeof accounts.totalAmount).toEqual("function");
+      });
+
+      $httpBackend.flush();
+    });
+  });
+
+
 });
