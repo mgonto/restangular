@@ -102,7 +102,7 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it("Custom GET methods sohuld work", function() {
+    it("Custom GET methods should work", function() {
       restangularAccounts.customGETLIST("messages").then(function(msgs) {
         expect(sanitizeRestangularAll(msgs)).toEqual(sanitizeRestangularAll(messages));
       });
@@ -238,6 +238,24 @@ describe("Restangular", function() {
       });
 
       $httpBackend.flush();
+    });
+  });
+
+  describe("COPY", function() {
+    it("should copy an object and 'this' should reference the copied object", function() {
+      var copiedAccount = Restangular.copy(accountsModel[0]);
+      var that;
+
+      copiedAccount.user = "Copied string";
+      expect(copiedAccount).not.toBe(accountsModel[0]);
+
+      // create a spy for one of the methods to capture the value of 'this'
+      spyOn(copiedAccount, 'getRestangularUrl').andCallFake(function() {
+        that = this;
+      });
+
+      copiedAccount.getRestangularUrl(); // invoke the method we are spying on
+      expect(that).toBe(copiedAccount);
     });
   });
 
