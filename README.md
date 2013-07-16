@@ -518,7 +518,7 @@ Sometimes, we have a lot of entities names with their ids and we just want to fe
 
 ````javascript
 
-var restangualrSpaces = Restangular.one("accounts",123).one("buildings", 456).all("spaces");
+var restangularSpaces = Restangular.one("accounts",123).one("buildings", 456).all("spaces");
 
 // This will do ONE get to /accounts/123/buildings/456/spaces
 restangularSpaces.getList()
