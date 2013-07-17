@@ -575,10 +575,56 @@ Restangular.one('building', 123).evaluate({myParam: 'param'}, {'myHeader': 'spec
 
 Restangular.all('users').login();
 
-
-
 ````
- 
+
+## Adding Custom Methods to Collections
+
+Create custom methods for your collection using Restangular.extendCollection(). This is an alias for:
+
+```
+  Restangular.addElementTransformer(route, true, fn)
+```
+
+### Example:
+```
+  // create methods for your collection
+  Restangular.extendCollection('accounts', function(collection) {
+    collection.totalAmount = function() {
+      // implementation here
+    };
+
+    return collection;
+  });
+
+  var accountsPromise = Restangular.all('accounts').getList();
+      
+  accountsPromise.then(function(accounts) {
+    accounts.totalAmount(); // invoke your custom collection method
+  });
+```
+
+## Adding Custom Methods to Models
+
+Create custom methods for your models using Restangular.extendModel(). This is an alias for:
+
+```
+  Restangular.addElementTransformer(route, false, fn)
+```
+
+### Example:
+```
+  Restangular.extendModel('accounts', function(model) {
+    model.prettifyAmount = function() {};
+    return model;
+  });
+
+  var accountPromise = Restangular.one('accounts', 1).get();
+  
+  accountPromise.then(function(account) {
+    account.prettifyAmount(); // invoke your custom model method
+  });
+```
+
 # FAQ
 
 #### **How can I handle errors?**

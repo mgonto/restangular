@@ -284,12 +284,12 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it("should allow for a custom method to be placed at the element level", function() {
+    it("should allow for a custom method to be placed at the model level when one model is requested", function() {
       var accountPromise;
       
-      Restangular.addElementTransformer('accounts', false, function(element) {
-         element.prettifyAmount = function() {};
-         return element;
+      Restangular.addElementTransformer('accounts', false, function(model) {
+         model.prettifyAmount = function() {};
+         return model;
       });
 
       accountPromise = Restangular.one('accounts', 1).get();
@@ -300,7 +300,54 @@ describe("Restangular", function() {
 
       $httpBackend.flush();
     });
+
+    it("should allow for a custom method to be placed at the model level when several models are requested", function() {
+      var accountPromise;
+      
+      Restangular.addElementTransformer('accounts', false, function(model) {
+         model.prettifyAmount = function() {};
+         return model;
+      });
+
+      accountsPromise = Restangular.all('accounts', 1).getList();
+      
+      accountsPromise.then(function(accounts) {
+        accounts.forEach(function(account, index) {
+          expect(typeof account.prettifyAmount).toEqual("function");
+        });
+      });
+
+      $httpBackend.flush();
+    });
   });
 
+  describe("extendCollection", function() {
+    it("should be an alias for a specific invocation of addElementTransformer", function() {
+      var spy = spyOn(Restangular, 'addElementTransformer');
 
+      var fn = function(collection) {
+        collection.totalAmount = function() {};
+        return collection;
+      };
+
+      Restangular.extendCollection('accounts', fn);
+
+      expect(spy).toHaveBeenCalledWith('accounts', true, fn);
+    });
+  });
+
+  describe("extendModel", function() {
+    it("should be an alias for a specific invocation of addElementTransformer", function() {
+      var spy = spyOn(Restangular, 'addElementTransformer');
+
+      var fn = function(model) {
+        model.prettifyAmount = function() {};
+        return model;
+      };
+
+      Restangular.extendModel('accounts', fn);
+
+      expect(spy).toHaveBeenCalledWith('accounts', false, fn);
+    });
+  });
 });
