@@ -36,7 +36,7 @@ Restangular.one('users').getList().then(function(users) {
 // This is a promise
 $scope.cars = $scope.user.getList('cars');
 
-// POST /users/123/sendMessage You've creat.ed your own method with the path & operation that you wanted
+// POST /users/123/sendMessage You've created your own method with the path & operation that you wanted
 $scope.user.sendMessage();
 
 // URL Building
