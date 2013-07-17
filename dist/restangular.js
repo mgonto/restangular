@@ -259,6 +259,14 @@ module.provider('Restangular', function() {
                 });
             }
             
+            object.extendCollection = function(route, fn) {
+              return object.addElementTransformer(route, true, fn);
+            };
+
+            object.extendModel = function(route, fn) {
+              return object.addElementTransformer(route, false, fn);
+            };
+
             config.transformElem = function(elem, isCollection, route, Restangular) {
                 var typeTransformers = config.transformers[route];
                 var changedElem = elem;
