@@ -717,7 +717,14 @@ In order to get this done, you need to use the `responseExtractor`. You need to 
 ````javascript
 RestangularProvider.setResponseExtractor(function(response) {
   var newResponse = response;
-  newResponse.originalElement = angular.copy(response);
+  if (angular.isArray(response)) {
+    angular.forEach(newResponse, function(value, key) {
+      newResponse[key].originalElement = angular.copy(value);
+    });
+  } else {
+    newResponse.originalElement = angular.copy(response);
+  }
+
   return newResponse;
 });
 ````
