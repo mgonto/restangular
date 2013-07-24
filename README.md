@@ -41,7 +41,7 @@ $scope.user.sendMessage();
 
 // URL Building
 // GET to /user/123/messages/123/from/123/unread
-$scope.user.one('message', 123).one('from', 123).getList('unread')
+$scope.user.one('messages', 123).one('from', 123).getList('unread')
 
 
 ````
