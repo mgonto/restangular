@@ -176,6 +176,13 @@ module.provider('Restangular', function() {
             object.setErrorInterceptor = function(interceptor) {
               config.errorInterceptor = interceptor;
             };
+
+            config.onBeforeElemRestangularized = config.onBeforeElemRestangularized || function(elem) {
+              return elem;
+            }
+            object.setOnBeforeElemRestangularized = function(post) {
+              config.onBeforeElemRestangularized = post;
+            };
             
             /**
              * This method is called after an element has been "Restangularized".
@@ -541,7 +548,9 @@ module.provider('Restangular', function() {
                           copiedElement, copiedElement[config.restangularFields.route]);
               }
               
-              function restangularizeElem(parent, elem, route) {
+              function restangularizeElem(parent, element, route) {
+                  var elem = config.onBeforeElemRestangularized(element, false, route);
+
                   var localElem = restangularizeBase(parent, elem, route);
                   localElem[config.restangularFields.restangularCollection] = false;
                   localElem.get = _.bind(getFunction, localElem);
@@ -558,7 +567,9 @@ module.provider('Restangular', function() {
                   return config.transformElem(localElem, false, route, service);
               }
               
-              function restangularizeCollection(parent, elem, route) {
+              function restangularizeCollection(parent, element, route) {
+                  var elem = config.onBeforeElemRestangularized(element, true, route);
+
                   var localElem = restangularizeBase(parent, elem, route);
                   localElem[config.restangularFields.restangularCollection] = true;
                   localElem.post = _.bind(postFunction, localElem, null);
