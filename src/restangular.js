@@ -631,13 +631,18 @@ module.provider('Restangular', function() {
                   
                   var okCallback = function(response) {
                       var resData = response.data;
-                      var elem = config.responseExtractor(resData, operation, route, fetchUrl) || resObj;
-                      if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
-                        resolvePromise(deferred, response, restangularizeElem(__this, elem, what));
-                      } else {
-                        resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route]));
-                      }
+                      var elem = config.responseExtractor(resData, operation, route, fetchUrl);
+                      if (elem) {
 
+                        if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
+                          resolvePromise(deferred, response, restangularizeElem(__this, elem, what));
+                        } else {
+                          resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route]));
+                        }  
+                        
+                      } else {
+                        resolvePromise(deferred, response, undefined);
+                      }
                   };
                   
                   var errorCallback = function(response) {
