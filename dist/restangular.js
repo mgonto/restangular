@@ -1,10 +1,6 @@
 /**
  * Restfull Resources service for AngularJS apps
-<<<<<<< HEAD
  * @version v1.0.8 - 2013-07-27
-=======
- * @version v1.0.7 - 2013-07-25
->>>>>>> 6491d11323d3f94ea78705ac7f5ff85eb5b66a82
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -64,15 +60,11 @@ module.provider('Restangular', function() {
                 common: {}
             };
             object.setDefaultRequestParams = function(values) {
-<<<<<<< HEAD
               config.defaultRequestParams.common = values;
             }
             
             object.requestParams = config.defaultRequestParams;
-=======
-              config.defaultRequestParams = values;
-            };
->>>>>>> 6491d11323d3f94ea78705ac7f5ff85eb5b66a82
+
 
             config.defaultHeaders = config.defaultHeaders || {};
             object.setDefaultHeaders = function(headers) {
@@ -124,14 +116,9 @@ module.provider('Restangular', function() {
                 id: "id",
                 route: "route",
                 parentResource: "parentResource",
-<<<<<<< HEAD
                 restangularCollection: "restangularCollection",
                 cannonicalId: "__cannonicalId"
-            }
-=======
-                restangularCollection: "restangularCollection"
             };
->>>>>>> 6491d11323d3f94ea78705ac7f5ff85eb5b66a82
             object.setRestangularFields = function(resFields) {
                 config.restangularFields = 
                   _.extend(config.restangularFields, resFields);
@@ -446,7 +433,6 @@ module.provider('Restangular', function() {
                     var currUrl = acum + "/" + elem[__this.config.restangularFields.route];
                     
                     if (!elem[__this.config.restangularFields.restangularCollection]) {
-<<<<<<< HEAD
                         var elemId;
                         if (config.useCannonicalId) {
                             elemId = elem[config.restangularFields.cannonicalId];
@@ -454,11 +440,7 @@ module.provider('Restangular', function() {
                             elemId = __this.config.getIdFromElem(elem);
                         }
                         
-                        if (!_.isUndefined(elemId) && !_.isNull(elemId)) {
-=======
-                        var elemId = __this.config.getIdFromElem(elem);
                         if ("" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId)) {
->>>>>>> 6491d11323d3f94ea78705ac7f5ff85eb5b66a82
                             currUrl += "/" + elemId;
                         }
                     }
