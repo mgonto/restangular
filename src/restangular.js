@@ -45,10 +45,18 @@ module.provider('Restangular', function() {
               return _.defaults(obj, config.defaultHttpFields);
             }
 
-            config.defaultRequestParams = config.defaultRequestParams || {};
+            config.defaultRequestParams = config.defaultRequestParams || {
+                get: {},
+                post: {},
+                put: {},
+                remove: {},
+                common: {}
+            };
             object.setDefaultRequestParams = function(values) {
-              config.defaultRequestParams = values;
+              config.defaultRequestParams.common = values;
             }
+            
+            object.requestParams = config.defaultRequestParams;
 
             config.defaultHeaders = config.defaultHeaders || {};
             object.setDefaultHeaders = function(headers) {
@@ -300,11 +308,14 @@ module.provider('Restangular', function() {
                 return parents.reverse();
             }
 
-            function RestangularResource($http, url, configurer) {
+            function RestangularResource(config, $http, url, configurer) {
               var resource = {};
               _.each(_.keys(configurer), function(key) {
                   var value = configurer[key];
-
+                  
+                  // Add default parameters
+                  value.params = _.extend({}, value.params, 
+                          config.defaultRequestParams[value.method.toLowerCase()]);
                   // We don't want the ? if no params are there
                   if (_.isEmpty(value.params)) {
                     delete value.params;
@@ -335,49 +346,49 @@ module.provider('Restangular', function() {
 
             BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what) {
                 
-                var params = _.defaults(callParams || {}, this.config.defaultRequestParams);
+                var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
                 
                 var url = this.base(current);
                 url += what ? ("/" +  what): '';
                 url += (this.config.suffix || '');
 
-                return RestangularResource($http, url, {
+                return RestangularResource(this.config, $http, url, {
                     getList: this.config.withHttpDefaults({method: 'GET',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     get: this.config.withHttpDefaults({method: 'GET',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     put: this.config.withHttpDefaults({method: 'PUT',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     post: this.config.withHttpDefaults({method: 'POST',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     remove: this.config.withHttpDefaults({method: 'DELETE',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     head: this.config.withHttpDefaults({method: 'HEAD',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     trace: this.config.withHttpDefaults({method: 'TRACE',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     options: this.config.withHttpDefaults({method: 'OPTIONS',
                       params: params,
-                      headers: headers || {}}),
+                      headers: headers}),
 
                     patch: this.config.withHttpDefaults({method: 'PATCH',
                       params: params,
-                      headers: headers || {}})
+                      headers: headers})
                 });
             }
             

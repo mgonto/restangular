@@ -321,7 +321,11 @@ You can now Override HTTP Methods. You can set here the array of methods to over
 
 #### defaultRequestParams
 
-You can set default Query parameters to be sent with every request
+You can set default Query parameters to be sent with every request and every method.
+
+Additionally, if you want to configure request params per method, you can use `requestParams` configuration similar to `$http`. For example `RestangularProvider.requestParams.get = {single: true}`.
+
+Supported method to configure are: remove, get, post, put, common (all)
 
 #### fullResponse
 
