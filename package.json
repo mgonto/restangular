@@ -41,5 +41,6 @@
   },
   "scripts": {
     "test": "grunt travis --verbose"
-  }
+  },
+  "license": "MIT"
 }
