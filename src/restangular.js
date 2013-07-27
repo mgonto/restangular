@@ -99,7 +99,8 @@ module.provider('Restangular', function() {
                 id: "id",
                 route: "route",
                 parentResource: "parentResource",
-                restangularCollection: "restangularCollection"
+                restangularCollection: "restangularCollection",
+                cannonicalId: "__cannonicalId"
             }
             object.setRestangularFields = function(resFields) {
                 config.restangularFields = 
@@ -123,6 +124,11 @@ module.provider('Restangular', function() {
                 idValue = idValue[prop];
               });
               return idValue;
+            }
+            
+            config.useCannonicalId = _.isUndefined(config.useCannonicalId) ? false : config.useCannonicalId;
+            object.setUseCannonicalId = function(value) {
+                config.useCannonicalId = value;
             }
             
             /**
@@ -391,7 +397,13 @@ module.provider('Restangular', function() {
                     var currUrl = acum + "/" + elem[__this.config.restangularFields.route];
                     
                     if (!elem[__this.config.restangularFields.restangularCollection]) {
-                        var elemId = __this.config.getIdFromElem(elem);
+                        var elemId;
+                        if (config.useCannonicalId) {
+                            elemId = elem[config.restangularFields.cannonicalId];
+                        } else {
+                            elemId = __this.config.getIdFromElem(elem);
+                        }
+                        
                         if (!_.isUndefined(elemId) && !_.isNull(elemId)) {
                             currUrl += "/" + elemId;
                         }
@@ -533,6 +545,11 @@ module.provider('Restangular', function() {
               
               function restangularizeElem(parent, elem, route) {
                   var localElem = restangularizeBase(parent, elem, route);
+                  
+                  if (config.useCannonicalId) {
+                      localElem[config.restangularFields.cannonicalId] = config.getIdFromElem(localElem)
+                  }
+                  
                   localElem[config.restangularFields.restangularCollection] = false;
                   localElem.get = _.bind(getFunction, localElem);
                   localElem.getList = _.bind(fetchFunction, localElem);
