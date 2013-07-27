@@ -1,3 +1,10 @@
+#1.0.8
+* **BREAKING CHANGE**: Restangular methods created with `addRestangularMethod` will change its signature depending on the opreation. If the operation is safe (GET, OPTIONS, etc.), the signature is methodName(params, headers, elemForBody). If it's not safe (POST, PUT, etc.), the signature is methodName(elemForBody, params, headers). This is to facilitate using them as when it's not safe, you're usually going to set a body
+* Now you can configure default request parameters per method and for everything as well
+* Added the ability to use Cannonical IDs. They're used if you need to change Primary Key (ID) of the element (Really weird case).
+* If response is null or undefined, the element sent in the request ISN'T used anymore. This is to have clarity of what's returned by the server and also to fix one bug.
+
+
 #1.0.7
 * `baseUrl` can now be set either with or without ending `/` and it'll work
 
