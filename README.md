@@ -567,15 +567,20 @@ RestangularProvider.addElementTransformer('users', true, function(user) {
 // Then, later in your code you can do the following:
 
 //GET to /buildings/123/evaluate?myParam=param with headers myHeader: value
-//Signature for this "custom created" methods is (params, headers, elem)
+
+//Signature for this "custom created" methods is (params, headers, elem) if it's a safe operation (GET, OPTIONS, etc.)
+// If it's an unsafe operation (POST, PUT, etc.), signature is (elem, params, headers).
+
 // If something is set to any of this variables, the default set in the method creation will be overrided
 // If nothing is set, then the defaults are sent
 Restangular.one('building', 123).evaluate({myParam: 'param'});
 
 //GET to /buildings/123/evaluate?myParam=param with headers myHeader: specialHeaderCase
+
 Restangular.one('building', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
 
-Restangular.all('users').login();
+// Here the body of the POST is going to be {key: value} as POST is an unsafe operation
+Restangular.all('users').login({key: value});
 
 
 

@@ -649,11 +649,10 @@ module.provider('Restangular', function() {
                   var __this = this;
                   var deferred = $q.defer();
                   var resParams = params || {};
-                  var resObj = obj || this;
                   var route = what || this[config.restangularFields.route];
                   var fetchUrl = urlHandler.fetchUrl(this, what);
                   
-                  var callObj = obj || stripRestangular(this);
+                  var callObj = obj || (operation === 'remove' ? undefined : stripRestangular(this));
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
                     headers || {}, resParams || {});
                   
@@ -746,7 +745,7 @@ module.provider('Restangular', function() {
                      bindedFunction = _.bind(customFunction, this, operation, path);
                  }
                  
-                 this[name] = function(params, headers, elem) {
+                 var createdFunction = function(params, headers, elem) {
                      var callParams = _.defaults({
                          params: params,
                          headers: headers,
@@ -757,7 +756,16 @@ module.provider('Restangular', function() {
                          elem: defaultElem
                      });
                      return bindedFunction(callParams.params, callParams.headers, callParams.elem);
+                 };
+                 
+                 if (config.isSafe(operation)) {
+                     this[name] = createdFunction;
+                 } else {
+                     this[name] = function(elem, params, headers) {
+                         return createdFunction(params, headers, elem);
+                     }
                  }
+                  
              }
 
              function withConfigurationFunction(configurer) {
