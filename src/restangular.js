@@ -660,8 +660,9 @@ module.provider('Restangular', function() {
                           resolvePromise(deferred, response, restangularizeCollection(null, processedData, __this[config.restangularFields.route]));
                       }
                   }, function error(response) {
-                      config.errorInterceptor(response);
-                      deferred.reject(response);
+                      if ( config.errorInterceptor(response) !== false ) {
+                          deferred.reject(response);
+                      }
                   });
                   
                   return restangularizePromise(deferred.promise, true);
@@ -695,8 +696,9 @@ module.provider('Restangular', function() {
                   };
                   
                   var errorCallback = function(response) {
-                      config.errorInterceptor(response);
-                      deferred.reject(response);
+                      if ( config.errorInterceptor(response) !== false ) {
+                          deferred.reject(response);
+                      }
                   };
                   // Overring HTTP Method
                   var callOperation = operation;
