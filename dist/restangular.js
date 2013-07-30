@@ -1,12 +1,10 @@
 /**
  * Restfull Resources service for AngularJS apps
- * @version v1.0.9 - 2013-07-27
+ * @version v1.0.10 - 2013-07-30
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
-'use strict';
-
 (function() {
 
 var module = angular.module('restangular', []);
