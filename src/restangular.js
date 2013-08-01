@@ -702,7 +702,7 @@ module.provider('Restangular', function() {
                   var isOverrideOperation = config.isOverridenMethod(operation);
                   if (isOverrideOperation) {
                     callOperation = 'post';
-                    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation});
+                    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
                   }
                   
                   if (config.isSafe(operation)) {
