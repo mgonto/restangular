@@ -300,6 +300,11 @@ It must return an object with the following properties:
 #### errorInterceptor
 The errorInterceptor is called whenever there's an error. It's a function that receives the response as a parameter.
 
+The errorInterceptor function, whenever it returns `false`, prevents the promise linked to a Restangular request to be executed.
+All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
+
+The feature to prevent the promise to complete is usefull whenever you need to intercept each Restangular error response for every request in your AngularJS application in a single place, increasing debugging capabilities and hooking security features in a single place.
+
 #### listTypeIsArray
 
 We don't use `$resource` anymore so this property is depracated. I've left it with an empty setter per now to avoid errors, but it'll be removed in the future.
