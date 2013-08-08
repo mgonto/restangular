@@ -2,7 +2,7 @@
   "name": "restangular",
   "version": "1.0.10",
   "main": "./dist/restangular.min.js",
-  "description": "Restfull Resources service for AngularJS apps",
+  "description": "Restful Resources service for AngularJS apps",
   "repository": {
     "type": "git",
     "url": "git://github.com/mgonto/restangular.git"
