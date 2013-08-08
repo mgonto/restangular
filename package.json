@@ -1,6 +1,6 @@
 {
   "name": "restangular",
-  "description": "Restfull Resources service for AngularJS apps",
+  "description": "Restful Resources service for AngularJS apps",
   "version": "1.0.10",
   "filename": "restangular.min.js",
   "homepage": "https://github.com/mgonto/restangular",
