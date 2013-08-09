@@ -1,3 +1,8 @@
+#1.0.11
+* Documentation Typo fixes
+* errorInterceptor can now stop Restangular from rejecting the promise
+* Bugfix fot method override on DELETE. Now it works
+
 #1.0.9
 * **BREAKING CHANGE**: Restangular methods created with `addRestangularMethod` will change its signature depending on the opreation. If the operation is safe (GET, OPTIONS, etc.), the signature is methodName(params, headers, elemForBody). If it's not safe (POST, PUT, etc.), the signature is methodName(elemForBody, params, headers). This is to facilitate using them as when it's not safe, you're usually going to set a body
 * Now you can configure default request parameters per method and for everything as well

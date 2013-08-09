@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.0.10 - 2013-07-30
+ * @version v1.0.11 - 2013-08-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -665,8 +665,9 @@ module.provider('Restangular', function() {
                           resolvePromise(deferred, response, restangularizeCollection(null, processedData, __this[config.restangularFields.route]));
                       }
                   }, function error(response) {
-                      config.errorInterceptor(response);
-                      deferred.reject(response);
+                      if ( config.errorInterceptor(response) !== false ) {
+                          deferred.reject(response);
+                      }
                   });
                   
                   return restangularizePromise(deferred.promise, true);
@@ -700,8 +701,9 @@ module.provider('Restangular', function() {
                   };
                   
                   var errorCallback = function(response) {
-                      config.errorInterceptor(response);
-                      deferred.reject(response);
+                      if ( config.errorInterceptor(response) !== false ) {
+                          deferred.reject(response);
+                      }
                   };
                   // Overring HTTP Method
                   var callOperation = operation;
@@ -709,7 +711,7 @@ module.provider('Restangular', function() {
                   var isOverrideOperation = config.isOverridenMethod(operation);
                   if (isOverrideOperation) {
                     callOperation = 'post';
-                    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation});
+                    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
                   }
                   
                   if (config.isSafe(operation)) {
