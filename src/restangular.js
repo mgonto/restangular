@@ -182,7 +182,16 @@ module.provider('Restangular', function() {
               config.fullRequestInterceptor = interceptor;
             };
 
+            /**
+             * Response interceptor is called just before resolving promises.
+             */
+            config.fullResponseInterceptor = config.fullResponseInterceptor || function(data, response, deferred) {
+                return data;
+            };
             
+            object.setFullResponseInterceptor = function(interceptor) {
+              config.fullResponseInterceptor = interceptor;
+            };
 
             config.errorInterceptor = config.errorInterceptor || function() {};
 
@@ -535,6 +544,10 @@ module.provider('Restangular', function() {
               }
 
               function resolvePromise(deferred, response, data) {
+                
+                // Trigger the full response interceptor.
+                data = config.fullResponseInterceptor(data, response, deferred);
+                
                 if (config.fullResponse) {
                   return deferred.resolve(_.extend(response, {
                     data: data
