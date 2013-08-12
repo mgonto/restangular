@@ -279,6 +279,15 @@ The responseInterceptor is called after we get each response from the server. It
 
 Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
 
+### fullResponseInterceptor
+The fullResponseInterceptor is executed after the response data has been restangularized but before the promise is resolved. This allows you to transform the restangularized data based on response headers and intercept promise resolution if necessary. This function receives the following arguments:
+
+* **data**: The restangularized response data.
+* **response**: The response received from the server.
+* **deferred**: The deferred promise for the request.
+
+The fullResponseInterceptor must return the restangularized data element.
+
 #### requestInterceptor
 The requestInterceptor is called before sending any data to the server. It's a function that must return the element to be requested. This function receives the following arguments:
 
