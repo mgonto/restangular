@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.0.11 - 2013-08-09
+ * @version v1.0.11 - 2013-08-12
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -189,7 +189,16 @@ module.provider('Restangular', function() {
               config.fullRequestInterceptor = interceptor;
             };
 
+            /**
+             * Response interceptor is called just before resolving promises.
+             */
+            config.fullResponseInterceptor = config.fullResponseInterceptor || function(data, response, deferred) {
+                return data;
+            };
             
+            object.setFullResponseInterceptor = function(interceptor) {
+              config.fullResponseInterceptor = interceptor;
+            };
 
             config.errorInterceptor = config.errorInterceptor || function() {};
 
@@ -542,6 +551,10 @@ module.provider('Restangular', function() {
               }
 
               function resolvePromise(deferred, response, data) {
+                
+                // Trigger the full response interceptor.
+                data = config.fullResponseInterceptor(data, response, deferred);
+                
                 if (config.fullResponse) {
                   return deferred.resolve(_.extend(response, {
                     data: data
