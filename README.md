@@ -12,8 +12,6 @@ This service is a perfect fit for any WebApp that uses Restful Resources as the 
 
 #Table of contents
 
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
-
 - [Restangular](#restangular)
 - [Table of contents](#table-of-contents)
   - [Differences with $resource](#differences-with-resource)
