@@ -247,7 +247,7 @@ This method accepts 2 parameters:
 * Boolean: Specifies if all elements should be parentless or not
 * Array: Specifies the routes (types) of all elements that should be parentless. For example `['buildings']`
 
-#### dsetDfaultHttpFields
+#### setDefaultHttpFields
 `$http` from AngularJS can receive a bunch of parameters like `cache`, `transformRequest` and so on. You can set all of those properties in the object sent on this setter so that they will be used in EVERY API call made by Restangular. This is very useful for caching for example. All properties that can be set can be checked here: http://docs.angularjs.org/api/ng.$http#Parameters
 
 #### addElementTransformer
@@ -288,7 +288,7 @@ The responseInterceptor is called after we get each response from the server. It
 
 Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
 
-### setFullResponseInterceptor
+#### setFullResponseInterceptor
 The fullResponseInterceptor is executed after the response data has been restangularized but before the promise is resolved. This allows you to transform the restangularized data based on response headers and intercept promise resolution if necessary. This function receives the following arguments:
 
 
