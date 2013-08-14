@@ -167,6 +167,13 @@ module.provider('Restangular', function() {
             object.setUseCannonicalId = function(value) {
                 config.useCannonicalId = value;
             }
+
+            config.getCannonicalIdFromElem = function(elem) {
+              var cannonicalId = elem[config.restangularFields.cannonicalId];
+              var actualId = config.isValidId(cannonicalId) ? 
+                  cannonicalId : config.getIdFromElem(elem);
+              return actualId;
+            };
             
             /**
              * Sets the Response parser. This is used in case your response isn't directly the data.
@@ -473,10 +480,11 @@ module.provider('Restangular', function() {
                       if (!elem[__this.config.restangularFields.restangularCollection]) {
                           var elemId;
                           if (__this.config.useCannonicalId) {
-                              elemId = elem[__this.config.restangularFields.cannonicalId];
+                              elemId = __this.config.getCannonicalIdFromElem(elem);
                           } else {
                               elemId = __this.config.getIdFromElem(elem);
                           }
+
                           if (config.isValidId(elemId)) {
                               elemUrl += "/" + elemId;
                           }
