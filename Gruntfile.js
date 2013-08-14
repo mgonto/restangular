@@ -29,11 +29,6 @@ module.exports = function(grunt) {
     zip: {
       '<%= dirs.dest %>/restangular.zip': ['<%= dirs.dest %>/<%= pkg.name %>.js', '<%= dirs.dest %>/<%= pkg.name %>.min.js']
     },
-    bower: {
-      dev: {
-        dest: '<%= dirs.dest %>/dependencies'
-      }
-    },
     bowerInstall: {
         install: {
         }
@@ -118,8 +113,6 @@ module.exports = function(grunt) {
 
   grunt.renameTask("bower", "bowerInstall");
 
-  grunt.loadNpmTasks('grunt-bower');
-
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.loadNpmTasks('grunt-conventional-changelog');
@@ -131,7 +124,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['bowerInstall', 'bower', 'karma:build', 'karma:buildUnderscore', 'concat', 'uglify', 'zip']);
+  grunt.registerTask('build', ['bowerInstall', 'karma:build', 'karma:buildUnderscore', 'concat', 'uglify', 'zip']);
 
   grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
   
