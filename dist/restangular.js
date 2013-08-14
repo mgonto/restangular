@@ -156,15 +156,22 @@ module.provider('Restangular', function() {
              *
              * The ResponseExtractor is a function that receives the response and the method executed.
              */
-            config.responseExtractor = config.responseExtractor || function(response) {
-              return response;
+            
+            config.responseExtractor = config.responseExtractor || function(data, operation,
+                    what, url, response, deferred) {
+                return data;
             };
-
+            
             object.setResponseExtractor = function(extractor) {
               config.responseExtractor = extractor;
             };
             
             object.setResponseInterceptor = object.setResponseExtractor;
+            
+            /**
+             * Response interceptor is called just before resolving promises.
+             */
+            
             
             /**
              * Request interceptor is called before sending an object to the server.
@@ -190,17 +197,6 @@ module.provider('Restangular', function() {
 
             object.setFullRequestInterceptor = function(interceptor) {
               config.fullRequestInterceptor = interceptor;
-            };
-
-            /**
-             * Response interceptor is called just before resolving promises.
-             */
-            config.fullResponseInterceptor = config.fullResponseInterceptor || function(data, response, deferred) {
-                return data;
-            };
-            
-            object.setFullResponseInterceptor = function(interceptor) {
-              config.fullResponseInterceptor = interceptor;
             };
 
             config.errorInterceptor = config.errorInterceptor || function() {};
@@ -379,10 +375,14 @@ module.provider('Restangular', function() {
               return resource;
             }
 
-            BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what) {
+            BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what, etag) {
                 
                 var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
+                
+                if (etag) {
+                    headers['If-None-Match'] = etag;
+                }
                 
                 var url = this.base(current);
                 url += what ? ("/" +  what): '';
@@ -556,8 +556,6 @@ module.provider('Restangular', function() {
               function resolvePromise(deferred, response, data) {
                 
                 // Trigger the full response interceptor.
-                data = config.fullResponseInterceptor(data, response, deferred);
-                
                 if (config.fullResponse) {
                   return deferred.resolve(_.extend(response, {
                     data: data
@@ -649,6 +647,15 @@ module.provider('Restangular', function() {
                   return restangularizePromise(deferred.promise, true)
               }
               
+              function parseResponse(resData, operation, route, fetchUrl, response, deferred) {
+                  var data = config.responseExtractor(resData, operation, route, fetchUrl, response, deferred);
+                  var etag = response.headers("ETag");
+                  if (data && etag) {
+                      data[config.restangularFields.etag] = etag;
+                  }
+                  return data;
+              }
+              
               
               function fetchFunction(what, reqParams, headers) {
                   var __this = this;
@@ -661,9 +668,10 @@ module.provider('Restangular', function() {
                   var request = config.fullRequestInterceptor(null, operation,
                       whatFetched, url, headers || {}, reqParams || {});
 
-                  urlHandler.resource(this, $http, request.headers, request.params, what).getList().then(function(response) {
+                  urlHandler.resource(this, $http, request.headers, request.params, what, 
+                          this[config.restangularFields.etag]).getList().then(function(response) {
                       var resData = response.data;
-                      var data = config.responseExtractor(resData, operation, whatFetched, url);
+                      var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
                       var processedData = _.map(data, function(elem) {
                           if (!__this[config.restangularFields.restangularCollection]) {
                               return restangularizeElem(__this, elem, what);
@@ -691,6 +699,7 @@ module.provider('Restangular', function() {
               
               function elemFunction(operation, what, params, obj, headers) {
                   var __this = this;
+                  var etag = this[config.restangularFields.etag];
                   var deferred = $q.defer();
                   var resParams = params || {};
                   var route = what || this[config.restangularFields.route];
@@ -702,7 +711,7 @@ module.provider('Restangular', function() {
                   
                   var okCallback = function(response) {
                       var resData = response.data;
-                      var elem = config.responseExtractor(resData, operation, route, fetchUrl);
+                      var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
                       if (elem) {
 
                         if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
@@ -733,14 +742,14 @@ module.provider('Restangular', function() {
                   if (config.isSafe(operation)) {
                     if (isOverrideOperation) {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what)[callOperation]({}).then(okCallback, errorCallback);
+                        what, etag)[callOperation]({}).then(okCallback, errorCallback);
                     } else {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what)[callOperation]().then(okCallback, errorCallback);
+                        what, etag)[callOperation]().then(okCallback, errorCallback);
                     }
                   } else {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what)[callOperation](request.element).then(okCallback, errorCallback);
+                        what, etag)[callOperation](request.element).then(okCallback, errorCallback);
                   }
                   
                   return restangularizePromise(deferred.promise);
