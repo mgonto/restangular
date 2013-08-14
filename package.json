@@ -35,7 +35,7 @@
     "grunt-contrib-uglify": "*",
     "grunt-bower": "*",
     "grunt-bower-task": "*",
-    "grunt-karma": "*",
+    "grunt-karma": "latest",
     "grunt-conventional-changelog": "0.0.12",
     "grunt-zip": "*"
   },

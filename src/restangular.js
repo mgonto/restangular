@@ -53,7 +53,7 @@ module.provider('Restangular', function() {
             object.setDefaultRequestParams = function(values) {
               config.defaultRequestParams.common = values;
             }
-            
+
             object.requestParams = config.defaultRequestParams;
 
 
@@ -61,6 +61,8 @@ module.provider('Restangular', function() {
             object.setDefaultHeaders = function(headers) {
               config.defaultHeaders = headers;
             };
+
+            object.defaultHeaders = config.defaultHeaders;
 
             /**
              * Method overriders will set which methods are sent via POST with an X-HTTP-Method-Override

@@ -1,7 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.3.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash -o ./dist/lodash.compat.js`
+ * Lo-Dash 1.3.1 <http://lodash.com/>
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -343,6 +342,7 @@
       'push': null,
       'shadowedProps': null,
       'string': null,
+      'support': null,
       'top': '',
       'trailing': false,
       'true': false,
@@ -833,96 +833,113 @@
      * @param {Object} data The data object used to populate the text.
      * @returns {String} Returns the interpolated text.
      */
-    var iteratorTemplate = function(obj) {
+    var iteratorTemplate = template(
+      // the `iterable` may be reassigned by the `top` snippet
+      'var index, iterable = <%= firstArg %>, ' +
+      // assign the `result` variable an initial value
+      'result = <%= init %>;\n' +
+      // exit early if the first argument is falsey
+      'if (!iterable) return result;\n' +
+      // add code before the iteration branches
+      '<%= top %>;' +
 
-      var __p = 'var index, iterable = ' +
-      (obj.firstArg) +
-      ', result = ' +
-      (obj.init) +
-      ';\nif (!iterable) return result;\n' +
-      (obj.top) +
-      ';';
-       if (obj.array) {
-      __p += '\nvar length = iterable.length; index = -1;\nif (' +
-      (obj.array) +
-      ') {  ';
-       if (support.unindexedChars) {
-      __p += '\n  if (isString(iterable)) {\n    iterable = iterable.split(\'\')\n  }  ';
-       }
-      __p += '\n  while (++index < length) {\n    ' +
-      (obj.loop) +
-      ';\n  }\n}\nelse {  ';
-       } else if (support.nonEnumArgs) {
-      __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
-      (obj.loop) +
-      ';\n    }\n  } else {  ';
-       }
+      // array-like iteration:
+      '<% if (array) { %>\n' +
+      'var length = iterable.length; index = -1;\n' +
+      'if (<%= array %>) {' +
 
-       if (support.enumPrototypes) {
-      __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
-       }
+      // add support for accessing string characters by index if needed
+      '  <% if (support.unindexedChars) { %>\n' +
+      '  if (isString(iterable)) {\n' +
+      "    iterable = iterable.split('')\n" +
+      '  }' +
+      '  <% } %>\n' +
 
-       if (support.enumErrorProps) {
-      __p += '\n  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n  ';
-       }
+      // iterate over the array-like value
+      '  while (++index < length) {\n' +
+      '    <%= loop %>;\n' +
+      '  }\n' +
+      '}\n' +
+      'else {' +
 
-          var conditions = [];    if (support.enumPrototypes) { conditions.push('!(skipProto && index == "prototype")'); }    if (support.enumErrorProps)  { conditions.push('!(skipErrorProps && (index == "message" || index == "name"))'); }
+      // object iteration:
+      // add support for iterating over `arguments` objects if needed
+      '  <% } else if (support.nonEnumArgs) { %>\n' +
+      '  var length = iterable.length; index = -1;\n' +
+      '  if (length && isArguments(iterable)) {\n' +
+      '    while (++index < length) {\n' +
+      "      index += '';\n" +
+      '      <%= loop %>;\n' +
+      '    }\n' +
+      '  } else {' +
+      '  <% } %>' +
 
-       if (obj.useHas && obj.useKeys) {
-      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] && keys(iterable),\n      length = ownProps ? ownProps.length : 0;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n';
-          if (conditions.length) {
-      __p += '    if (' +
-      (conditions.join(' && ')) +
-      ') {\n  ';
-       }
-      __p += 
-      (obj.loop) +
-      ';    ';
-       if (conditions.length) {
-      __p += '\n    }';
-       }
-      __p += '\n  }  ';
-       } else {
-      __p += '\n  for (index in iterable) {\n';
-          if (obj.useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }    if (conditions.length) {
-      __p += '    if (' +
-      (conditions.join(' && ')) +
-      ') {\n  ';
-       }
-      __p += 
-      (obj.loop) +
-      ';    ';
-       if (conditions.length) {
-      __p += '\n    }';
-       }
-      __p += '\n  }    ';
-       if (support.nonEnumShadows) {
-      __p += '\n\n  if (iterable !== objectProto) {\n    var ctor = iterable.constructor,\n        isProto = iterable === (ctor && ctor.prototype),\n        className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n        nonEnum = nonEnumProps[className];\n      ';
-       for (k = 0; k < 7; k++) {
-      __p += '\n    index = \'' +
-      (obj.shadowedProps[k]) +
-      '\';\n    if ((!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))';
-              if (!obj.useHas) {
-      __p += ' || (!nonEnum[index] && iterable[index] !== objectProto[index])';
-       }
-      __p += ') {\n      ' +
-      (obj.loop) +
-      ';\n    }      ';
-       }
-      __p += '\n  }    ';
-       }
+      // avoid iterating over `prototype` properties in older Firefox, Opera, and Safari
+      '  <% if (support.enumPrototypes) { %>\n' +
+      "  var skipProto = typeof iterable == 'function';\n" +
+      '  <% } %>' +
 
-       }
+      // avoid iterating over `Error.prototype` properties in older IE and Safari
+      '  <% if (support.enumErrorProps) { %>\n' +
+      '  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n' +
+      '  <% } %>' +
 
-       if (obj.array || support.nonEnumArgs) {
-      __p += '\n}';
-       }
-      __p += 
-      (obj.bottom) +
-      ';\nreturn result';
+      // define conditions used in the loop
+      '  <%' +
+      '    var conditions = [];' +
+      '    if (support.enumPrototypes) { conditions.push(\'!(skipProto && index == "prototype")\'); }' +
+      '    if (support.enumErrorProps)  { conditions.push(\'!(skipErrorProps && (index == "message" || index == "name"))\'); }' +
+      '  %>' +
 
-      return __p
-    };
+      // iterate own properties using `Object.keys`
+      '  <% if (useHas && useKeys) { %>\n' +
+      '  var ownIndex = -1,\n' +
+      '      ownProps = objectTypes[typeof iterable] && keys(iterable),\n' +
+      '      length = ownProps ? ownProps.length : 0;\n\n' +
+      '  while (++ownIndex < length) {\n' +
+      '    index = ownProps[ownIndex];\n<%' +
+      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
+      '    <%= loop %>;' +
+      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
+      '  }' +
+
+      // else using a for-in loop
+      '  <% } else { %>\n' +
+      '  for (index in iterable) {\n<%' +
+      '    if (useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }' +
+      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
+      '    <%= loop %>;' +
+      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
+      '  }' +
+
+      // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
+      // existing property and the `constructor` property of a prototype
+      // defaults to non-enumerable, Lo-Dash skips the `constructor`
+      // property when it infers it's iterating over a `prototype` object.
+      '    <% if (support.nonEnumShadows) { %>\n\n' +
+      '  if (iterable !== objectProto) {\n' +
+      "    var ctor = iterable.constructor,\n" +
+      '        isProto = iterable === (ctor && ctor.prototype),\n' +
+      '        className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n' +
+      '        nonEnum = nonEnumProps[className];\n' +
+      '      <% for (k = 0; k < 7; k++) { %>\n' +
+      "    index = '<%= shadowedProps[k] %>';\n" +
+      '    if ((!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))<%' +
+      '        if (!useHas) { %> || (!nonEnum[index] && iterable[index] !== objectProto[index])<% }' +
+      '      %>) {\n' +
+      '      <%= loop %>;\n' +
+      '    }' +
+      '      <% } %>\n' +
+      '  }' +
+      '    <% } %>' +
+      '  <% } %>' +
+      '  <% if (array || support.nonEnumArgs) { %>\n}<% } %>\n' +
+
+      // add code to the bottom of the iteration function
+      '<%= bottom %>;\n' +
+      // finally, return the `result`
+      'return result'
+    );
 
     /** Reusable iterator options for `assign` and `defaults` */
     var defaultsIteratorOptions = {
@@ -1031,6 +1048,8 @@
 
       // data properties
       data.shadowedProps = shadowedProps;
+      data.support = support;
+
       // iterator options
       data.array = data.bottom = data.loop = data.top = '';
       data.init = 'iterable';
@@ -5412,11 +5431,11 @@
       text || (text = '');
 
       // avoid missing dependencies when `iteratorTemplate` is not defined
-      options = defaults({}, options, settings);
+      options = iteratorTemplate ? defaults({}, options, settings) : settings;
 
-      var imports = defaults({}, options.imports, settings.imports),
-          importsKeys = keys(imports),
-          importsValues = values(imports);
+      var imports = iteratorTemplate && defaults({}, options.imports, settings.imports),
+          importsKeys = iteratorTemplate ? keys(imports) : ['_'],
+          importsValues = iteratorTemplate ? values(imports) : [lodash];
 
       var isEvaluating,
           index = 0,
@@ -5868,6 +5887,11 @@
         };
       });
     }
+
+    // add pseudo private property to be used and removed during the build process
+    lodash._basicEach = basicEach;
+    lodash._iteratorTemplate = iteratorTemplate;
+    lodash._shimKeys = shimKeys;
 
     return lodash;
   }

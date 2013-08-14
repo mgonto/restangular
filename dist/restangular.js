@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.0.11 - 2013-08-12
+ * @version v1.0.11 - 2013-08-14
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -60,7 +60,7 @@ module.provider('Restangular', function() {
             object.setDefaultRequestParams = function(values) {
               config.defaultRequestParams.common = values;
             }
-            
+
             object.requestParams = config.defaultRequestParams;
 
 
@@ -68,6 +68,8 @@ module.provider('Restangular', function() {
             object.setDefaultHeaders = function(headers) {
               config.defaultHeaders = headers;
             };
+
+            object.defaultHeaders = config.defaultHeaders;
 
             /**
              * Method overriders will set which methods are sent via POST with an X-HTTP-Method-Override
