@@ -117,7 +117,8 @@ module.provider('Restangular', function() {
                 route: "route",
                 parentResource: "parentResource",
                 restangularCollection: "restangularCollection",
-                cannonicalId: "__cannonicalId"
+                cannonicalId: "__cannonicalId",
+                etag: "restangularEtag"
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields = 
