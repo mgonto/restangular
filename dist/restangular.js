@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.0 - 2013-08-14
+ * @version v1.1.1 - 2013-08-15
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -650,7 +650,16 @@ module.provider('Restangular', function() {
                       _.each(["do", "custom"], function(alias) {
                           var callOperation = oper === 'delete' ? 'remove' : oper;
                           var name = alias + oper.toUpperCase();
-                          elem[name] = _.bind(customFunction, elem, callOperation);
+                          var callFunction;
+
+                          if (callOperation !== 'put' && callOperation !== 'post') {
+                              callFunction = customFunction; 
+                          } else {
+                              callFunction = function(operation, elem, path, params, headers) {
+                                return _.bind(customFunction, this)(operation, path, params, headers, elem);
+                              }
+                          }
+                          elem[name] = _.bind(callFunction, elem, callOperation);
                       });
                   });
                   elem.customGETLIST = _.bind(fetchFunction, elem);

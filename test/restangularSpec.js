@@ -164,6 +164,13 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
+    it("customPUT should work", function() {
+      $httpBackend.expectPUT('/accounts/hey').respond(accountsModel);
+      restangularAccounts.customPUT({key: 'value'}, 'hey');
+
+      $httpBackend.flush();
+    });
+
     it("options()  should safely return", function() {
       restangularAccounts.options().then(function() {
         expect(true).toBe(true);
