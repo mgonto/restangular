@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.2 - 2013-08-15
+ * @version v1.1.3 - 2013-08-16
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -72,6 +72,7 @@ module.provider('Restangular', function() {
             config.defaultHeaders = config.defaultHeaders || {};
             object.setDefaultHeaders = function(headers) {
               config.defaultHeaders = headers;
+              object.defaultHeaders = config.defaultHeaders;
             };
 
             object.defaultHeaders = config.defaultHeaders;
