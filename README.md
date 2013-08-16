@@ -342,27 +342,18 @@ This can be used together with `addRestangularMethod` (Explained later) to add c
 
 
 #### setResponseInterceptor (or setResponseExtractor. It's an Alias)
-The responseInterceptor is called after we get each response from the server. It's a function that receives 4 arguments:
+The responseInterceptor is called after we get each response from the server. It's a function that receives this arguments:
 
-* **response**: The response got from the server
-* **operation**: The operation made. It'll be the HTTP method used except for a `GET` which returns a list of element which will return `getList` so that you can distinguish them.
-* **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
-* **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
-
-Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
-
-#### setFullResponseInterceptor
-The fullResponseInterceptor is executed after the response data has been restangularized but before the promise is resolved. This allows you to transform the restangularized data based on response headers and intercept promise resolution if necessary. This function receives the following arguments:
-
-
-* **data**: Response data
+* **data**: The data received got from the server
 * **operation**: The operation made. It'll be the HTTP method used except for a `GET` which returns a list of element which will return `getList` so that you can distinguish them.
 * **what**: The model that's being requested. It can be for example: `accounts`, `buildings`, etc.
 * **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 * **response**: Full server response including headers
 * **deferred**: The deferred promise for the request.
 
-The fullResponseInterceptor must return the restangularized data element.
+Some of the use cases of the responseInterceptor are handling wrapped responses and enhancing response elements with more methods among others.
+
+The responseInterceptor must return the restangularized data element.
 
 #### setRequestInterceptor
 The requestInterceptor is called before sending any data to the server. It's a function that must return the element to be requested. This function receives the following arguments:
