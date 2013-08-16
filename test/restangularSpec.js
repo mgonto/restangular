@@ -380,4 +380,14 @@ describe("Restangular", function() {
       expect(spy).toHaveBeenCalledWith('accounts', false, fn);
     });
   });
+  
+  describe("defaultHeaders", function() {
+    it("should return defaultHeaders", function() {
+      var defaultHeaders = {testheader:'header value'};
+      
+      Restangular.setDefaultHeaders(defaultHeaders);
+      
+      expect(Restangular.defaultHeaders).toEqual(defaultHeaders);
+    });
+  });
 });
