@@ -405,6 +405,17 @@ Additionally, if you want to configure request params per method, you can use `r
 
 Supported method to configure are: remove, get, post, put, common (all)
 
+````javascript
+// set params for multiple methods at once
+Restangular.setDefaultRequestParams(['remove', 'post'], {confirm: true});
+
+// set only for get method
+Restangular.setDefaultRequestParams('get', {limit: 10});
+
+// or for all supported request methods
+Restangular.setDefaultRequestParams({apikey: "secret key"});
+````
+
 #### setFullResponse
 
 You can set fullResponse to true to get the whole response every time you do any request. The full response has the restangularized data in the `data` field, and also has the headers and config sent. By default, it's set to false.

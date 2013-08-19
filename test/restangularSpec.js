@@ -390,4 +390,38 @@ describe("Restangular", function() {
       expect(Restangular.defaultHeaders).toEqual(defaultHeaders);
     });
   });
+  
+  describe("defaultRequestParams", function() {
+    it("should return defaultRequestParams", function() {
+      var defaultRequestParams = {param:'value'};
+      
+      Restangular.setDefaultRequestParams(defaultRequestParams);
+      
+      expect(Restangular.requestParams.common).toEqual(defaultRequestParams);
+    });
+    
+    it("should be able to set default params for get, post, put.. methods separately", function() {
+      var postParams = {post:'value'},
+          putParams = {put:'value'};
+      
+      Restangular.setDefaultRequestParams('post', postParams);
+      expect(Restangular.requestParams.post).toEqual(postParams);
+      
+      Restangular.setDefaultRequestParams('put', putParams);
+      expect(Restangular.requestParams.put).toEqual(putParams);
+      
+      expect(Restangular.requestParams.common).not.toEqual(putParams);
+    });
+    
+    it("should be able to set default params for multiple methods with array", function() {
+      var defaultParams = {param:'value'};
+      
+      Restangular.setDefaultRequestParams(['post', 'put'], defaultParams);
+      
+      expect(Restangular.requestParams.post).toEqual(defaultParams);
+      expect(Restangular.requestParams.put).toEqual(defaultParams);
+      
+      expect(Restangular.requestParams.common).not.toEqual(defaultParams);
+    });
+  });
 });
