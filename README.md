@@ -401,9 +401,20 @@ You can now Override HTTP Methods. You can set here the array of methods to over
 
 You can set default Query parameters to be sent with every request and every method.
 
-Additionally, if you want to configure request params per method, you can use `requestParams` configuration similar to `$http`. For example `RestangularProvider.requestParams.get = {single: true}`.
+Additionally, if you want to configure request params per method, you can use `requestParams` configuration similar to `$http`. For example `RestangularProvider.requestParams.get = {single: true}` or Restangular.setDefaultRequestParams('get', {single: true});.
 
 Supported method to configure are: remove, get, post, put, common (all)
+
+````javascript
+// set params for multiple methods at once
+Restangular.setDefaultRequestParams(['remove', 'post'], {confirm: true});
+
+// set only for get method
+Restangular.setDefaultRequestParams('get', {limit: 10});
+
+// or for all supported request methods
+Restangular.setDefaultRequestParams({apikey: "secret key"});
+````
 
 #### setFullResponse
 

@@ -55,8 +55,23 @@ module.provider('Restangular', function() {
                 remove: {},
                 common: {}
             };
-            object.setDefaultRequestParams = function(values) {
-              config.defaultRequestParams.common = values;
+
+            object.setDefaultRequestParams = function(param1, param2) {
+              var methods = [],
+                  params = param2 || param1;
+              if (!_.isUndefined(param2)) {
+                if (_.isArray(param1)) {
+                  methods = param1;
+                } else {
+                  methods.push(param1);
+                }
+              } else {
+                methods.push('common');
+              }
+              
+              _.each(methods, function (method) {
+                config.defaultRequestParams[method] = params;
+              });
             }
 
             object.requestParams = config.defaultRequestParams;
