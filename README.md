@@ -1,7 +1,7 @@
 #Restangular
 
 [![Build Status](https://travis-ci.org/mgonto/restangular.png)](https://travis-ci.org/mgonto/restangular)
-<a href="https://twitter.com/intent/tweet?hashtags=&original_referer=http%3A%2F%2Fgithub.com%2F&text=Check+out+Restangular%2C+a+service+for+%23AngularJS+that+makes+it+easy+to+use+Res+APIs&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2Fmgonto%2Frestangular" target="_blank">
+<a href="https://twitter.com/intent/tweet?hashtags=&original_referer=http%3A%2F%2Fgithub.com%2F&text=Check+out+Restangular%2C+a+service+for+%23AngularJS+that+makes+it+easy+to+use+Rest+APIs&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2Fmgonto%2Frestangular" target="_blank">
   <img src="http://jpillora.com/github-twitter-button/img/tweet.png"></img>
 </a>
 
@@ -13,8 +13,7 @@ This service is a perfect fit for any WebApp that uses Restful Resources as the 
 #Table of contents
 
 - [Restangular](#restangular)
-- [Table of contents](#table-of-contents)
-	- [Differences with $resource](#differences-with-resource)
+- [Differences with $resource](#differences-with-resource)
 - [How do I add this to my project?](#how-do-i-add-this-to-my-project)
 - [Dependencies](#dependencies)
 - [Starter Guide](#starter-guide)
@@ -61,16 +60,16 @@ This service is a perfect fit for any WebApp that uses Restful Resources as the 
 	- [Adding Custom Methods to Models](#adding-custom-methods-to-models)
 		- [Example:](#example-1)
 - [FAQ](#faq)
-			- [How can I handle errors?](#how-can-i-handle-errors)
-			- [I need to send one header in EVERY Restangular request, how do I do this?](#i-need-to-send-one-header-in-every-restangular-request-how-do-i-do-this)
-			- [Can I cache requests?](#can-i-cache-requests)
-			- [Can it be used in $routeProvider.resolve?](#can-it-be-used-in-routeproviderresolve)
-			- [My response is actually wrapped with some metadata. How do I get the data in that case?](#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case)
-			- [I use Mongo and the ID of the elements is _id not id as the default. Therefore requests are sent to undefined routes](#i-use-mongo-and-the-id-of-the-elements-is-_id-not-id-as-the-default-therefore-requests-are-sent-to-undefined-routes)
-			- [How do I handle CRUD operations in a List returned by Restangular?](#how-do-i-handle-crud-operations-in-a-list-returned-by-restangular)
-			- [When I set baseUrl with a port, it's stripped out.](#when-i-set-baseurl-with-a-port-its-stripped-out)
-			- [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
-			- [Why does this depend on Lodash / Underscore?](#why-does-this-depend-on-lodash--underscore)
+    - [How can I handle errors?](#how-can-i-handle-errors)
+    - [I need to send one header in EVERY Restangular request, how do I do this?](#i-need-to-send-one-header-in-every-restangular-request-how-do-i-do-this)
+    - [Can I cache requests?](#can-i-cache-requests)
+    - [Can it be used in $routeProvider.resolve?](#can-it-be-used-in-routeproviderresolve)
+    - [My response is actually wrapped with some metadata. How do I get the data in that case?](#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case)
+    - [I use Mongo and the ID of the elements is _id not id as the default. Therefore requests are sent to undefined routes](#i-use-mongo-and-the-id-of-the-elements-is-_id-not-id-as-the-default-therefore-requests-are-sent-to-undefined-routes)
+    - [How do I handle CRUD operations in a List returned by Restangular?](#how-do-i-handle-crud-operations-in-a-list-returned-by-restangular)
+    - [When I set baseUrl with a port, it's stripped out.](#when-i-set-baseurl-with-a-port-its-stripped-out)
+    - [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
+    - [Why does this depend on Lodash / Underscore?](#why-does-this-depend-on-lodash--underscore)
 - [Supported Angular versions](#supported-angular-versions)
 - [Server Frameworks](#server-frameworks)
 - [Releases Notes](#releases-notes)

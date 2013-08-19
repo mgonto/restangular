@@ -65,6 +65,7 @@ module.provider('Restangular', function() {
             config.defaultHeaders = config.defaultHeaders || {};
             object.setDefaultHeaders = function(headers) {
               config.defaultHeaders = headers;
+              object.defaultHeaders = config.defaultHeaders;
             };
 
             object.defaultHeaders = config.defaultHeaders;
