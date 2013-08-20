@@ -22,7 +22,6 @@ describe("Restangular", function() {
   };
 
   // Load required modules
-  beforeEach(angular.mock.module("ngResource"));
   beforeEach(angular.mock.module("restangular"));
 
   // Init HTTP mock backend and Restangular resources
