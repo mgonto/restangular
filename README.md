@@ -5,10 +5,10 @@
   <img src="http://jpillora.com/github-twitter-button/img/tweet.png"></img>
 </a>
 
-Restangular is an AngularJS service that will help you get, delete and update Restful Resources with very few lines in the Client side. 
-This service is a perfect fit for any WebApp that uses Restful Resources as the API for your application.
+Restangular is an AngularJS service that simplifies common GET, DELETE, and UPDATE requests with a minimum of client code. 
+It's a perfect fit for any WebApp that consumes data from a RESTful API.
 
-**If you want to check a live example, [please click this link to plunkr](http://plnkr.co/edit/d6yDka?p=preview).** It's the same example as [Angular's Javascript Projects](http://angularjs.org/#wire-up-a-backend) but Restangularized.
+**Check out a, [live demo on plunkr](http://plnkr.co/edit/d6yDka?p=preview).** It uses the same example as the official [Angular Javascript Project](http://angularjs.org/#wire-up-a-backend)... but Restangularized!
 
 #Table of contents
 
