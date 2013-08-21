@@ -423,8 +423,7 @@ module.provider('Restangular', function() {
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
                 
                 if (etag) {
-                    var _if_match_ops = ['remove', 'put', 'patch'];
-                    if (_if_match_ops.indexOf(operation) > -1) {
+                    if (!config.isSafe(operation)) {
                       headers['If-Match'] = etag;
                     } else {
                       headers['If-None-Match'] = etag;
