@@ -94,23 +94,24 @@ Restangular has several features that distinguish it from $resource:
 
 Let's see a quick and short example of these features
 ````javascript
-// It uses promises.
-Restangular.one('users').getList().then(function(users) {
-  $scope.user = users[0];
+// Restangular returns promises
+Restangular.one('users').getList()	// GET: /users
+.then(function(users) {
+  // returns a list of users
+  $scope.user = users[0];	// first Restangular obj in list: { id: 123 }
 })
 
-// Later in the code.
+// Later in the code...
 
-// Requests /users/123/cars You don't have to know the URL. Just the name of the resource
-// This is a promise
-$scope.cars = $scope.user.getList('cars');
+// Retangular objects are self-aware and know how to make their own restful requests
+$scope.user.getList('cars');	// GET: /users/123/cars
 
-// POST /users/123/sendMessage You've created your own method with the path & operation that you wanted
-$scope.user.sendMessage();
+// You can also use your own custom methods on Restangular objects
+$scope.user.sendMessage();	// POST: /users/123/sendMessage
 
-// URL Building
-// GET to /user/123/messages/123/from/123/unread
-$scope.user.one('messages', 123).one('from', 123).getList('unread')
+// Chain methods together to easily build complex requests
+$scope.user.one('messages', 123).one('from', 123).getList('unread');
+// GET: /user/123/messages/123/from/123/unread
 
 
 ````
