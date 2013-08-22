@@ -439,13 +439,17 @@ module.provider('Restangular', function() {
               return resource;
             }
 
-            BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what, etag) {
+            BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what, etag, operation) {
                 
                 var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
                 
                 if (etag) {
-                    headers['If-None-Match'] = etag;
+                    if (!config.isSafe(operation)) {
+                      headers['If-Match'] = etag;
+                    } else {
+                      headers['If-None-Match'] = etag;
+                    }
                 }
                 
                 var url = this.base(current);
@@ -781,7 +785,7 @@ module.provider('Restangular', function() {
                       whatFetched, url, headers || {}, reqParams || {});
 
                   urlHandler.resource(this, $http, request.headers, request.params, what, 
-                          this[config.restangularFields.etag]).getList().then(function(response) {
+                          this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
                       var processedData = _.map(data, function(elem) {
@@ -854,14 +858,14 @@ module.provider('Restangular', function() {
                   if (config.isSafe(operation)) {
                     if (isOverrideOperation) {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what, etag)[callOperation]({}).then(okCallback, errorCallback);
+                        what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
                     } else {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what, etag)[callOperation]().then(okCallback, errorCallback);
+                        what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
                     }
                   } else {
                       urlHandler.resource(this, $http, callHeaders, request.params, 
-                        what, etag)[callOperation](request.element).then(okCallback, errorCallback);
+                        what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
                   }
                   
                   return restangularizePromise(deferred.promise);
