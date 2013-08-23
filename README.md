@@ -138,7 +138,7 @@ You can download this by:
 
 #Dependencies
 
-Restangular depends on Angular and Underscore (or Lodash). **angular-resource is no longer needed since version 1.0.6, now this uses `$http` instead of `$resource`**
+Restangular depends on Angular and Lodash (or Underscore). **angular-resource is no longer needed since version 1.0.6, now this uses `$http` instead of `$resource`**
 
 #Starter Guide
 
