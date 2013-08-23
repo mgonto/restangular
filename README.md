@@ -138,35 +138,26 @@ You can download this by:
 
 #Dependencies
 
-Restangular depends on Angular and (Underscore or Lodash). **angular-resource is no longer needed since version 1.0.6, now this uses `$http` instead of `$resource`**
+Restangular depends on Angular and Underscore (or Lodash). **angular-resource is no longer needed since version 1.0.6, now this uses `$http` instead of `$resource`**
 
 #Starter Guide
 
-## Quick configuration for Lazy Readers
-This is the quick configuration to bootstrap all. Read the rest of the documentation for further configuration and understanding
+## Quick Configuration (For Lazy Readers)
+This is all you need to start using all the basic Restangular features.
 
 ````javascript
-angular.module('sample-app', ['restangular'])
-  .config(function(RestangularProvider) {
-    RestangularProvider.setBaseUrl("/api/v1");
-  });
+// Add Restangular as a dependency to your app
+angular.module('your-app', ['restangular']);
   
-angular.module('sample-app').controller('MainCtrl', function($scope, Restangular) {
-  $scope.projects = Restangular.all('projects').getList();
+// Inject Restangular into your controller
+angular.module('your-app').controller('MainCtrl', function($scope, Restangular) {
+  // ...
 });
 ````
 
-## Adding dependency to Restangular module in your app
-
-The first thing you need to do after adding the link to your script file, is mentioning in your app that you'll use Restangular.
-
-````javascript
-var app = angular.module('angularjs-starter', ['restangular']);
-````
+The Restangular service may be injected into any Controller or Directive :)
 
 ## Using Restangular
-
-Now that you have everything configured, you can just inject this Service to any Controller or Directive like any other :)
 
 ### Creating Main Restangular object
 
