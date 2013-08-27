@@ -290,7 +290,7 @@ You can set all these configurations in **`RestangularProvider` or `Restangular`
 The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, so you can also set an absolute url like `http://api.example.com/api/v1` if you need do set another domain.
 
 #### setExtraFields
-This are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
+These are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
 
 #### setParentless
 Use this property to control whether Restangularized elements to have a parent or not. So, for example if you get an account and then get a nested list of buildings, you may want the buildings URL to be simple `/buildings/123` instead of `/accounts/123/buildings/123`. This property lets you do that.
@@ -373,7 +373,7 @@ The feature to prevent the promise to complete is usefull whenever you need to i
 
 #### setRestangularFields
 
-Restangular required 3 fields for every "Restangularized" element. This are:
+Restangular required 3 fields for every "Restangularized" element. These are:
 
 * id: Id of the element. Default: id
 * route: Name of the route of this element. Default: route
@@ -520,7 +520,7 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
 There are 3 sets of methods. Collections have some methods and elements have others. There are are also some common methods for all of them
 
 ### Restangular methods
-This are the methods that can be called in the Restangular object.
+These are the methods that can be called on the Restangular object.
 * **one(route, id)**: This will create a new Restangular object that is just a pointer to one element with the route `route` and the specified id.
 * **all(route)**: This will create a new Restangular object that is just a pointer to a list of elements for the specified path.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
@@ -584,7 +584,7 @@ Before modifying an object, we sometimes want to copy it and then modify the cop
 
 ## Enhanced promises
 
-Restangular uses enhanced promises when returning. What does this mean? All promises returned now have 2 additional methods and collection promises have 3. This are the methods:
+Restangular uses enhanced promises when returning. What does this mean? All promises returned now have 2 additional methods and collection promises have 3. These are the methods:
 
 * **call(methodName, params*)**: This will return a new promise of the previous value, after calling the method called methodName with the parameters params.
 * **get(fieldName)**: This will return a new promise for the type of the field. The param of this new promise is the property `fieldName` from the original promise result.
