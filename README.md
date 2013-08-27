@@ -735,12 +735,12 @@ Restangular.all('users').login({key: value});
 
 Create custom methods for your collection using Restangular.extendCollection(). This is an alias for:
 
-```
-  Restangular.addElementTransformer(route, true, fn)
+```js
+  Restangular.addElementTransformer(route, true, fn);
 ```
 
 ### Example:
-```
+```js
   // create methods for your collection
   Restangular.extendCollection('accounts', function(collection) {
     collection.totalAmount = function() {
@@ -761,12 +761,12 @@ Create custom methods for your collection using Restangular.extendCollection(). 
 
 Create custom methods for your models using Restangular.extendModel(). This is an alias for:
 
-```
-  Restangular.addElementTransformer(route, false, fn)
+```js
+  Restangular.addElementTransformer(route, false, fn);
 ```
 
 ### Example:
-```
+```js
   Restangular.extendModel('accounts', function(model) {
     model.prettifyAmount = function() {};
     return model;
