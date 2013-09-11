@@ -301,7 +301,7 @@ This method accepts 2 parameters:
 * Array: Specifies the routes (types) of all elements that should be parentless. For example `['buildings']`
 
 #### setDefaultHttpFields
-`$http` from AngularJS can receive a bunch of parameters like `cache`, `transformRequest` and so on. You can set all of those properties in the object sent on this setter so that they will be used in EVERY API call made by Restangular. This is very useful for caching for example. All properties that can be set can be checked here: http://docs.angularjs.org/api/ng.$http#Parameters
+`$http` from AngularJS can receive a bunch of parameters like `cache`, `transformRequest` and so on. You can set all of those properties in the object sent on this setter so that they will be used in EVERY API call made by Restangular. This is very useful for caching for example. All properties that can be set can be checked here: http://docs.angularjs.org/api/ng.$http#parameters
 
 #### addElementTransformer
 This is a hook. After each element has been "restangularized" (Added the new methods from Restangular), the corresponding transformer will be called if it fits. 
