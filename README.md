@@ -131,8 +131,8 @@ You can download this by:
 <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
 
 <!-- Or use TAG number for specific version -->
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/0.6.1/restangular.js"></script>
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/0.6.1/restangular.min.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/1.1.3/restangular.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/1.1.3/restangular.min.js"></script>
 ````
 
 
