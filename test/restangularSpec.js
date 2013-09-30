@@ -47,7 +47,7 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts/messages").respond(messages);
     $httpBackend.whenGET("/accounts/1/message").respond(messages[0]);
     $httpBackend.whenGET("/accounts/1/messages").respond(messages);
-    $httpBackend.whenGET("/accounts/0").respond(accountsModel[1]);
+    $httpBackend.whenGET("/accounts/0").respond(accountsModel[0]);
     $httpBackend.whenGET("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
@@ -90,6 +90,14 @@ describe("Restangular", function() {
     it("getList() should return an array of items", function() {
       restangularAccounts.getList().then(function(accounts) {
         expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("get(id) should return the item with given id", function() {
+      restangularAccounts.get(0).then(function(account) {
+        expect(sanitizeRestangularOne(account)).toEqual(sanitizeRestangularOne(accountsModel[0]));
       });
 
       $httpBackend.flush();

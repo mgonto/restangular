@@ -742,10 +742,15 @@ module.provider('Restangular', function() {
                   localElem.putElement = _.bind(putElementFunction, localElem);
                   localElem.options = _.bind(optionsFunction, localElem);
                   localElem.patch = _.bind(patchFunction, localElem);
+                  localElem.get = _.bind(getById, localElem);
                   localElem.getList = _.bind(fetchFunction, localElem, null);
                   
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, true, route, service);
+              }
+
+              function getById(id, reqParams, headers){
+                  return this.customGET(id.toString(), reqParams, headers);
               }
               
               function putElementFunction(idx, params, headers) {
