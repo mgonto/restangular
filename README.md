@@ -547,6 +547,7 @@ These are the methods that can be called on the Restangular object.
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
+* **get([id]): Gets one item from the collection by id**.
 * **post(elementToPost, [queryParams, headers])**: Creates a new element of this collection.
 * **head([queryParams, headers])**: Does a HEAD
 * **trace: ([queryParams, headers])**: Does a TRACE
