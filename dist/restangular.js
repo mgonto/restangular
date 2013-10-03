@@ -147,7 +147,20 @@ module.provider('Restangular', function() {
                 restangularCollection: "restangularCollection",
                 cannonicalId: "__cannonicalId",
                 etag: "restangularEtag",
-                selfLink: "href"
+                selfLink: "href",
+                get: "get",
+                getList: "getList",
+                put: "put",
+                post: "post",
+                remove: "remove",
+                head: "head",
+                trace: "trace",
+                options: "options",
+                patch: "patch",
+                getRestangularUrl: "getRestangularUrl",
+                putElement: "putElement",
+                addRestangularMethod: "addRestangularMethod",
+                getParentList: "getParentList"
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields = 
@@ -578,8 +591,8 @@ module.provider('Restangular', function() {
 
               function restangularizeBase(parent, elem, route) {
                   elem[config.restangularFields.route] = route;
-                  elem.getRestangularUrl = _.bind(urlHandler.fetchUrl, urlHandler, elem);
-                  elem.addRestangularMethod = _.bind(addRestangularMethodFunction, elem);
+                  elem[config.restangularFields.getRestangularUrl] = _.bind(urlHandler.fetchUrl, urlHandler, elem);
+                  elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
                   
                   // RequestLess connection
                   elem.one = _.bind(one, elem, elem);
@@ -724,22 +737,22 @@ module.provider('Restangular', function() {
                   }
                   
                   if (collection) {
-                      localElem.getParentList = function() {
+                      localElem[config.restangularFields.getParentList] = function() {
                           return collection;
                       }
                   }
                   
                   
                   localElem[config.restangularFields.restangularCollection] = false;
-                  localElem.get = _.bind(getFunction, localElem);
-                  localElem.getList = _.bind(fetchFunction, localElem);
-                  localElem.put = _.bind(putFunction, localElem);
-                  localElem.post = _.bind(postFunction, localElem);
-                  localElem.remove = _.bind(deleteFunction, localElem);
-                  localElem.head = _.bind(headFunction, localElem);
-                  localElem.trace = _.bind(traceFunction, localElem);
-                  localElem.options = _.bind(optionsFunction, localElem);
-                  localElem.patch = _.bind(patchFunction, localElem);
+                  localElem[config.restangularFields.get] = _.bind(getFunction, localElem);
+                  localElem[config.restangularFields.getList] = _.bind(fetchFunction, localElem);
+                  localElem[config.restangularFields.put] = _.bind(putFunction, localElem);
+                  localElem[config.restangularFields.post] = _.bind(postFunction, localElem);
+                  localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
+                  localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
+                  localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
+                  localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
+                  localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
                   
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, false, route, service);
@@ -750,14 +763,14 @@ module.provider('Restangular', function() {
 
                   var localElem = restangularizeBase(parent, elem, route);
                   localElem[config.restangularFields.restangularCollection] = true;
-                  localElem.post = _.bind(postFunction, localElem, null);
-                  localElem.head = _.bind(headFunction, localElem);
-                  localElem.trace = _.bind(traceFunction, localElem);
-                  localElem.putElement = _.bind(putElementFunction, localElem);
-                  localElem.options = _.bind(optionsFunction, localElem);
-                  localElem.patch = _.bind(patchFunction, localElem);
-                  localElem.get = _.bind(getById, localElem);
-                  localElem.getList = _.bind(fetchFunction, localElem, null);
+                  localElem[config.restangularFields.post] = _.bind(postFunction, localElem, null);
+                  localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
+                  localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
+                  localElem[config.restangularFields.putElement] = _.bind(putElementFunction, localElem);
+                  localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
+                  localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
+                  localElem[config.restangularFields.get] = _.bind(getById, localElem);
+                  localElem[config.restangularFields.getList] = _.bind(fetchFunction, localElem, null);
                   
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, true, route, service);

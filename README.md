@@ -544,6 +544,7 @@ These are the methods that can be called on the Restangular object.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **getRestangularUrl()**: Gets the URL of the current object.
+* **getParentList()**: Gets the parent list to which it belongs (if any)
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
