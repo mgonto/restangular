@@ -85,7 +85,7 @@ module.provider('Restangular', function() {
             object.setDefaultHeaders = function(headers) {
               config.defaultHeaders = headers;
               object.defaultHeaders = config.defaultHeaders;
-			  return this;
+              return this;
             };
 
             object.defaultHeaders = config.defaultHeaders;
@@ -707,7 +707,7 @@ module.provider('Restangular', function() {
                           copiedElement, copiedElement[config.restangularFields.route]);
               }
               
-              function restangularizeElem(parent, element, route) {
+              function restangularizeElem(parent, element, route, collection) {
                   var elem = config.onBeforeElemRestangularized(element, false, route);
 
                   var localElem = restangularizeBase(parent, elem, route);
@@ -715,6 +715,13 @@ module.provider('Restangular', function() {
                   if (config.useCannonicalId) {
                       localElem[config.restangularFields.cannonicalId] = config.getIdFromElem(localElem)
                   }
+                  
+                  if (collection) {
+                      localElem.getParentList = function() {
+                          return collection;
+                      }
+                  }
+                  
                   
                   localElem[config.restangularFields.restangularCollection] = false;
                   localElem.get = _.bind(getFunction, localElem);
@@ -795,10 +802,10 @@ module.provider('Restangular', function() {
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
                       var processedData = _.map(data, function(elem) {
                           if (!__this[config.restangularFields.restangularCollection]) {
-                              return restangularizeElem(__this, elem, what);
+                              return restangularizeElem(__this, elem, what, data);
                           } else {
                               return restangularizeElem(__this[config.restangularFields.parentResource],
-                                elem, __this[config.restangularFields.route]);
+                                elem, __this[config.restangularFields.route], data);
                           }
                           
                       });
