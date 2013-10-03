@@ -546,6 +546,7 @@ These are the methods that can be called on the Restangular object.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getParentList()**: Gets the parent list to which it belongs (if any)
+* **clone()**: Copies the element
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
@@ -561,6 +562,7 @@ These are the methods that can be called on the Restangular object.
 * **all(route)**: Used for RequestLess connections and URL Building. See section below.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
+* **clone()**: Copies the collection
 
 
 ### Custom methods
