@@ -383,6 +383,7 @@ Restangular required 3 fields for every "Restangularized" element. These are:
 * etag: Where to save the ETag received from the server. Defaults to `restangularEtag`
 * selfLink: The path to the property that has the URL to this item. If your REST API doesn't return a URL to an item, you can just leave it blank. Defaults to `href`
 
+Also all of Restangular methods and functions are configurable through restangularFields property.
 All of these fields except for `id` and `selfLink` are handled by Restangular, so most of the time you won't change them. You can configure the name of the property that will be binded to all of this fields by setting restangularFields property.
 
 #### setMethodOverriders
