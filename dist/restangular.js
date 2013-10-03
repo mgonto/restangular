@@ -160,7 +160,8 @@ module.provider('Restangular', function() {
                 getRestangularUrl: "getRestangularUrl",
                 putElement: "putElement",
                 addRestangularMethod: "addRestangularMethod",
-                getParentList: "getParentList"
+                getParentList: "getParentList",
+                clone: "clone"
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields = 
@@ -595,6 +596,7 @@ module.provider('Restangular', function() {
                   elem[config.restangularFields.route] = route;
                   elem[config.restangularFields.getRestangularUrl] = _.bind(urlHandler.fetchUrl, urlHandler, elem);
                   elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
+                  elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
                   
                   // RequestLess connection
                   elem.one = _.bind(one, elem, elem);
