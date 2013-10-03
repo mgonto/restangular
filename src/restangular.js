@@ -176,7 +176,9 @@ module.provider('Restangular', function() {
               var properties = field.split('.');
               var idValue = angular.copy(elem);
               _.each(properties, function(prop) {
-                idValue = idValue[prop];
+                if (idValue) {
+                  idValue = idValue[prop];  
+                }
               });
               return idValue;
             };
