@@ -844,13 +844,15 @@ module.provider('Restangular', function() {
               
               function elemFunction(operation, what, params, obj, headers) {
                   var __this = this;
-                  var etag = this[config.restangularFields.etag];
                   var deferred = $q.defer();
                   var resParams = params || {};
                   var route = what || this[config.restangularFields.route];
                   var fetchUrl = urlHandler.fetchUrl(this, what);
                   
-                  var callObj = obj || (operation === 'remove' ? undefined : stripRestangular(this));
+                  var callObj = obj || this;
+                  var etag = callObj[config.restangularFields.etag];
+                  callObj = stripRestangular(callObj);
+                  
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
                     headers || {}, resParams || {});
                   
