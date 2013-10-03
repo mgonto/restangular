@@ -275,7 +275,7 @@ var account = Restangular.one("accounts", 123);
 $scope.account = account.get({single: true});
 
 // POST /accounts/123/messages?param=myParam with the body of name: "My Message"
-account.customPOST("messages", {param: "myParam"}, {}, {name: "My Message"})
+account.customPOST({name: "My Message"}, "messages", {param: "myParam"}, {})
 
 
 ````
