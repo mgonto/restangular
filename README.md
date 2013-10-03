@@ -425,6 +425,10 @@ If all of your requests require to send some suffix to work, you can set it here
 
 You can set this to either `true` or `false`. By default it's false. If set to true, then the cannonical ID from the element will be used for URL creation (in DELETE, PUT, POST, etc.). What this means is that if you change the ID of the element and then you do a put, if you set this to true, it'll use the "old" ID which was received from the server. If set to false, it'll use the new ID assigned to the element.
 
+#### setEncodeIds
+
+You can set here if you want to URL Encode IDs or not. By default, it's true.
+
 ### How to configure them globally
 
 You can configure this in either the `config` or the `run` method. If your configurations don't need any other services, then I'd recommend you do them in the `config`. If your configurations depend on other services, you can configure them in the `run` using `Restangular` instead of `RestangularProvider` 

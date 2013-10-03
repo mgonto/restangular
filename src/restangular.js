@@ -50,6 +50,11 @@ module.provider('Restangular', function() {
             config.withHttpDefaults = function(obj) {
               return _.defaults(obj, config.defaultHttpFields);
             };
+            
+            config.encodeIds = _.isUndefined(config.encodeIds) ? true : config.encodeIds;
+            object.setEncodeIds = function(encode) {
+                config.encodeIds = encode;
+            }
 
             config.defaultRequestParams = config.defaultRequestParams || {
                 get: {},
@@ -544,7 +549,7 @@ module.provider('Restangular', function() {
                           }
 
                           if (config.isValidId(elemId)) {
-                              elemUrl += "/" + elemId;
+                              elemUrl += "/" + (__this.config.encodeIds ? encodeURIComponent(elemId) : elemId);
                           }
                       }
                     }
