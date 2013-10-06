@@ -130,12 +130,12 @@ module.provider('Restangular', function() {
 
             /**
              * You can set the restangular fields here. The 3 required fields for Restangular are:
-             * 
+             *
              * id: Id of the element
              * route: name of the route of this element
              * parentResource: the reference to the parent resource
-             * 
-             *  All of this fields except for id, are handled (and created) by Restangular. By default, 
+             *
+             *  All of this fields except for id, are handled (and created) by Restangular. By default,
              *  the field values will be id, route and parentResource respectively
              */
             config.restangularFields = config.restangularFields || {
@@ -162,7 +162,7 @@ module.provider('Restangular', function() {
                 clone: "clone"
             };
             object.setRestangularFields = function(resFields) {
-                config.restangularFields = 
+                config.restangularFields =
                   _.extend(config.restangularFields, resFields);
                 return this;
             };
@@ -183,7 +183,7 @@ module.provider('Restangular', function() {
               var idValue = angular.copy(elem);
               _.each(properties, function(prop) {
                 if (idValue) {
-                  idValue = idValue[prop];  
+                  idValue = idValue[prop]; 
                 }
               });
               return idValue;
@@ -219,7 +219,7 @@ module.provider('Restangular', function() {
 
             config.getCannonicalIdFromElem = function(elem) {
               var cannonicalId = elem[config.restangularFields.cannonicalId];
-              var actualId = config.isValidId(cannonicalId) ? 
+              var actualId = config.isValidId(cannonicalId) ?
                   cannonicalId : config.getIdFromElem(elem);
               return actualId;
             };
@@ -252,10 +252,10 @@ module.provider('Restangular', function() {
             /**
              * Request interceptor is called before sending an object to the server.
              */
-            config.fullRequestInterceptor = config.fullRequestInterceptor || function(element, operation, 
+            config.fullRequestInterceptor = config.fullRequestInterceptor || function(element, operation,
               path, url, headers, params) {
                 return {
-                  element: element, 
+                  element: element,
                   headers: headers,
                   params: params
                 };
@@ -294,10 +294,10 @@ module.provider('Restangular', function() {
 
             /**
              * This method is called after an element has been "Restangularized".
-             * 
-             * It receives the element, a boolean indicating if it's an element or a collection 
+             *
+             * It receives the element, a boolean indicating if it's an element or a collection
              * and the name of the model
-             * 
+             *
              */
             config.onElemRestangularized = config.onElemRestangularized || function(elem) {
               return elem;
@@ -332,11 +332,11 @@ module.provider('Restangular', function() {
 
             /**
              * This lets you set a suffix to every request.
-             * 
+             *
              * For example, if your api requires that for JSon requests you do /users/123.json, you can set that
              * in here.
-             * 
-             * 
+             *
+             *
              * By default, the suffix is null
              */
             config.suffix = _.isUndefined(config.suffix) ? null : config.suffix;
@@ -385,10 +385,10 @@ module.provider('Restangular', function() {
                 var changedElem = elem;
                 if (typeTransformers) {
                     _.each(typeTransformers, function(transformer) {
-                       changedElem = transformer(isCollection, changedElem); 
+                       changedElem = transformer(isCollection, changedElem);
                     });
                 }
-                return config.onElemRestangularized(changedElem, 
+                return config.onElemRestangularized(changedElem,
                   isCollection, route, Restangular);
             };
 
@@ -430,7 +430,7 @@ module.provider('Restangular', function() {
                   var value = configurer[key];
 
                   // Add default parameters
-                  value.params = _.extend({}, value.params, 
+                  value.params = _.extend({}, value.params,
                           config.defaultRequestParams[value.method.toLowerCase()]);
                   // We don't want the ? if no params are there
                   if (_.isEmpty(value.params)) {
@@ -535,7 +535,7 @@ module.provider('Restangular', function() {
                       if (__this.config.isAbsoluteUrl(elemSelfLink)) {
                         return elemSelfLink;
                       } else {
-                        elemUrl = elemSelfLink;  
+                        elemUrl = elemSelfLink; 
                       }
                     } else {
                       elemUrl = elem[__this.config.restangularFields.route];
@@ -710,7 +710,7 @@ module.provider('Restangular', function() {
                           var callFunction;
 
                           if (callOperation !== 'put' && callOperation !== 'post') {
-                              callFunction = customFunction; 
+                              callFunction = customFunction;
                           } else {
                               callFunction = function(operation, elem, path, params, headers) {
                                 return _.bind(customFunction, this)(operation, path, params, headers, elem);
@@ -725,7 +725,7 @@ module.provider('Restangular', function() {
 
               function copyRestangularizedElement(fromElement) {
                   var copiedElement = angular.copy(fromElement);
-                  return restangularizeElem(copiedElement[config.restangularFields.parentResource], 
+                  return restangularizeElem(copiedElement[config.restangularFields.parentResource],
                           copiedElement, copiedElement[config.restangularFields.route]);
               }
 
@@ -818,7 +818,7 @@ module.provider('Restangular', function() {
                   var request = config.fullRequestInterceptor(null, operation,
                       whatFetched, url, headers || {}, reqParams || {});
 
-                  urlHandler.resource(this, $http, request.headers, request.params, what, 
+                  urlHandler.resource(this, $http, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
@@ -858,7 +858,7 @@ module.provider('Restangular', function() {
                   var etag = callObj[config.restangularFields.etag];
                   callObj = stripRestangular(callObj);
 
-                  var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl, 
+                  var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
                     headers || {}, resParams || {});
 
                   var okCallback = function(response) {
@@ -870,7 +870,7 @@ module.provider('Restangular', function() {
                           resolvePromise(deferred, response, restangularizeElem(__this, elem, what));
                         } else {
                           resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route]));
-                        }  
+                        } 
 
                       } else {
                         resolvePromise(deferred, response, undefined);
@@ -893,14 +893,14 @@ module.provider('Restangular', function() {
 
                   if (config.isSafe(operation)) {
                     if (isOverrideOperation) {
-                      urlHandler.resource(this, $http, callHeaders, request.params, 
+                      urlHandler.resource(this, $http, callHeaders, request.params,
                         what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
                     } else {
-                      urlHandler.resource(this, $http, callHeaders, request.params, 
+                      urlHandler.resource(this, $http, callHeaders, request.params,
                         what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
                     }
                   } else {
-                      urlHandler.resource(this, $http, callHeaders, request.params, 
+                      urlHandler.resource(this, $http, callHeaders, request.params,
                         what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
                   }
 
@@ -946,7 +946,7 @@ module.provider('Restangular', function() {
              function addRestangularMethodFunction(name, operation, path, defaultParams, defaultHeaders, defaultElem) {
                  var bindedFunction;
                  if (operation === 'getList') {
-                     bindedFunction = _.bind(fetchFunction, this, path); 
+                     bindedFunction = _.bind(fetchFunction, this, path);
                  } else {
                      bindedFunction = _.bind(customFunction, this, operation, path);
                  }
