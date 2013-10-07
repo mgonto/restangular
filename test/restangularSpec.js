@@ -18,7 +18,7 @@ describe("Restangular", function() {
     return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
       "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
       "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all","doGET", "doPOST",
-      "doPUT", "doDELETE", "doGETLIST", "addRestangularMethod", "getRestangularUrl");
+      "doPUT", "doDELETE", "doGETLIST", "addRestangularMethod", "getRestangularUrl", "several");
   };
 
   // Load required modules
@@ -44,6 +44,7 @@ describe("Restangular", function() {
     $httpBackend.when("OPTIONS", "/accounts").respond();
 
     $httpBackend.whenGET("/accounts").respond(accountsModel);
+    $httpBackend.whenGET("/accounts/0,1").respond(accountsModel);
     $httpBackend.whenGET("/accounts/messages").respond(messages);
     $httpBackend.whenGET("/accounts/1/message").respond(messages[0]);
     $httpBackend.whenGET("/accounts/1/messages").respond(messages);
@@ -89,6 +90,15 @@ describe("Restangular", function() {
   describe("ALL", function() {
     it("getList() should return an array of items", function() {
       restangularAccounts.getList().then(function(accounts) {
+        expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("several getList() should return an array of items", function() {
+      $httpBackend.expectGET('/accounts/0,1');
+      Restangular.several("accounts", 0, 1).getList().then(function(accounts) {
         expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
       });
 

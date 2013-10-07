@@ -159,7 +159,8 @@ module.provider('Restangular', function() {
                 putElement: "putElement",
                 addRestangularMethod: "addRestangularMethod",
                 getParentList: "getParentList",
-                clone: "clone"
+                clone: "clone",
+                ids: "ids"
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -540,7 +541,12 @@ module.provider('Restangular', function() {
                     } else {
                       elemUrl = elem[__this.config.restangularFields.route];
 
-                      if (!elem[__this.config.restangularFields.restangularCollection]) {
+                      if (elem[__this.config.restangularFields.restangularCollection]) {
+                        var ids = elem[__this.config.restangularFields.ids];
+                        if (ids) {
+                          elemUrl += "/" + ids.join(",");
+                        }
+                      } else {
                           var elemId;
                           if (__this.config.useCannonicalId) {
                               elemId = __this.config.getCannonicalIdFromElem(elem);
@@ -599,6 +605,7 @@ module.provider('Restangular', function() {
                   // RequestLess connection
                   elem.one = _.bind(one, elem, elem);
                   elem.all = _.bind(all, elem, elem);
+                  elem.several = _.bind(several, elem, elem);
                   elem.oneUrl = _.bind(oneUrl, elem, elem);
                   elem.allUrl = _.bind(allUrl, elem, elem);
 
@@ -636,7 +643,14 @@ module.provider('Restangular', function() {
 
 
               function all(parent, route) {
-                  return restangularizeCollection(parent, {} , route, true);
+                  return restangularizeCollection(parent, [] , route, true);
+              }
+
+              function several(parent, route, ids) {
+                var collection = [];
+                collection[config.restangularFields.ids] = 
+                  Array.prototype.splice.call(arguments, 2);
+                return restangularizeCollection(parent, collection , route, true); 
               }
 
               function oneUrl(parent, route, url) {
@@ -991,6 +1005,8 @@ module.provider('Restangular', function() {
               service.one = _.bind(one, service, null);
 
               service.all = _.bind(all, service, null);
+
+              service.several = _.bind(several, service, null);
 
               service.oneUrl = _.bind(oneUrl, service, null);
 

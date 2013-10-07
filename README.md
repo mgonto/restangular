@@ -161,7 +161,7 @@ The Restangular service may be injected into any Controller or Directive :)
 
 ### Creating Main Restangular object
 
-There are 2 ways of creating a main Restangular object. 
+There are 3 ways of creating a main Restangular object. 
 The first one and most common one is by stating the main route of all requests. 
 The second one is by stating the main route and object of all requests.
 
@@ -171,6 +171,9 @@ Restangular.all('accounts')
 
 // Stating main object
 Restangular.one('accounts', 1234)
+
+// Gets a list of all of those accounts
+Restangular.several('accounts', 1234, 123, 12345);
 ````
 
 ### Let's code!
@@ -546,6 +549,7 @@ These are the methods that can be called on the Restangular object.
 * **patch([queryParams, headers])**: Does a PATCH
 * **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
 * **all(route)**: Used for RequestLess connections and URL Building. See section below.
+* **several(route, ids*)**: Used for RequestLess connections and URL Building. See section below.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **getRestangularUrl()**: Gets the URL of the current object.
@@ -564,6 +568,7 @@ These are the methods that can be called on the Restangular object.
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
 * **all(route)**: Used for RequestLess connections and URL Building. See section below.
+* **several(route, ids*)**: Used for RequestLess connections and URL Building. See section below.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **clone()**: Copies the collection
