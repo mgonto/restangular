@@ -650,7 +650,7 @@ In this case, as you can see, the URL to each element can't be guessed so we nee
 
 How do we do this with Restangular?
 
-First, we need to configure the path for the link to self. For that, int he config we do:
+First, we need to configure the path for the link to self. For that, in the config we do:
 
 ````javascript
 RestangularProvider.setRestangularFields({
