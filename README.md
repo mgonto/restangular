@@ -103,7 +103,7 @@ Restangular.one('users').getList()	// GET: /users
 
 // Later in the code...
 
-// Retangular objects are self-aware and know how to make their own restful requests
+// Restangular objects are self-aware and know how to make their own restful requests
 $scope.user.getList('cars');	// GET: /users/123/cars
 
 // You can also use your own custom methods on Restangular objects
