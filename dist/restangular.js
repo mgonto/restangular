@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.5 - 2013-10-07
+ * @version v1.1.5 - 2013-10-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -877,8 +877,9 @@ module.provider('Restangular', function() {
 
                   var callObj = obj || this;
                   var etag = callObj[config.restangularFields.etag];
-                  callObj = stripRestangular(callObj);
-
+                  if (_.isObject(callObj)) {
+                      callObj = stripRestangular(callObj);
+                  }
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
                     headers || {}, resParams || {});
 

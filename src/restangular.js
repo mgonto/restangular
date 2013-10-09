@@ -870,8 +870,9 @@ module.provider('Restangular', function() {
 
                   var callObj = obj || this;
                   var etag = callObj[config.restangularFields.etag];
-                  callObj = stripRestangular(callObj);
-
+                  if (_.isObject(callObj)) {
+                      callObj = stripRestangular(callObj);
+                  }
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
                     headers || {}, resParams || {});
 
