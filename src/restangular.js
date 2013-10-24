@@ -850,7 +850,7 @@ module.provider('Restangular', function() {
                       if (!__this[config.restangularFields.restangularCollection]) {
                           resolvePromise(deferred, response, restangularizeCollection(__this, processedData, what));
                       } else {
-                          resolvePromise(deferred, response, restangularizeCollection(null, processedData, __this[config.restangularFields.route]));
+                          resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route]));
                       }
                   }, function error(response) {
                       if ( config.errorInterceptor(response) !== false ) {
