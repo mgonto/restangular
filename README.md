@@ -970,7 +970,9 @@ This server frameworks play real nice with Restangular, as they let you create a
 
 # Releases Notes
 
-[Click here to see Releases Notes](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
+New releases notes are together with releases in GitHub at: https://github.com/mgonto/restangular/releases
+
+To see old releases notes, [you can click here](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
 
 # License
 
