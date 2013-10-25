@@ -823,6 +823,19 @@ RestangularProvider.setDefaultHttpFields({cache: true});
 
 Yes, of course. Every method in Restangular returns a promise so this can be used without any problem.
 
+#### **How can I send a delete WITHOUT a body?**
+
+You must add a requestInterceptor for this.
+
+````js
+RestangularProvider.setRequestInterceptor(function(elem, operation) {
+  if (operation === "remove") {
+     return undefined;
+  } 
+  return elem;
+})
+````
+
 #### **My response is actually wrapped with some metadata. How do I get the data in that case?**
 
 So, let's assume that your data is the following:
