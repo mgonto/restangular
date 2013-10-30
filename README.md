@@ -945,8 +945,9 @@ In order to get this done, you need to use the `responseExtractor`. You need to 
 RestangularProvider.setResponseExtractor(function(response) {
   var newResponse = response;
   if (angular.isArray(response)) {
+    newResponse.originalElement = [];
     angular.forEach(newResponse, function(value, key) {
-      newResponse[key].originalElement = angular.copy(value);
+      newResponse.originalElement[key] = angular.copy(value);
     });
   } else {
     newResponse.originalElement = angular.copy(response);
