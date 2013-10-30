@@ -947,7 +947,7 @@ RestangularProvider.setResponseExtractor(function(response) {
   if (angular.isArray(response)) {
     newResponse.originalElement = [];
     angular.forEach(newResponse, function(value, key) {
-      newResponse.originalElement[key] = angular.copy(value);
+      newResponse[key].originalElement = angular.copy(value);
     });
   } else {
     newResponse.originalElement = angular.copy(response);
@@ -955,6 +955,21 @@ RestangularProvider.setResponseExtractor(function(response) {
 
   return newResponse;
 });
+````
+
+**Addendum :** If you want originalElement to be the original response object instead of having an original value for each key in your newResponse array, replace
+
+
+
+````
+      newResponse[key].originalElement = angular.copy(value);
+````
+
+By
+
+  
+````
+      newResponse.originalElement[key] = angular.copy(value);
 ````
 
 #### Why does this depend on Lodash / Underscore?
