@@ -956,6 +956,21 @@ RestangularProvider.setResponseExtractor(function(response) {
 });
 ````
 
+**Addendum :** If you want originalElement to be the original response object instead of having an original value for each key in your newResponse array, replace
+
+
+
+````
+      newResponse[key].originalElement = angular.copy(value);
+````
+
+By
+
+  
+````
+      newResponse.originalElement[key] = angular.copy(value);
+````
+
 #### Why does this depend on Lodash / Underscore?
 
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc. 
