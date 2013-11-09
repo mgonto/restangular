@@ -486,7 +486,16 @@ module.provider('Restangular', function() {
                 }
 
                 var url = this.base(current);
-                url += what ? ("/" +  what): '';
+                
+                if (what) {
+                  var add = '';
+                  if (!/\/$/.test(url)) {
+                    add += '/';
+                  }
+                  add += what;
+                  url += add;
+                }
+
                 if (this.config.suffix 
                   && url.indexOf(this.config.suffix, url.length - suffix.length) === -1) {
 
