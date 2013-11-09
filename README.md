@@ -545,6 +545,7 @@ These are the methods that can be called on the Restangular object.
 * **restangularizeElement(parent, element, route)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route)**: Restangularizes a new collection
 
+
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
 * **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. **It's a string with the name of the nested resource (and URL)**. For example `buildings`
@@ -563,6 +564,7 @@ These are the methods that can be called on the Restangular object.
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getParentList()**: Gets the parent list to which it belongs (if any)
 * **clone()**: Copies the element
+* **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
@@ -580,7 +582,7 @@ These are the methods that can be called on the Restangular object.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **clone()**: Copies the collection
-
+* **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
@@ -702,6 +704,16 @@ Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name:
 
 // DELETE /accounts/123/buildings/456
 Restangular.one("accounts", 123).one("buildings", 456).remove();
+````
+
+## Using local $http configuration
+
+There're sometimes when you want to set a specific configuration $http configuration just for one Restangular's call. For that, you can use `withHttpConfig`. You must call that method just before doing the HTTP request. Let's learn how to use it with the following example:
+
+````js
+Restangular.one('accounts', 123).withHttpConfig({timeout: 100}).getList('buildings');
+
+$scope.account.withHttpConfig({timeout: 100}).put();
 ````
 
 ## Creating new Restangular Methods

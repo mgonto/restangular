@@ -50,8 +50,8 @@ module.provider('Restangular', function() {
               return this;
             };
 
-            config.withHttpDefaults = function(obj) {
-              return _.defaults(obj, config.defaultHttpFields);
+            config.withHttpValues = function(httpLocalConfig, obj) {
+              return _.defaults(obj, httpLocalConfig, config.defaultHttpFields);
             };
 
             config.encodeIds = _.isUndefined(config.encodeIds) ? true : config.encodeIds;
@@ -482,45 +482,56 @@ module.provider('Restangular', function() {
                 url += what ? ("/" +  what): '';
                 if (this.config.suffix 
                   && url.indexOf(this.config.suffix, url.length - suffix.length) === -1) {
-                  
+
                     url += this.config.suffix;  
                 }
-                
+                var localHttpConfig = current[this.config.restangularFields.httpConfig];
+                current[this.config.restangularFields.httpConfig] = undefined;
+
 
                 return RestangularResource(this.config, $http, url, {
-                    getList: this.config.withHttpDefaults({method: 'GET',
+                    getList: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'GET',
                       params: params,
                       headers: headers}),
 
-                    get: this.config.withHttpDefaults({method: 'GET',
+                    get: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'GET',
                       params: params,
                       headers: headers}),
 
-                    put: this.config.withHttpDefaults({method: 'PUT',
+                    put: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'PUT',
                       params: params,
                       headers: headers}),
 
-                    post: this.config.withHttpDefaults({method: 'POST',
+                    post: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'POST',
                       params: params,
                       headers: headers}),
 
-                    remove: this.config.withHttpDefaults({method: 'DELETE',
+                    remove: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'DELETE',
                       params: params,
                       headers: headers}),
 
-                    head: this.config.withHttpDefaults({method: 'HEAD',
+                    head: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'HEAD',
                       params: params,
                       headers: headers}),
 
-                    trace: this.config.withHttpDefaults({method: 'TRACE',
+                    trace: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'TRACE',
                       params: params,
                       headers: headers}),
 
-                    options: this.config.withHttpDefaults({method: 'OPTIONS',
+                    options: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'OPTIONS',
                       params: params,
                       headers: headers}),
 
-                    patch: this.config.withHttpDefaults({method: 'PATCH',
+                    patch: this.config.withHttpValues(localHttpConfig, 
+                      {method: 'PATCH',
                       params: params,
                       headers: headers})
                 });
@@ -610,6 +621,7 @@ module.provider('Restangular', function() {
                   elem[config.restangularFields.getRestangularUrl] = _.bind(urlHandler.fetchUrl, urlHandler, elem);
                   elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
                   elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
+                  elem.withHttpConfig = _.bind(withHttpConfig, elem);
 
                   // RequestLess connection
                   elem.one = _.bind(one, elem, elem);
@@ -870,8 +882,8 @@ module.provider('Restangular', function() {
                   return restangularizePromise(deferred.promise, true);
               }
 
-              function withHttpConfig(config) {
-                 this[config.restangularFields.httpConfig] = config;
+              function withHttpConfig(httpConfig) {
+                 this[config.restangularFields.httpConfig] = httpConfig;
                  return this;
               }
 
