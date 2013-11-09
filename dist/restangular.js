@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.6 - 2013-11-09
+ * @version v1.1.7 - 2013-11-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -474,7 +474,7 @@ module.provider('Restangular', function() {
               return resource;
             }
 
-            BaseCreator.prototype.resource = function(current, $http, $httpConfig, callHeaders, callParams, what, etag, operation) {
+            BaseCreator.prototype.resource = function(current, $http, localHttpConfig, callHeaders, callParams, what, etag, operation) {
 
                 var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
@@ -503,7 +503,7 @@ module.provider('Restangular', function() {
 
                     url += this.config.suffix;  
                 }
-                var localHttpConfig = $httpConfig;
+                
                 current[this.config.restangularFields.httpConfig] = undefined;
 
 
@@ -918,7 +918,7 @@ module.provider('Restangular', function() {
                       callObj = stripRestangular(callObj);
                   }
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
-                    headers || {}, resParams || {});
+                    headers || {}, resParams || {}, this[config.restangularFields.httpConfig] || {});
 
                   var okCallback = function(response) {
                       var resData = response.data;
