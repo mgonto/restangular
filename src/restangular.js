@@ -11,7 +11,7 @@ module.provider('Restangular', function() {
              */
 
             object.configuration = config;
-            
+
             var safeMethods= ["get", "head", "options", "trace"];
             config.isSafe = function(operation) {
               return _.contains(safeMethods, operation.toLowerCase());
@@ -163,7 +163,8 @@ module.provider('Restangular', function() {
                 addRestangularMethod: "addRestangularMethod",
                 getParentList: "getParentList",
                 clone: "clone",
-                ids: "ids"
+                ids: "ids",
+                httpConfig: '_$httpConfig'
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -479,7 +480,12 @@ module.provider('Restangular', function() {
 
                 var url = this.base(current);
                 url += what ? ("/" +  what): '';
-                url += (this.config.suffix || '');
+                if (this.config.suffix 
+                  && url.indexOf(this.config.suffix, url.length - suffix.length) === -1) {
+                  
+                    url += this.config.suffix;  
+                }
+                
 
                 return RestangularResource(this.config, $http, url, {
                     getList: this.config.withHttpDefaults({method: 'GET',
@@ -862,6 +868,11 @@ module.provider('Restangular', function() {
                   });
 
                   return restangularizePromise(deferred.promise, true);
+              }
+
+              function withHttpConfig(config) {
+                 this[config.restangularFields.httpConfig] = config;
+                 return this;
               }
 
               function elemFunction(operation, what, params, obj, headers) {
