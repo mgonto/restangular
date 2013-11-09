@@ -9,6 +9,9 @@ module.provider('Restangular', function() {
             /**
              * Those are HTTP safe methods for which there is no need to pass any data with the request.
              */
+
+            object.configuration = config;
+            
             var safeMethods= ["get", "head", "options", "trace"];
             config.isSafe = function(operation) {
               return _.contains(safeMethods, operation.toLowerCase());

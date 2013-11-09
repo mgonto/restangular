@@ -432,6 +432,14 @@ You can set this to either `true` or `false`. By default it's false. If set to t
 
 You can set here if you want to URL Encode IDs or not. By default, it's true.
 
+### Accessing configuration
+
+You can also access the configuration via `RestangularProvider` and `Restangular` via the `configuration` property if you don't want to use the setters. Check it out:
+
+````js
+Restangular.configuration.requestSuffix = '/';
+````
+
 ### How to configure them globally
 
 You can configure this in either the `config` or the `run` method. If your configurations don't need any other services, then I'd recommend you do them in the `config`. If your configurations depend on other services, you can configure them in the `run` using `Restangular` instead of `RestangularProvider` 

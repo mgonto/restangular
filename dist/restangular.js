@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.6 - 2013-10-24
+ * @version v1.1.6 - 2013-11-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -16,6 +16,9 @@ module.provider('Restangular', function() {
             /**
              * Those are HTTP safe methods for which there is no need to pass any data with the request.
              */
+
+            object.configuration = config;
+            
             var safeMethods= ["get", "head", "options", "trace"];
             config.isSafe = function(operation) {
               return _.contains(safeMethods, operation.toLowerCase());
