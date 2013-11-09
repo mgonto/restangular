@@ -365,6 +365,7 @@ It must return an object with the following properties:
 * **headers**: The headers to send
 * **params**: The request parameters to send
 * **element**: The element to send
+* **httpConfig**: The httpConfig to call with
 
 #### setErrorInterceptor
 The errorInterceptor is called whenever there's an error. It's a function that receives the response as a parameter.

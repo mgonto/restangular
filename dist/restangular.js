@@ -265,20 +265,22 @@ module.provider('Restangular', function() {
              * Request interceptor is called before sending an object to the server.
              */
             config.fullRequestInterceptor = config.fullRequestInterceptor || function(element, operation,
-              path, url, headers, params) {
+              path, url, headers, params, httpConfig) {
                 return {
                   element: element,
                   headers: headers,
-                  params: params
+                  params: params,
+                  httpConfig: httpConfig
                 };
             };
 
             object.setRequestInterceptor = function(interceptor) {
-              config.fullRequestInterceptor = function(elem, operation, path, url, headers, params) {
+              config.fullRequestInterceptor = function(elem, operation, path, url, headers, params, httpConfig) {
                 return {
                   headers: headers,
                   params: params,
-                  element: interceptor(elem, operation, path, url)
+                  element: interceptor(elem, operation, path, url),
+                  httpConfig: httpConfig
                 }
               };
               return this;
@@ -472,7 +474,7 @@ module.provider('Restangular', function() {
               return resource;
             }
 
-            BaseCreator.prototype.resource = function(current, $http, callHeaders, callParams, what, etag, operation) {
+            BaseCreator.prototype.resource = function(current, $http, $httpConfig, callHeaders, callParams, what, etag, operation) {
 
                 var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
                 var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
@@ -486,7 +488,7 @@ module.provider('Restangular', function() {
                 }
 
                 var url = this.base(current);
-                
+
                 if (what) {
                   var add = '';
                   if (!/\/$/.test(url)) {
@@ -501,7 +503,7 @@ module.provider('Restangular', function() {
 
                     url += this.config.suffix;  
                 }
-                var localHttpConfig = current[this.config.restangularFields.httpConfig];
+                var localHttpConfig = $httpConfig;
                 current[this.config.restangularFields.httpConfig] = undefined;
 
 
@@ -867,9 +869,9 @@ module.provider('Restangular', function() {
 
 
                   var request = config.fullRequestInterceptor(null, operation,
-                      whatFetched, url, headers || {}, reqParams || {});
+                      whatFetched, url, headers || {}, reqParams || {}, this[config.restangularFields.httpConfig] || {});
 
-                  urlHandler.resource(this, $http, request.headers, request.params, what,
+                  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
@@ -950,14 +952,14 @@ module.provider('Restangular', function() {
 
                   if (config.isSafe(operation)) {
                     if (isOverrideOperation) {
-                      urlHandler.resource(this, $http, callHeaders, request.params,
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
                         what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
                     } else {
-                      urlHandler.resource(this, $http, callHeaders, request.params,
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
                         what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
                     }
                   } else {
-                      urlHandler.resource(this, $http, callHeaders, request.params,
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
                         what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
                   }
 
