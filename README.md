@@ -555,7 +555,7 @@ These are the methods that can be called on the Restangular object.
 * **head([queryParams, headers])**: Does a HEAD
 * **trace([queryParams, headers])**: Does a TRACE
 * **options([queryParams, headers])**: Does a OPTIONS
-* **patch([queryParams, headers])**: Does a PATCH
+* **patch(object, [queryParams, headers])**: Does a PATCH
 * **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
 * **all(route)**: Used for RequestLess connections and URL Building. See section below.
 * **several(route, ids*)**: Used for RequestLess connections and URL Building. See section below.
@@ -573,7 +573,7 @@ These are the methods that can be called on the Restangular object.
 * **head([queryParams, headers])**: Does a HEAD
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
-* **patch([queryParams, headers])**: Does a PATCH
+* **patch(object, [queryParams, headers])**: Does a PATCH
 * **putElement(idx, params, headers)**: Puts the element on the required index and returns a promise of the updated new array
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **one(route, id)**: Used for RequestLess connections and URL Building. See section below.
