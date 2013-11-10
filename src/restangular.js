@@ -188,7 +188,7 @@ module.provider('Restangular', function() {
               var idValue = angular.copy(elem);
               _.each(properties, function(prop) {
                 if (idValue) {
-                  idValue = idValue[prop]; 
+                  idValue = idValue[prop];
                 }
               });
               return idValue;
@@ -491,57 +491,57 @@ module.provider('Restangular', function() {
                   url += add;
                 }
 
-                if (this.config.suffix 
-                  && url.indexOf(this.config.suffix, url.length - suffix.length) === -1) {
+                if (this.config.suffix
+                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1) {
 
-                    url += this.config.suffix;  
+                    url += this.config.suffix;
                 }
-                
+
                 current[this.config.restangularFields.httpConfig] = undefined;
 
 
                 return RestangularResource(this.config, $http, url, {
-                    getList: this.config.withHttpValues(localHttpConfig, 
+                    getList: this.config.withHttpValues(localHttpConfig,
                       {method: 'GET',
                       params: params,
                       headers: headers}),
 
-                    get: this.config.withHttpValues(localHttpConfig, 
+                    get: this.config.withHttpValues(localHttpConfig,
                       {method: 'GET',
                       params: params,
                       headers: headers}),
 
-                    put: this.config.withHttpValues(localHttpConfig, 
+                    put: this.config.withHttpValues(localHttpConfig,
                       {method: 'PUT',
                       params: params,
                       headers: headers}),
 
-                    post: this.config.withHttpValues(localHttpConfig, 
+                    post: this.config.withHttpValues(localHttpConfig,
                       {method: 'POST',
                       params: params,
                       headers: headers}),
 
-                    remove: this.config.withHttpValues(localHttpConfig, 
+                    remove: this.config.withHttpValues(localHttpConfig,
                       {method: 'DELETE',
                       params: params,
                       headers: headers}),
 
-                    head: this.config.withHttpValues(localHttpConfig, 
+                    head: this.config.withHttpValues(localHttpConfig,
                       {method: 'HEAD',
                       params: params,
                       headers: headers}),
 
-                    trace: this.config.withHttpValues(localHttpConfig, 
+                    trace: this.config.withHttpValues(localHttpConfig,
                       {method: 'TRACE',
                       params: params,
                       headers: headers}),
 
-                    options: this.config.withHttpValues(localHttpConfig, 
+                    options: this.config.withHttpValues(localHttpConfig,
                       {method: 'OPTIONS',
                       params: params,
                       headers: headers}),
 
-                    patch: this.config.withHttpValues(localHttpConfig, 
+                    patch: this.config.withHttpValues(localHttpConfig,
                       {method: 'PATCH',
                       params: params,
                       headers: headers})
@@ -567,7 +567,7 @@ module.provider('Restangular', function() {
                       if (__this.config.isAbsoluteUrl(elemSelfLink)) {
                         return elemSelfLink;
                       } else {
-                        elemUrl = elemSelfLink; 
+                        elemUrl = elemSelfLink;
                       }
                     } else {
                       elemUrl = elem[__this.config.restangularFields.route];
@@ -680,9 +680,9 @@ module.provider('Restangular', function() {
 
               function several(parent, route, ids) {
                 var collection = [];
-                collection[config.restangularFields.ids] = 
+                collection[config.restangularFields.ids] =
                   Array.prototype.splice.call(arguments, 2);
-                return restangularizeCollection(parent, collection , route, true); 
+                return restangularizeCollection(parent, collection , route, true);
               }
 
               function oneUrl(parent, route, url) {
@@ -922,7 +922,7 @@ module.provider('Restangular', function() {
                           resolvePromise(deferred, response, restangularizeElem(__this, elem, what));
                         } else {
                           resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route]));
-                        } 
+                        }
 
                       } else {
                         resolvePromise(deferred, response, undefined);
