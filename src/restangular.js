@@ -12,7 +12,7 @@ module.provider('Restangular', function() {
 
             object.configuration = config;
 
-            var safeMethods= ["get", "head", "options", "trace"];
+            var safeMethods= ["get", "head", "options", "trace", "getList"];
             config.isSafe = function(operation) {
               return _.contains(safeMethods, operation.toLowerCase());
             };
