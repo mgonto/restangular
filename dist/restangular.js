@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.8 - 2013-11-10
+ * @version v1.1.8 - 2013-11-11
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -19,7 +19,7 @@ module.provider('Restangular', function() {
 
             object.configuration = config;
 
-            var safeMethods= ["get", "head", "options", "trace"];
+            var safeMethods= ["get", "head", "options", "trace", "getList"];
             config.isSafe = function(operation) {
               return _.contains(safeMethods, operation.toLowerCase());
             };
