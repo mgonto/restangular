@@ -184,9 +184,10 @@ Now that we have our main Object let's start playing with it.
 // First way of creating a Restangular object. Just saying the base URL
 var baseAccounts = Restangular.all('accounts');
 
-// This will query /accounts and return a promise. As Angular supports setting promises to scope variables
-// as soon as we get the information from the server, it will be shown in our template :)
-$scope.allAccounts = baseAccounts.getList();
+// This will query /accounts and return a promise.
+baseAccounts.getList().then(function(accounts) {
+  $scope.allAccounts = accounts;
+});
 
 var newAccount = {name: "Gonto's account"};
 
