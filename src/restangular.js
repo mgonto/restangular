@@ -923,7 +923,7 @@ module.provider('Restangular', function() {
                   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
-                      var fullParams = _.defaults(reqParams || {}, config.defaultRequestParams.get, config.defaultRequestParams.common);
+                      var fullParams = response.config.params;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
                       var processedData = _.map(data, function(elem) {
                           if (!__this[config.restangularFields.restangularCollection]) {
@@ -972,7 +972,7 @@ module.provider('Restangular', function() {
 
                   var okCallback = function(response) {
                       var resData = response.data;
-                      var fullParams = _.defaults(resParams || {}, config.defaultRequestParams.get, config.defaultRequestParams.common);
+                      var fullParams = response.config.params;
                       var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
                       if (elem) {
 
