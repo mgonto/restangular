@@ -1,3 +1,7 @@
+# New release information
+New releases are in Releases section of Github
+https://github.com/mgonto/restangular/releases
+
 #1.0.11
 * Documentation Typo fixes
 * errorInterceptor can now stop Restangular from rejecting the promise
