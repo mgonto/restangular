@@ -184,7 +184,7 @@ describe("Restangular", function() {
     $httpBackend.flush();
    });
 
-    it("post() should add a new item", function() {
+    it("post() should work with arrays", function() {
      Restangular.all('places').post([{name: "Gonto"}, {name: 'John'}]).then(function(value) {
        expect(value.length).toEqual(2);
      });
