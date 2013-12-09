@@ -121,6 +121,13 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
+    it("several remove() should work", function() {
+      $httpBackend.expectDELETE('/accounts/0,1').respond([200, "", ""]);
+      Restangular.several("accounts", 0, 1).remove();
+
+      $httpBackend.flush();
+    });
+
     it("get(id) should return the item with given id", function() {
       restangularAccounts.get(0).then(function(account) {
         expect(sanitizeRestangularOne(account)).toEqual(sanitizeRestangularOne(accountsModel[0]));

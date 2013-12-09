@@ -886,6 +886,7 @@ module.provider('Restangular', function() {
                   var localElem = restangularizeBase(parent, elem, route, reqParams);
                   localElem[config.restangularFields.restangularCollection] = true;
                   localElem[config.restangularFields.post] = _.bind(postFunction, localElem, null);
+                  localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
                   localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
                   localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
                   localElem[config.restangularFields.putElement] = _.bind(putElementFunction, localElem);
