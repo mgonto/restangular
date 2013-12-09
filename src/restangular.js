@@ -19,7 +19,14 @@ module.provider('Restangular', function() {
 
             var absolutePattern = /^https?:\/\//i;
             config.isAbsoluteUrl = function(string) {
-              return string && absolutePattern.test(string);
+              return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ? 
+                      string && absolutePattern.test(string) :
+                      config.absoluteUrl;
+            }
+            
+            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
+            object.setSelfLinkAbsoluteUrl = function(value) {
+                config.absoluteUrl = value;
             }
             /**
              * This is the BaseURL to be used with Restangular
