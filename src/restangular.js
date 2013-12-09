@@ -173,7 +173,21 @@ module.provider('Restangular', function() {
                 clone: "clone",
                 ids: "ids",
                 httpConfig: '_$httpConfig',
-                reqParams: 'reqParams'
+                reqParams: 'reqParams',
+                one: 'one',
+                all: 'all',
+                several: 'several',
+                oneUrl: 'oneUrl',
+                allUrl: 'allUrl',
+                customPUT: 'customPUT',
+                customPOST: 'customPOST',
+                customDELETE: 'customDELETE',
+                customGET: 'customGET',
+                doPUT: 'doPUT',
+                doPOST: 'doPOST',
+                doDELETE: 'doDELETE',
+                doGET: 'doGET'
+                
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -182,7 +196,7 @@ module.provider('Restangular', function() {
             };
 
             config.isRestangularized = function(obj) {
-              return !!obj.one || !!obj.all;
+              return !!obj[config.restangularFields.one] || !!obj[config.restangularFields.all];
             }
 
             config.setFieldToElem = function(field, elem, value) {
@@ -704,11 +718,11 @@ module.provider('Restangular', function() {
                   elem.withHttpConfig = _.bind(withHttpConfig, elem);
 
                   // RequestLess connection
-                  elem.one = _.bind(one, elem, elem);
-                  elem.all = _.bind(all, elem, elem);
-                  elem.several = _.bind(several, elem, elem);
-                  elem.oneUrl = _.bind(oneUrl, elem, elem);
-                  elem.allUrl = _.bind(allUrl, elem, elem);
+                  elem[config.restangularFields.one] = _.bind(one, elem, elem);
+                  elem[config.restangularFields.all] = _.bind(all, elem, elem);
+                  elem[config.restangularFields.several] = _.bind(several, elem, elem);
+                  elem[config.restangularFields.oneUrl] = _.bind(oneUrl, elem, elem);
+                  elem[config.restangularFields.allUrl] = _.bind(allUrl, elem, elem);
 
                   if (parent && config.shouldSaveParent(route)) {
                       var parentId = config.getIdFromElem(parent);
@@ -1130,6 +1144,8 @@ module.provider('Restangular', function() {
               service.oneUrl = _.bind(oneUrl, service, null);
 
               service.allUrl = _.bind(allUrl, service, null);
+
+              service.stripRestangular = _.bind(stripRestangular, service);
 
               service.restangularizeElement = _.bind(restangularizeElem, service);
 
