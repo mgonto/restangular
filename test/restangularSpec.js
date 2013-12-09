@@ -184,6 +184,18 @@ describe("Restangular", function() {
     $httpBackend.flush();
    });
 
+    it("post() should add a new item", function() {
+     Restangular.all('places').post([{name: "Gonto"}, {name: 'John'}]).then(function(value) {
+       expect(value.length).toEqual(2);
+     });
+
+    $httpBackend.expectPOST('/places').respond(function(method, url, data, headers) {
+      return [201, angular.fromJson(data), ""];
+    });
+
+    $httpBackend.flush();
+   });
+
     it("post() should add a new item with data and return the data from the server", function() {
      restangularAccounts.post(newAccount).then(function(added) {
        expect(added.fromServer).toEqual(true);
