@@ -1122,7 +1122,7 @@ module.provider('Restangular', function() {
              }
 
              function withConfigurationFunction(configurer) {
-                 var newConfig = angular.copy(globalConfiguration);
+                 var newConfig = angular.copy(config);
                  Configurer.init(newConfig, newConfig);
                  configurer(newConfig);
                  return createServiceForConfiguration(newConfig);
