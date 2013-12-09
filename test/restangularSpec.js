@@ -103,6 +103,31 @@ describe("Restangular", function() {
     });
   });
 
+  describe("$object", function() {
+    it("Should work for single get", function() {
+      var promise = Restangular.one('accounts', 1).get();
+      var obj = promise.$object;
+      expect(obj).toBeDefined();
+      expect(obj.amount).toBeUndefined();
+
+      $httpBackend.flush();
+
+      expect(obj.amount).toEqual(3.1416);      
+    });
+
+    it("Should work for single get", function() {
+      var promise = Restangular.all('accounts').getList();
+      var list = promise.$object;
+      expect(list).toBeDefined();
+      expect(list.length).toEqual(0);
+
+      $httpBackend.flush();
+
+      expect(list.length).toEqual(2);
+      expect(list[1].amount).toEqual(3.1416);
+    });
+  });
+
   describe("ALL", function() {
     it("getList() should return an array of items", function() {
       restangularAccounts.getList().then(function(accounts) {

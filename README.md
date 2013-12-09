@@ -52,6 +52,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
 		- [Custom methods](#custom-methods)
 	- [Copying elements](#copying-elements)
 	- [Enhanced promises](#enhanced-promises)
+  - [Using values directly in templates](#using-values-directly-in-templates)
 	- [Using Self reference resources](#using-self-reference-resources)
 	- [URL Building](#url-building)
 	- [Creating new Restangular Methods](#creating-new-restangular-methods)
@@ -188,6 +189,11 @@ var baseAccounts = Restangular.all('accounts');
 baseAccounts.getList().then(function(accounts) {
   $scope.allAccounts = accounts;
 });
+
+// Does a GET to /accounts
+// Returns an empty array by default. Once a value is returned from the server
+// that array is filled with those values. So you can use this in your template
+$scope.accounts = Restangular.all('accounts').getList().$object;
 
 var newAccount = {name: "Gonto's account"};
 
@@ -618,6 +624,7 @@ Restangular uses enhanced promises when returning. What does this mean? All prom
 * **call(methodName, params*)**: This will return a new promise of the previous value, after calling the method called methodName with the parameters params.
 * **get(fieldName)**: This will return a new promise for the type of the field. The param of this new promise is the property `fieldName` from the original promise result.
 * **push(object)**: This method will only be in the promises of arrays. It's a subset of the call method that does a push.
+* **$object**: This returns the reference to the object that will be filled once the server responds a value. This means that if you call `getList` this will be an empty array by default. Once the array is returned from the server, this same `$object` property will get filled with results from the server.
  
 I know these explanations are quite complicated, so let's see an example :D.
 
@@ -638,6 +645,35 @@ lengthPromise.then(function(length) {
   // Here the length is the real length value of the returned collection of buildings
 });
 ````
+## Using values directly in templates
+
+Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be depracated soon.
+
+**This means that the following will cease to work**:
+
+````js
+$scope.accounts = Restangular.all('accounts').getList();
+````
+
+````html
+<tr ng-repeat="account in accounts">
+  <td>{{account.name}}</td>
+</tr>
+````
+
+**As this was a really handy way of working with Restangular, I've made a feature similar to $resource that will enable this behavior again**:
+
+````js
+$scope.accounts = Restangular.all('accounts').getList().$object;
+````
+
+````html
+<tr ng-repeat="account in accounts">
+  <td>{{account.name}}</td>
+</tr>
+````
+
+The `$object` property is a new property I've added to promises. By default, it'll be an empty array or object. Once the sever has responded with the real value, that object or array is filled with the correct response, therefore making the ng-repeat work :). Pretty neat :D
 
 ## Using Self reference resources
 
