@@ -577,6 +577,7 @@ These are the methods that can be called on the Restangular object.
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch(object, [queryParams, headers])**: Does a PATCH
+* **remove([queryParams, headers])**: Does a DELETE
 * **putElement(idx, params, headers)**: Puts the element on the required index and returns a promise of the updated new array
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getRequestedUrl()**: Gets the real URL the current object was requested with (incl. GET parameters). Will equal getRestangularUrl() when no parameters were used, before calling `getList()`, or when using on a nested child.

@@ -181,6 +181,10 @@ module.provider('Restangular', function() {
                 return this;
             };
 
+            config.isRestangularized = function(obj) {
+              return !!obj.one || !!obj.all;
+            }
+
             config.setFieldToElem = function(field, elem, value) {
               var properties = field.split('.');
               var idValue = elem;
@@ -982,7 +986,8 @@ module.provider('Restangular', function() {
 
                   var callObj = obj || this;
                   var etag = callObj[config.restangularFields.etag];
-                  if (_.isObject(callObj)) {
+
+                  if (_.isObject(callObj) && config.isRestangularized(callObj)) {
                       callObj = stripRestangular(callObj);
                   }
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
