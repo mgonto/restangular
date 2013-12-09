@@ -802,9 +802,17 @@ module.provider('Restangular', function() {
               // Elements
 
               function stripRestangular(elem) {
-		        if (_.isArray(elem))
-                        return _.without(elem, _.values(_.omit(config.restangularFields, 'id')));
-                        else return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+                if (_.isArray(elem)) {
+                    var array = [];
+                    _.each(elem, function(value) {
+                        array.push(stripRestangular(value));
+                    });
+                    return array;
+                } else {
+                    return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+                }
+                        
+                        
               }
 
               function addCustomOperation(elem) {
