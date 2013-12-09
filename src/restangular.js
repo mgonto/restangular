@@ -494,8 +494,8 @@ module.provider('Restangular', function() {
                 }
 
                 if (this.config.suffix
-                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1) {
-
+                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1
+                  && !this.config.getUrlFromElem(current)) {
                     url += this.config.suffix;
                 }
 

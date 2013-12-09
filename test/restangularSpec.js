@@ -54,6 +54,9 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
 
+    // Full URL
+    $httpBackend.whenGET('http://accounts.com/all').respond(accountsModel);
+
     $httpBackend.whenPOST("/accounts").respond(function(method, url, data, headers) {
       var newData = angular.fromJson(data);
       newData.fromServer = true;
@@ -86,6 +89,18 @@ describe("Restangular", function() {
   afterEach(function() {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
+  });
+
+  describe("With Url", function() {
+    it("Shouldn't add suffix to URL", function() {
+      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setRequestSuffix('.json');
+      });
+
+      $httpBackend.expectGET('http://accounts.com/all');
+      suffixRestangular.allUrl('accounts', 'http://accounts.com/all').getList();
+      $httpBackend.flush();
+    });
   });
 
   describe("ALL", function() {
