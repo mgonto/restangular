@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.1.9 - 2013-12-09
+ * @version v1.2.0 - 2013-12-09
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -26,7 +26,14 @@ module.provider('Restangular', function() {
 
             var absolutePattern = /^https?:\/\//i;
             config.isAbsoluteUrl = function(string) {
-              return string && absolutePattern.test(string);
+              return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ? 
+                      string && absolutePattern.test(string) :
+                      config.absoluteUrl;
+            }
+            
+            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
+            object.setSelfLinkAbsoluteUrl = function(value) {
+                config.absoluteUrl = value;
             }
             /**
              * This is the BaseURL to be used with Restangular
@@ -173,13 +180,31 @@ module.provider('Restangular', function() {
                 clone: "clone",
                 ids: "ids",
                 httpConfig: '_$httpConfig',
-                reqParams: 'reqParams'
+                reqParams: 'reqParams',
+                one: 'one',
+                all: 'all',
+                several: 'several',
+                oneUrl: 'oneUrl',
+                allUrl: 'allUrl',
+                customPUT: 'customPUT',
+                customPOST: 'customPOST',
+                customDELETE: 'customDELETE',
+                customGET: 'customGET',
+                doPUT: 'doPUT',
+                doPOST: 'doPOST',
+                doDELETE: 'doDELETE',
+                doGET: 'doGET'
+                
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
                   _.extend(config.restangularFields, resFields);
                 return this;
             };
+
+            config.isRestangularized = function(obj) {
+              return !!obj[config.restangularFields.one] || !!obj[config.restangularFields.all];
+            }
 
             config.setFieldToElem = function(field, elem, value) {
               var properties = field.split('.');
@@ -501,8 +526,8 @@ module.provider('Restangular', function() {
                 }
 
                 if (this.config.suffix
-                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1) {
-
+                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1
+                  && !this.config.getUrlFromElem(current)) {
                     url += this.config.suffix;
                 }
 
@@ -700,11 +725,11 @@ module.provider('Restangular', function() {
                   elem.withHttpConfig = _.bind(withHttpConfig, elem);
 
                   // RequestLess connection
-                  elem.one = _.bind(one, elem, elem);
-                  elem.all = _.bind(all, elem, elem);
-                  elem.several = _.bind(several, elem, elem);
-                  elem.oneUrl = _.bind(oneUrl, elem, elem);
-                  elem.allUrl = _.bind(allUrl, elem, elem);
+                  elem[config.restangularFields.one] = _.bind(one, elem, elem);
+                  elem[config.restangularFields.all] = _.bind(all, elem, elem);
+                  elem[config.restangularFields.several] = _.bind(several, elem, elem);
+                  elem[config.restangularFields.oneUrl] = _.bind(oneUrl, elem, elem);
+                  elem[config.restangularFields.allUrl] = _.bind(allUrl, elem, elem);
 
                   if (parent && config.shouldSaveParent(route)) {
                       var parentId = config.getIdFromElem(parent);
@@ -763,38 +788,45 @@ module.provider('Restangular', function() {
                   return restangularizeCollection(parent, elem , route, true);
               }
               // Promises
-              function restangularizePromise(promise, isCollection) {
+              function restangularizePromise(promise, isCollection, valueToFill) {
                   promise.call = _.bind(promiseCall, promise);
                   promise.get = _.bind(promiseGet, promise);
                   promise[config.restangularFields.restangularCollection] = isCollection;
                   if (isCollection) {
                       promise.push = _.bind(promiseCall, promise, "push");
                   }
+                  promise.$object = valueToFill;
                   return promise;
               }
 
               function promiseCall(method) {
                   var deferred = $q.defer();
                   var callArgs = arguments;
+                  var filledValue = {};
                   this.then(function(val) {
                       var params = Array.prototype.slice.call(callArgs, 1);
                       var func = val[method];
                       func.apply(val, params);
+                      filledValue = val;
                       deferred.resolve(val);
                   });
-                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection]);
+                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
               }
 
               function promiseGet(what) {
                   var deferred = $q.defer();
+                  var filledValue = {};
                   this.then(function(val) {
-                      deferred.resolve(val[what]);
+                      filledValue = val[what];
+                      deferred.resolve(filledValue);
                   });
-                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection]);
+                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
               }
 
-              function resolvePromise(deferred, response, data) {
+              function resolvePromise(deferred, response, data, filledValue) {
 
+                _.extend(filledValue, data);
+                
                 // Trigger the full response interceptor.
                 if (config.fullResponse) {
                   return deferred.resolve(_.extend(response, {
@@ -809,9 +841,17 @@ module.provider('Restangular', function() {
               // Elements
 
               function stripRestangular(elem) {
-		        if (_.isArray(elem))
-                        return _.without(elem, _.values(_.omit(config.restangularFields, 'id')));
-                        else return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+                if (_.isArray(elem)) {
+                    var array = [];
+                    _.each(elem, function(value) {
+                        array.push(stripRestangular(value));
+                    });
+                    return array;
+                } else {
+                    return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+                }
+                        
+                        
               }
 
               function addCustomOperation(elem) {
@@ -878,6 +918,7 @@ module.provider('Restangular', function() {
                   var localElem = restangularizeBase(parent, elem, route, reqParams);
                   localElem[config.restangularFields.restangularCollection] = true;
                   localElem[config.restangularFields.post] = _.bind(postFunction, localElem, null);
+                  localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
                   localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
                   localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
                   localElem[config.restangularFields.putElement] = _.bind(putElementFunction, localElem);
@@ -898,15 +939,17 @@ module.provider('Restangular', function() {
                   var __this = this;
                   var elemToPut = this[idx];
                   var deferred = $q.defer();
+                  var filledArray = [];
                   elemToPut.put(params, headers).then(function(serverElem) {
                       var newArray = copyRestangularizedElement(__this);
                       newArray[idx] = serverElem;
+                      filledArray = newArray;
                       deferred.resolve(newArray);
                   }, function(response) {
                       deferred.reject(response);
                   });
 
-                  return restangularizePromise(deferred.promise, true)
+                  return restangularizePromise(deferred.promise, true, filledArray);
               }
 
               function parseResponse(resData, operation, route, fetchUrl, response, deferred) {
@@ -929,6 +972,8 @@ module.provider('Restangular', function() {
                   var request = config.fullRequestInterceptor(null, operation,
                       whatFetched, url, headers || {}, reqParams || {}, this[config.restangularFields.httpConfig] || {});
 
+                  var filledArray = [];
+
                   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
@@ -945,10 +990,11 @@ module.provider('Restangular', function() {
                       });
 
                       processedData = _.extend(data, processedData);
+
                       if (!__this[config.restangularFields.restangularCollection]) {
-                          resolvePromise(deferred, response, restangularizeCollection(__this, processedData, what, fullParams));
+                          resolvePromise(deferred, response, restangularizeCollection(__this, processedData, what, fullParams), filledArray);
                       } else {
-                          resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route], fullParams));
+                          resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route], fullParams), filledArray);
                       }
                   }, function error(response) {
                       if ( config.errorInterceptor(response) !== false ) {
@@ -956,7 +1002,7 @@ module.provider('Restangular', function() {
                       }
                   });
 
-                  return restangularizePromise(deferred.promise, true);
+                  return restangularizePromise(deferred.promise, true, filledArray);
               }
 
               function withHttpConfig(httpConfig) {
@@ -973,11 +1019,14 @@ module.provider('Restangular', function() {
 
                   var callObj = obj || this;
                   var etag = callObj[config.restangularFields.etag];
-                  if (_.isObject(callObj)) {
+
+                  if (_.isObject(callObj) && config.isRestangularized(callObj)) {
                       callObj = stripRestangular(callObj);
                   }
                   var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
                     headers || {}, resParams || {}, this[config.restangularFields.httpConfig] || {});
+
+                  var filledObject = {};
 
                   var okCallback = function(response) {
                       var resData = response.data;
@@ -986,13 +1035,13 @@ module.provider('Restangular', function() {
                       if (elem) {
 
                         if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
-                          resolvePromise(deferred, response, restangularizeElem(__this, elem, what, fullParams));
+                          resolvePromise(deferred, response, restangularizeElem(__this, elem, what, fullParams), filledObject);
                         } else {
-                          resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], fullParams));
+                          resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], fullParams), filledObject);
                         }
 
                       } else {
-                        resolvePromise(deferred, response, undefined);
+                        resolvePromise(deferred, response, undefined, filledObject);
                       }
                   };
 
@@ -1023,7 +1072,7 @@ module.provider('Restangular', function() {
                         what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
                   }
 
-                  return restangularizePromise(deferred.promise);
+                  return restangularizePromise(deferred.promise, false, filledObject);
               }
 
               function getFunction(params, headers) {
@@ -1094,7 +1143,7 @@ module.provider('Restangular', function() {
              }
 
              function withConfigurationFunction(configurer) {
-                 var newConfig = angular.copy(globalConfiguration);
+                 var newConfig = angular.copy(config);
                  Configurer.init(newConfig, newConfig);
                  configurer(newConfig);
                  return createServiceForConfiguration(newConfig);
@@ -1116,6 +1165,8 @@ module.provider('Restangular', function() {
               service.oneUrl = _.bind(oneUrl, service, null);
 
               service.allUrl = _.bind(allUrl, service, null);
+
+              service.stripRestangular = _.bind(stripRestangular, service);
 
               service.restangularizeElement = _.bind(restangularizeElem, service);
 
