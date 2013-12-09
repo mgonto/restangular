@@ -52,7 +52,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
 		- [Custom methods](#custom-methods) 
 	- [Copying elements](#copying-elements)
 	- [Enhanced promises](#enhanced-promises)
-  - [Using values directly in templates](#using-values-directly-in-templates)
+        - [Using values directly in templates](#using-values-directly-in-templates)
 	- [Using Self reference resources](#using-self-reference-resources)
 	- [URL Building](#url-building)
 	- [Creating new Restangular Methods](#creating-new-restangular-methods)
