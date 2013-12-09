@@ -1051,7 +1051,7 @@ Also, when using Restangular with version >= 1.1.4, in case you're using Restang
 Users reported that this server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
 
 * Ruby on Rails
-* CakePHP and Laravel for PHP
+* CakePHP, Laravel and FatFREE for PHP
 * Play1 & 2 for Java & scala
 * Restify and Express for NodeJS
 * Tastypie for Django 
