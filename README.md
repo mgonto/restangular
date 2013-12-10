@@ -1054,7 +1054,7 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * CakePHP, Laravel and FatFREE for PHP
 * Play1 & 2 for Java & scala
 * Restify and Express for NodeJS
-* Tastypie for Django 
+* Tastypie and Django Rest Framework for Django 
 * Slim Framework
 
 # Releases Notes
