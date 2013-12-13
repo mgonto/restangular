@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.2.0 - 2013-12-09
+ * @version v1.2.1 - 2013-12-13
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -29,12 +29,12 @@ module.provider('Restangular', function() {
               return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ? 
                       string && absolutePattern.test(string) :
                       config.absoluteUrl;
-            }
+            };
             
             config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
             object.setSelfLinkAbsoluteUrl = function(value) {
                 config.absoluteUrl = value;
-            }
+            };
             /**
              * This is the BaseURL to be used with Restangular
              */
@@ -71,7 +71,7 @@ module.provider('Restangular', function() {
             config.encodeIds = _.isUndefined(config.encodeIds) ? true : config.encodeIds;
             object.setEncodeIds = function(encode) {
                 config.encodeIds = encode;
-            }
+            };
 
             config.defaultRequestParams = config.defaultRequestParams || {
                 get: {},
@@ -98,7 +98,7 @@ module.provider('Restangular', function() {
                 config.defaultRequestParams[method] = params;
               });
               return this;
-            }
+            };
 
             object.requestParams = config.defaultRequestParams;
 
@@ -204,7 +204,7 @@ module.provider('Restangular', function() {
 
             config.isRestangularized = function(obj) {
               return !!obj[config.restangularFields.one] || !!obj[config.restangularFields.all];
-            }
+            };
 
             config.setFieldToElem = function(field, elem, value) {
               var properties = field.split('.');
@@ -238,23 +238,23 @@ module.provider('Restangular', function() {
             };
 
             config.isValidId = function(elemId) {
-                return "" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId)
-            }
+                return "" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId);
+            };
 
             config.setUrlToElem = function(elem, url) {
               config.setFieldToElem(config.restangularFields.selfLink, elem, url);
               return this;
-            }
+            };
 
             config.getUrlFromElem = function(elem) {
               return config.getFieldFromElem(config.restangularFields.selfLink, elem);
-            }
+            };
 
             config.useCannonicalId = _.isUndefined(config.useCannonicalId) ? false : config.useCannonicalId;
             object.setUseCannonicalId = function(value) {
                 config.useCannonicalId = value;
                 return this;
-            }
+            };
 
             config.getCannonicalIdFromElem = function(elem) {
               var cannonicalId = elem[config.restangularFields.cannonicalId];
@@ -308,7 +308,7 @@ module.provider('Restangular', function() {
                   params: params,
                   element: interceptor(elem, operation, path, url),
                   httpConfig: httpConfig
-                }
+                };
               };
               return this;
             };
@@ -327,7 +327,7 @@ module.provider('Restangular', function() {
 
             config.onBeforeElemRestangularized = config.onBeforeElemRestangularized || function(elem) {
               return elem;
-            }
+            };
             object.setOnBeforeElemRestangularized = function(post) {
               config.onBeforeElemRestangularized = post;
               return this;
@@ -362,11 +362,11 @@ module.provider('Restangular', function() {
                 if (_.isArray(values)) {
                     config.shouldSaveParent = function(route) {
                         return !_.contains(values, route);
-                    }
+                    };
                 } else if (_.isBoolean(values)) {
                     config.shouldSaveParent = function() {
                         return !values;
-                    }
+                    };
                 }
                 return this;
             };
@@ -484,7 +484,7 @@ module.provider('Restangular', function() {
                           return $http(_.extend(value, {
                               url: url
                           }));
-                      }
+                      };
 
                   } else {
 
@@ -493,7 +493,7 @@ module.provider('Restangular', function() {
                               url: url,
                               data: data
                           }));
-                      }
+                      };
 
                   }
               });
@@ -698,7 +698,7 @@ module.provider('Restangular', function() {
 
             config.urlCreatorFactory.path = Path;
 
-        }
+        };
 
         var globalConfiguration = {};
 
@@ -867,7 +867,7 @@ module.provider('Restangular', function() {
                           } else {
                               callFunction = function(operation, elem, path, params, headers) {
                                 return _.bind(customFunction, this)(operation, path, params, headers, elem);
-                              }
+                              };
                           }
                           elem[name] = _.bind(callFunction, elem, callOperation);
                       });
@@ -888,13 +888,13 @@ module.provider('Restangular', function() {
                   var localElem = restangularizeBase(parent, elem, route, reqParams);
 
                   if (config.useCannonicalId) {
-                      localElem[config.restangularFields.cannonicalId] = config.getIdFromElem(localElem)
+                      localElem[config.restangularFields.cannonicalId] = config.getIdFromElem(localElem);
                   }
 
                   if (collection) {
                       localElem[config.restangularFields.getParentList] = function() {
                           return collection;
-                      }
+                      };
                   }
 
                   localElem[config.restangularFields.restangularCollection] = false;
@@ -929,6 +929,14 @@ module.provider('Restangular', function() {
 
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, true, route, service);
+              }
+
+              function restangularizeCollectionAndElements(parent, element, route) {
+                var collection = restangularizeCollection(parent, element, route);
+                _.each(collection, function(elem) {
+                  restangularizeElem(parent, elem, route);
+                });
+                return collection;
               }
 
               function getById(id, reqParams, headers){
@@ -1137,7 +1145,7 @@ module.provider('Restangular', function() {
                  } else {
                      this[name] = function(elem, params, headers) {
                          return createdFunction(params, headers, elem);
-                     }
+                     };
                  }
 
              }
@@ -1170,7 +1178,7 @@ module.provider('Restangular', function() {
 
               service.restangularizeElement = _.bind(restangularizeElem, service);
 
-              service.restangularizeCollection = _.bind(restangularizeCollection, service);
+              service.restangularizeCollection = _.bind(restangularizeCollectionAndElements, service);
 
               return service;
           }
