@@ -924,6 +924,14 @@ module.provider('Restangular', function() {
                   return config.transformElem(localElem, true, route, service);
               }
 
+              function restangularizeCollectionAndElements(parent, element, route) {
+                var collection = restangularizeCollection(parent, element, route);
+                _.each(collection, function(elem) {
+                  restangularizeElem(parent, elem, route);
+                });
+                return collection;
+              }
+
               function getById(id, reqParams, headers){
                   return this.customGET(id.toString(), reqParams, headers);
               }
@@ -1163,7 +1171,7 @@ module.provider('Restangular', function() {
 
               service.restangularizeElement = _.bind(restangularizeElem, service);
 
-              service.restangularizeCollection = _.bind(restangularizeCollection, service);
+              service.restangularizeCollection = _.bind(restangularizeCollectionAndElements, service);
 
               return service;
           }

@@ -103,6 +103,21 @@ describe("Restangular", function() {
     });
   });
 
+  describe("Local data", function() {
+    it("Should restangularize a collection OK", function() {
+      var collection = angular.copy(accountsModel);
+
+      Restangular.restangularizeCollection(null, collection, 'accounts');
+
+      expect(_.has(collection, 'get')).toBe(true);
+      expect(_.has(collection[0], 'get')).toBe(true);
+
+      expect(collection.getRestangularUrl()).toBe('/accounts');
+      expect(collection[0].getRestangularUrl()).toBe('/accounts/0');
+
+    });
+  });
+
   describe("$object", function() {
     it("Should work for single get", function() {
       var promise = Restangular.one('accounts', 1).get();
