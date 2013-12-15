@@ -618,7 +618,7 @@ module.provider('Restangular', function() {
                       }
                     }
 
-                    return acum + "/" + elemUrl;
+                    return acum.replace(/\/$/, "") + "/" + elemUrl;
 
                 }, this.config.baseUrl);
             };
