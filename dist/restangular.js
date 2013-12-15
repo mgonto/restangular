@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.2.1 - 2013-12-13
+ * @version v1.2.1 - 2013-12-15
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -625,7 +625,7 @@ module.provider('Restangular', function() {
                       }
                     }
 
-                    return acum + "/" + elemUrl;
+                    return acum.replace(/\/$/, "") + "/" + elemUrl;
 
                 }, this.config.baseUrl);
             };
