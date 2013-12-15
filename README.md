@@ -67,6 +67,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
     - [Can it be used in $routeProvider.resolve?](#can-it-be-used-in-routeproviderresolve)
     - [My response is actually wrapped with some metadata. How do I get the data in that case?](#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case)
     - [I use Mongo and the ID of the elements is _id not id as the default. Therefore requests are sent to undefined routes](#i-use-mongo-and-the-id-of-the-elements-is-_id-not-id-as-the-default-therefore-requests-are-sent-to-undefined-routes)
+    - [What if each of my models has a different ID name like CustomerID for Customer](#what-if-each-of-my-models-has-a-different-id-name-like-customerid-for-customer)
     - [How do I handle CRUD operations in a List returned by Restangular?](#how-do-i-handle-crud-operations-in-a-list-returned-by-restangular)
     - [When I set baseUrl with a port, it's stripped out.](#when-i-set-baseurl-with-a-port-its-stripped-out)
     - [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
@@ -958,6 +959,18 @@ RestangularProvider.setRestangularFields({
 });
 ````
 
+#### **What if each of my models has a different ID name like CustomerID for Customer**
+
+In some cases, peolpe have different ID name for each entity. For example, they have CustomerID for customer and EquipmentID for Equipment. If that's the case, you can override's Restangular's getIdFromElem. For that, you need to do:
+
+````js
+RestangularProvider.configuration.getIdFromElem = function(elem) {
+  // if route is customers ==> returns customerID
+  return elem[_.initial(elem.route).join('') + "ID"];
+}
+````
+
+With that, you'd get what you need :)
 
 #### **How do I handle CRUD operations in a List returned by Restangular?**
 
