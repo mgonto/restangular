@@ -16,6 +16,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
 - [Differences with $resource](#differences-with-resource)
 - [How do I add this to my project?](#how-do-i-add-this-to-my-project)
 - [Dependencies](#dependencies)
+- [Production apps using Restangular](#production-apps-using-restangular)
 - [Starter Guide](#starter-guide)
 	- [Quick configuration for Lazy Readers](#quick-configuration-for-lazy-readers)
 	- [Adding dependency to Restangular module in your app](#adding-dependency-to-restangular-module-in-your-app)
@@ -140,7 +141,14 @@ You can download this by:
 
 #Dependencies
 
-Restangular depends on Angular and Lodash (or Underscore). **angular-resource is no longer needed since version 1.0.6, now this uses `$http` instead of `$resource`**
+Restangular depends on Angular and Lodash (or Underscore). 
+
+# Production apps using Restangular
+
+Each time, there're more Production WebApps using `Restangular`. If your webapp uses it and it's not in the list, please create an issue or submit a PR:
+
+* **Life360** is using Restangular to build the WebApp version of their platform
+* *Thomas Reuters** is using Restangular for the new Webapp they've built
 
 #Starter Guide
 
