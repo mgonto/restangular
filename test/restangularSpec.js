@@ -516,4 +516,35 @@ describe("Restangular", function() {
       expect(Restangular.requestParams.common).not.toEqual(defaultParams);
     });
   });
+
+  describe("withConfig", function() {
+    it("should create new service with scoped configuration", function() {
+      var childRestangular = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setBaseUrl('/api/v1');
+      });
+
+      expect(Restangular.configuration.baseUrl).toEqual('');
+      expect(childRestangular.configuration.baseUrl).toEqual('/api/v1');
+      
+    });
+
+    it("should allow nested configurations", function() {
+      var childRestangular = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setBaseUrl('/api/v1');
+      });
+    
+      var grandchildRestangular = childRestangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setRequestSuffix('.json');
+      });
+
+      expect(Restangular.configuration.baseUrl).toEqual('');
+      expect(Restangular.configuration.suffix).toEqual(null);
+
+      expect(childRestangular.configuration.baseUrl).toEqual('/api/v1');
+      expect(childRestangular.configuration.suffix).toEqual(null);
+
+      expect(grandchildRestangular.configuration.baseUrl).toEqual('/api/v1');
+      expect(grandchildRestangular.configuration.suffix).toEqual('.json');
+    });
+  });
 });

@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.2.1 - 2013-12-15
+ * @version v1.2.1 - 2013-12-17
  * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gonto.com.ar>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -1151,7 +1151,7 @@ module.provider('Restangular', function() {
              }
 
              function withConfigurationFunction(configurer) {
-                 var newConfig = angular.copy(config);
+                 var newConfig = angular.copy(_.omit(config, 'configuration'));
                  Configurer.init(newConfig, newConfig);
                  configurer(newConfig);
                  return createServiceForConfiguration(newConfig);
