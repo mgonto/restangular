@@ -1019,7 +1019,8 @@ module.provider('Restangular', function() {
                   var fetchUrl = urlHandler.fetchUrl(this, what);
 
                   var callObj = obj || this;
-                  var etag = callObj[config.restangularFields.etag];
+                  // fallback to etag on restangular object (since for custom methods we probably don't explicitly specify the etag field)
+                  var etag = callObj[config.restangularFields.etag] || this[config.restangularFields.etag];
 
                   if (_.isObject(callObj) && config.isRestangularized(callObj)) {
                       callObj = stripRestangular(callObj);
