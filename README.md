@@ -389,7 +389,7 @@ The errorInterceptor is called whenever there's an error. It's a function that r
 The errorInterceptor function, whenever it returns `false`, prevents the promise linked to a Restangular request to be executed.
 All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
 
-The feature to prevent the promise to complete is usefull whenever you need to intercept each Restangular error response for every request in your AngularJS application in a single place, increasing debugging capabilities and hooking security features in a single place.
+The feature to prevent the promise to complete is useful whenever you need to intercept each Restangular error response for every request in your AngularJS application in a single place, increasing debugging capabilities and hooking security features in a single place.
 
 #### setRestangularFields
 
@@ -399,7 +399,7 @@ Restangular required 3 fields for every "Restangularized" element. These are:
 * route: Name of the route of this element. Default: route
 * parentResource: The reference to the parent resource. Default: parentResource
 * restangularCollection: A boolean indicating if this is a collection or an element. Default: restangularCollection
-* cannonicalId: If available, the path to the cannonical ID to use. Usefull for PK changes
+* cannonicalId: If available, the path to the cannonical ID to use. Useful for PK changes
 * etag: Where to save the ETag received from the server. Defaults to `restangularEtag`
 * selfLink: The path to the property that has the URL to this item. If your REST API doesn't return a URL to an item, you can just leave it blank. Defaults to `href`
 
