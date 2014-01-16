@@ -1020,7 +1020,7 @@ module.provider('Restangular', function() {
 
                   var callObj = obj || this;
                   // fallback to etag on restangular object (since for custom methods we probably don't explicitly specify the etag field)
-                  var etag = callObj[config.restangularFields.etag] || this[config.restangularFields.etag];
+                  var etag = callObj[config.restangularFields.etag] || (operation != "post" ? this[config.restangularFields.etag] : null);
 
                   if (_.isObject(callObj) && config.isRestangularized(callObj)) {
                       callObj = stripRestangular(callObj);
