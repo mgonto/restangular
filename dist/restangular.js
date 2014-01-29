@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.3.0 - 2014-01-29 * @link https://github.com/mgonto/restangular
+ * @version v1.3.1 - 2014-01-29 * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gon.to>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */(function() {
@@ -1053,11 +1053,11 @@ module.provider('Restangular', function() {
                   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation)[method]().then(function(response) {
                       var resData = response.data;
-                      if (!_.isArray(resData)) {
-                        throw new Error("Response for getList SHOULD be an array and not an object or something else");
-                      }
                       var fullParams = response.config.params;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
+                      if (!_.isArray(data)) {
+                        throw new Error("Response for getList SHOULD be an array and not an object or something else");
+                      }
                       var processedData = _.map(data, function(elem) {
                           if (!__this[config.restangularFields.restangularCollection]) {
                               return restangularizeElem(__this, elem, what, true, data);
