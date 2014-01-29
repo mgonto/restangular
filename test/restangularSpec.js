@@ -4,24 +4,6 @@ describe("Restangular", function() {
   var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
   var messages, newAccount;
 
-  // Utils
-  // Apply "sanitizeRestangularOne" function to an array of items
-  function sanitizeRestangularAll(items) {
-    var all = _.map(items, function(item) {
-      return sanitizeRestangularOne(item);
-    });
-    return sanitizeRestangularOne(all);
-  };
-
-  // Remove all Restangular/AngularJS added methods in order to use Jasmine toEqual between the retrieve resource and the model
-  function sanitizeRestangularOne(item) {
-    return _.omit(item, "route", "parentResource", "getList", "get", "post", "put", "remove", "head", "trace", "options", "patch",
-      "$then", "$resolved", "restangularCollection", "customOperation", "customGET", "customPOST",
-      "customPUT", "customDELETE", "customGETLIST", "$getList", "$resolved", "restangularCollection", "one", "all","doGET", "doPOST",
-      "doPUT", "doDELETE", "doGETLIST", "addRestangularMethod", "getRestangularUrl", "several", "getRequestedUrl", "clone",
-      "reqParams", "withHttpConfig", "oneUrl", "allUrl", "getParentList");
-  };
-
   // Load required modules
   beforeEach(angular.mock.module("restangular"));
 
@@ -200,7 +182,7 @@ describe("Restangular", function() {
   describe("ALL", function() {
     it("getList() should return an array of items", function() {
       restangularAccounts.getList().then(function(accounts) {
-        expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
+        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
       });
 
       $httpBackend.flush();
@@ -209,7 +191,7 @@ describe("Restangular", function() {
     it("several getList() should return an array of items", function() {
       $httpBackend.expectGET('/accounts/0,1');
       Restangular.several("accounts", 0, 1).getList().then(function(accounts) {
-        expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
+        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
       });
 
       $httpBackend.flush();
@@ -224,7 +206,7 @@ describe("Restangular", function() {
 
     it("get(id) should return the item with given id", function() {
       restangularAccounts.get(0).then(function(account) {
-        expect(sanitizeRestangularOne(account)).toEqual(sanitizeRestangularOne(accountsModel[0]));
+        expect(Restangular.stripRestangular(account)).toEqual(Restangular.stripRestangular(accountsModel[0]));
       });
 
       $httpBackend.flush();
@@ -238,7 +220,7 @@ describe("Restangular", function() {
 
     it("Custom GET methods should work", function() {
       restangularAccounts.customGETLIST("messages").then(function(msgs) {
-        expect(sanitizeRestangularAll(msgs)).toEqual(sanitizeRestangularAll(messages));
+        expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(messages));
       });
 
       $httpBackend.flush();
@@ -334,7 +316,7 @@ describe("Restangular", function() {
           $httpBackend.expectGET('/accounts?foo=1').respond(accountsModel);
           return restangularAccounts.getList({foo: 1});
         }).then(function(accounts) {
-          expect(sanitizeRestangularAll(accounts)).toEqual(sanitizeRestangularAll(accountsModel));
+          expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
         });
 
       $httpBackend.flush();
@@ -344,8 +326,8 @@ describe("Restangular", function() {
   describe("ONE", function() {
     it("get() should return a JSON item", function() {
       restangularAccount1.get().then(function(account) {
-        expect(sanitizeRestangularOne(account))
-          .toEqual(sanitizeRestangularOne(accountsModel[1]));
+        expect(Restangular.stripRestangular(account))
+          .toEqual(Restangular.stripRestangular(accountsModel[1]));
       });
 
       $httpBackend.flush();
@@ -353,8 +335,8 @@ describe("Restangular", function() {
 
     it("Should make RequestLess connections with one", function() {
       restangularAccount1.one("transactions", 1).get().then(function(transaction) {
-        expect(sanitizeRestangularOne(transaction))
-          .toEqual(sanitizeRestangularOne(accountsModel[1].transactions[1]));
+        expect(Restangular.stripRestangular(transaction))
+          .toEqual(Restangular.stripRestangular(accountsModel[1].transactions[1]));
       });
 
       $httpBackend.flush();
@@ -362,8 +344,8 @@ describe("Restangular", function() {
 
     it("Should make RequestLess connections with all", function() {
       restangularAccount1.all("transactions").getList().then(function(transactions) {
-        expect(sanitizeRestangularAll(transactions))
-          .toEqual(sanitizeRestangularAll(accountsModel[1].transactions));
+        expect(Restangular.stripRestangular(transactions))
+          .toEqual(Restangular.stripRestangular(accountsModel[1].transactions));
       });
 
       $httpBackend.flush();
@@ -372,7 +354,7 @@ describe("Restangular", function() {
 
     it("Custom GET methods should work", function() {
       restangularAccount1.customGET("message").then(function(msg) {
-        expect(sanitizeRestangularOne(msg)).toEqual(sanitizeRestangularOne(messages[0]));
+        expect(Restangular.stripRestangular(msg)).toEqual(Restangular.stripRestangular(messages[0]));
       });
 
       $httpBackend.flush();
@@ -397,8 +379,8 @@ describe("Restangular", function() {
     it("should return an array when accessing a subvalue", function() {
       restangularAccount1.get().then(function(account) {
         account.getList("transactions").then(function(transactions) {
-          expect(sanitizeRestangularAll(transactions))
-            .toEqual(sanitizeRestangularAll(accountsModel[1].transactions));
+          expect(Restangular.stripRestangular(transactions))
+            .toEqual(Restangular.stripRestangular(accountsModel[1].transactions));
         });
       });
 
