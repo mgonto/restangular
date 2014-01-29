@@ -756,6 +756,11 @@ module.provider('Restangular', function() {
 
 
               function one(parent, route, id) {
+                  if (_.isNumber(route) || _.isNumber(parent)) {
+                    var error = "You're creating a Restangular entity with the number "
+                    error += "instead of the route or the parent. You can't call .one(12)";
+                    throw new Error(error);
+                  }
                   var elem = {};
                   config.setIdToElem(elem, id);
                   return restangularizeElem(parent, elem , route, false);
@@ -774,6 +779,9 @@ module.provider('Restangular', function() {
               }
 
               function oneUrl(parent, route, url) {
+                  if (!route) {
+                    throw new Error("Route is mandatory when creating new Restangular objects.");
+                  }
                   var elem = {};
                   config.setUrlToElem(elem, url);
                   return restangularizeElem(parent, elem , route, false);
@@ -781,6 +789,9 @@ module.provider('Restangular', function() {
 
 
               function allUrl(parent, route, url) {
+                  if (!route) {
+                    throw new Error("Route is mandatory when creating new Restangular objects.");
+                  }
                   var elem = {};
                   config.setUrlToElem(elem, url);
                   return restangularizeCollection(parent, elem , route, false);
@@ -985,6 +996,9 @@ module.provider('Restangular', function() {
                   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
                           this[config.restangularFields.etag], operation).getList().then(function(response) {
                       var resData = response.data;
+                      if (!_.isArray(resData)) {
+                        throw new Error("Response for getList SHOULD be an array and not an object or something else");
+                      }
                       var fullParams = response.config.params;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
                       var processedData = _.map(data, function(elem) {
