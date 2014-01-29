@@ -188,11 +188,16 @@ module.provider('Restangular', function() {
                 customPOST: 'customPOST',
                 customDELETE: 'customDELETE',
                 customGET: 'customGET',
+                customGETLIST: 'customGETLIST',
+                customOperation: 'customOperation',
                 doPUT: 'doPUT',
                 doPOST: 'doPOST',
                 doDELETE: 'doDELETE',
                 doGET: 'doGET',
-                fromServer: '$fromServer'
+                doGETLIST: 'doGETLIST',
+                fromServer: '$fromServer',
+                withConfig: 'withConfig',
+                withHttpConfig: 'withHttpConfig'
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -737,7 +742,7 @@ module.provider('Restangular', function() {
                   elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
                   elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
                   elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
-                  elem.withHttpConfig = _.bind(withHttpConfig, elem);
+                  elem[config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
 
                   // RequestLess connection
                   elem[config.restangularFields.one] = _.bind(one, elem, elem);
@@ -883,7 +888,7 @@ module.provider('Restangular', function() {
               }
 
               function addCustomOperation(elem) {
-                  elem.customOperation = _.bind(customFunction, elem);
+                  elem[config.restangularFields.customOperation] = _.bind(customFunction, elem);
                   _.each(["put", "post", "get", "delete"], function(oper) {
                       _.each(["do", "custom"], function(alias) {
                           var callOperation = oper === 'delete' ? 'remove' : oper;
@@ -900,8 +905,8 @@ module.provider('Restangular', function() {
                           elem[name] = _.bind(callFunction, elem, callOperation);
                       });
                   });
-                  elem.customGETLIST = _.bind(fetchFunction, elem);
-                  elem.doGETLIST = elem.customGETLIST;
+                  elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
+                  elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
               }
 
               function copyRestangularizedElement(fromElement) {
