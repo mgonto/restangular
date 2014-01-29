@@ -312,7 +312,16 @@ module.provider('Restangular', function() {
             };
 
             object.setFullRequestInterceptor = function(interceptor) {
-              config.fullRequestInterceptor = interceptor;
+              config.fullRequestInterceptor = function(element, operation,
+              path, url, headers, params, httpConfig) {
+                return _.defaults(interceptor(element, operation,
+              path, url, headers, params, httpConfig), {
+                  element: element,
+                  headers: headers,
+                  params: params,
+                  httpConfig: httpConfig
+                });
+              };
               return this;
             };
 

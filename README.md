@@ -380,11 +380,13 @@ The fullRequestInterceptor is similar to the `requestInterceptor` but more power
 
 It's a function that receives the same as the `requestInterceptor` plus the headers and the query parameters (in that order).
 
-It must return an object with the following properties:
+It can return an object with any (or all) of following properties:
 * **headers**: The headers to send
 * **params**: The request parameters to send
 * **element**: The element to send
 * **httpConfig**: The httpConfig to call with
+
+If a property isn't returned, the one sent is used.
 
 #### setErrorInterceptor
 The errorInterceptor is called whenever there's an error. It's a function that receives the response as a parameter.
@@ -503,12 +505,13 @@ app.config(function(RestangularProvider) {
     });
     
     // ..or use the full request interceptor, setRequestInterceptor's more powerful brother!
-    RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params) {
+    RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
       delete element.name;      
       return {
         element: element,
         params: _.extend(params, {single: true}),
-        headers: headers
+        headers: headers,
+        httpConfig: httpConfig
       };
     });
     
