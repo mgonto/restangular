@@ -91,6 +91,46 @@ describe("Restangular", function() {
     $httpBackend.verifyNoOutstandingRequest();
   });
 
+  describe("Transformers", function() {
+    it("Should decorate element both on server and local by default", function() {
+
+      Restangular.extendModel('accounts', function(account) {
+        account.extended = function() {return true;}
+        return account;
+      });
+
+      Restangular.one('accounts', 1).get().then(function(account) {
+        expect(account.extended).toBeDefined();
+      });
+
+      var local = {};
+      Restangular.restangularizeElement(null, local, 'accounts');
+      expect(local.extended).toBeDefined();
+
+      $httpBackend.flush();
+    });
+
+    it("Should decorate element only server if config set", function() {
+
+      Restangular.extendModel('accounts', function(account) {
+        account.extended = function() {return true;}
+        return account;
+      });
+
+      Restangular.setTransformOnlyServerElements(true)
+
+      Restangular.one('accounts', 1).get().then(function(account) {
+        expect(account.extended).toBeDefined();
+      });
+
+      var local = {};
+      Restangular.restangularizeElement(null, local, 'accounts');
+      expect(local.extended).toBeUndefined();
+
+      $httpBackend.flush();
+    });
+  });
+
   describe("With Url", function() {
     it("Shouldn't add suffix to URL", function() {
       var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
@@ -128,6 +168,20 @@ describe("Restangular", function() {
       $httpBackend.flush();
 
       expect(obj.amount).toEqual(3.1416);      
+    });
+
+    it("Should be restangularized by default", function() {
+      Restangular.extendModel('accounts', function(account) {
+        account.extended = function() {return true;}
+        return account;
+      });
+
+      var promise = Restangular.one('accounts', 1).get();
+      var obj = promise.$object;
+      expect(obj).toBeDefined();
+      expect(obj.extended).toBeDefined();
+
+      $httpBackend.flush();
     });
 
     it("Should work for single get", function() {

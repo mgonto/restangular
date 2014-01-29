@@ -75,6 +75,11 @@ module.exports = function(grunt) {
         singleRun: true,
         autoWatch: false
       },
+      debug: {
+        singleRun: false,
+        autoWatch: true,
+        browsers: ['Chrome']
+      },
       travis: {
         singleRun: true,
         autoWatch: false,
@@ -129,6 +134,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['bowerInstall', 'karma:build', 'karma:buildUnderscore', 'concat', 'uglify', 'zip']);
 
   grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
+
+  grunt.registerTask('test-debug', ['karma:debug']);
   
   grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore']);
 
