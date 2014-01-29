@@ -687,7 +687,7 @@ module.provider('Restangular', function() {
                                encodeUriQuery(v));
                   });
                 });
-                return url + ((url.indexOf('?') === -1) ? '?' : '&') + parts.join('&');
+                return url + (this.config.suffix || '') + ((url.indexOf('?') === -1) ? '?' : '&') + parts.join('&');
             };
 
 
