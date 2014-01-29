@@ -1044,7 +1044,7 @@ module.provider('Restangular', function() {
                           resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route], true, fullParams), filledArray);
                       }
                   }, function error(response) {
-                      if ( config.errorInterceptor(response) !== false ) {
+                      if ( config.errorInterceptor(response, deferred) !== false ) {
                           deferred.reject(response);
                       }
                   });
@@ -1095,7 +1095,7 @@ module.provider('Restangular', function() {
                   };
 
                   var errorCallback = function(response) {
-                      if ( config.errorInterceptor(response) !== false ) {
+                      if ( config.errorInterceptor(response, deferred) !== false ) {
                           deferred.reject(response);
                       }
                   };
