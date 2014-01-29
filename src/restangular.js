@@ -1102,7 +1102,7 @@ module.provider('Restangular', function() {
                   };
 
                   var errorCallback = function(response) {
-                      if (response.status === 304 && callObj === __this) {
+                      if (response.status === 304 && config.isSafe(operation)) {
                         resolvePromise(deferred, response, __this, filledObject);
                       } else if ( config.errorInterceptor(response, deferred) !== false ) {
                           deferred.reject(response);
