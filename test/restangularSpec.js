@@ -75,6 +75,54 @@ describe("Restangular", function() {
     $httpBackend.verifyNoOutstandingRequest();
   });
 
+  describe("Interceptors", function() {
+    it("Should add multiple request and response interceptors", function() {
+      Restangular.addRequestInterceptor(function(elem) {
+        elem.firstRequestInterceptor = true;
+        return elem;
+      });
+      Restangular.addRequestInterceptor(function(elem) {
+        elem.secondRequestInterceptor = true;
+        return elem;
+      });
+      Restangular.addFullRequestInterceptor(function(elem) {
+        elem.thirdRequestInterceptor = true;
+        return {
+          element: elem
+        };
+      });
+
+      Restangular.addResponseInterceptor(function(elem) {
+        elem.firstResponseInterceptor = true;
+        return elem;
+      });
+
+      Restangular.addResponseInterceptor(function(elem) {
+        elem.secondResponseInterceptor = true;
+        return elem;
+      });
+
+      $httpBackend.whenPOST("/list").respond(function(method, url, data, headers) {
+        var elem = angular.fromJson(data);
+        expect(elem.firstRequestInterceptor).toBeDefined();
+        expect(elem.secondRequestInterceptor).toBeDefined();
+        expect(elem.thirdRequestInterceptor).toBeDefined();
+        return [200, elem, ""];
+      });
+
+      $httpBackend.expectPOST('/list');
+
+       Restangular.all('list').post({name: "Gonto"}).then(function(elem) {
+        expect(elem.firstResponseInterceptor).toBeDefined();
+        expect(elem.secondResponseInterceptor).toBeDefined();
+       });
+
+       $httpBackend.flush();
+
+
+    });
+  });
+
   describe("Transformers", function() {
     it("Should decorate element both on server and local by default", function() {
 

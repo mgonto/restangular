@@ -274,17 +274,32 @@ module.provider('Restangular', function() {
              * The ResponseExtractor is a function that receives the response and the method executed.
              */
 
-            config.responseExtractor = config.responseExtractor || function(data, operation,
+            config.responseInterceptors = config.responseInterceptors || [];
+
+            config.defaultResponseInterceptor = function(data, operation,
                     what, url, response, deferred) {
                 return data;
             };
 
-            object.setResponseExtractor = function(extractor) {
-              config.responseExtractor = extractor;
+            config.responseExtractor = function(data, operation,
+                    what, url, response, deferred) {
+                var interceptors = angular.copy(config.responseInterceptors);
+                interceptors.push(config.defaultResponseInterceptor);
+                var theData = data;
+                _.each(interceptors, function(interceptor) {
+                  theData = interceptor(theData, operation,
+                    what, url, response, deferred);
+                });
+                return theData;
+            };
+
+            object.addResponseInterceptor = function(extractor) {
+              config.responseInterceptors.push(extractor);
               return this;
             };
 
-            object.setResponseInterceptor = object.setResponseExtractor;
+            object.setResponseInterceptor = object.addResponseInterceptor;
+            object.setResponseExtractor = object.addResponseInterceptor;
 
             /**
              * Response interceptor is called just before resolving promises.
@@ -294,7 +309,9 @@ module.provider('Restangular', function() {
             /**
              * Request interceptor is called before sending an object to the server.
              */
-            config.fullRequestInterceptor = config.fullRequestInterceptor || function(element, operation,
+             config.requestInterceptors = config.requestInterceptors || [];
+
+             config.defaultInterceptor = function(element, operation,
               path, url, headers, params, httpConfig) {
                 return {
                   element: element,
@@ -302,33 +319,38 @@ module.provider('Restangular', function() {
                   params: params,
                   httpConfig: httpConfig
                 };
+              };
+
+            config.fullRequestInterceptor = function(element, operation,
+              path, url, headers, params, httpConfig) {
+                var interceptors = angular.copy(config.requestInterceptors);
+                interceptors.push(config.defaultInterceptor);
+                return _.reduce(interceptors, function(request, interceptor) {
+                  return _.defaults(request, interceptor(element, operation,
+                    path, url, headers, params, httpConfig));
+                }, {});
             };
 
-            object.setRequestInterceptor = function(interceptor) {
-              config.fullRequestInterceptor = function(elem, operation, path, url, headers, params, httpConfig) {
+            object.addRequestInterceptor = function(interceptor) {
+              config.requestInterceptors.push(function(elem, operation, path, url, headers, params, httpConfig) {
                 return {
                   headers: headers,
                   params: params,
                   element: interceptor(elem, operation, path, url),
                   httpConfig: httpConfig
                 };
-              };
+              });
               return this;
             };
 
-            object.setFullRequestInterceptor = function(interceptor) {
-              config.fullRequestInterceptor = function(element, operation,
-              path, url, headers, params, httpConfig) {
-                return _.defaults(interceptor(element, operation,
-              path, url, headers, params, httpConfig), {
-                  element: element,
-                  headers: headers,
-                  params: params,
-                  httpConfig: httpConfig
-                });
-              };
+            object.setRequestInterceptor = object.addRequestInterceptor;
+
+            object.addFullRequestInterceptor = function(interceptor) {
+              config.requestInterceptors.push(interceptor);
               return this;
             };
+
+            object.setFullRequestInterceptor = object.addFullRequestInterceptor;
 
             config.errorInterceptor = config.errorInterceptor || function() {};
 

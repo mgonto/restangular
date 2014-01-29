@@ -353,7 +353,10 @@ This callback is a function that has 3 parameters:
 This can be used together with `addRestangularMethod` (Explained later) to add custom methods to an element
 
 
-#### setResponseInterceptor (or setResponseExtractor. It's an Alias)
+#### setResponseInterceptor
+**This is depracated. Use addResponseInterceptor since you can add more than one**.
+
+#### addResponseInterceptor
 The responseInterceptor is called after we get each response from the server. It's a function that receives this arguments:
 
 * **data**: The data received got from the server
@@ -368,6 +371,9 @@ Some of the use cases of the responseInterceptor are handling wrapped responses 
 The responseInterceptor must return the restangularized data element.
 
 #### setRequestInterceptor
+**This is depracated. Use addRequestInterceptor since you can add more than one**.
+
+#### addRequestInterceptor
 The requestInterceptor is called before sending any data to the server. It's a function that must return the element to be requested. This function receives the following arguments:
 
 * **element**: The element to send to the server.
@@ -376,7 +382,10 @@ The requestInterceptor is called before sending any data to the server. It's a f
 * **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 
 #### setFullRequestInterceptor
-The fullRequestInterceptor is similar to the `requestInterceptor` but more powerful. It lets you change the element, the request parameters and the headers as well.
+**This is depracated. Use addFullRequestInterceptor since you can add more than one**.
+
+#### addFullRequestInterceptor
+This adds a new fullRequestInterceptor. The fullRequestInterceptor is similar to the `requestInterceptor` but more powerful. It lets you change the element, the request parameters and the headers as well.
 
 It's a function that receives the same as the `requestInterceptor` plus the headers and the query parameters (in that order).
 
