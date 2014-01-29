@@ -118,6 +118,11 @@ module.provider('Restangular', function() {
               return this;
             };
 
+            config.jsonp = _.isUndefined(config.jsonp) ? false : config.jsonp;
+            object.setJsonp = function(active) {
+              config.jsonp = active;
+            };
+
             config.isOverridenMethod = function(method, values) {
               var search = values || config.methodOverriders;
               return !_.isUndefined(_.find(search, function(one) {
@@ -422,7 +427,7 @@ module.provider('Restangular', function() {
                   isCollection, route, Restangular);
             };
 
-            config.transformLocalElements = true;
+            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? true : config.transformLocalElements;
             object.setTransformOnlyServerElements = function(active) {
               config.transformLocalElements = !active;
             }
@@ -538,6 +543,11 @@ module.provider('Restangular', function() {
 
                     get: this.config.withHttpValues(localHttpConfig,
                       {method: 'GET',
+                      params: params,
+                      headers: headers}),
+
+                    jsonp: this.config.withHttpValues(localHttpConfig,
+                      {method: 'jsonp',
                       params: params,
                       headers: headers}),
 
@@ -993,8 +1003,14 @@ module.provider('Restangular', function() {
                   var filledArray = [];
                   filledArray = config.transformElem(filledArray, true, whatFetched, service)
 
+                  var method = "getList";
+
+                  if (config.jsonp) {
+                    method = "jsonp";
+                  }
+
                   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
-                          this[config.restangularFields.etag], operation).getList().then(function(response) {
+                          this[config.restangularFields.etag], operation)[method]().then(function(response) {
                       var resData = response.data;
                       if (!_.isArray(resData)) {
                         throw new Error("Response for getList SHOULD be an array and not an object or something else");
@@ -1081,6 +1097,8 @@ module.provider('Restangular', function() {
                   if (isOverrideOperation) {
                     callOperation = 'post';
                     callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
+                  } else if (config.jsonp && callOperation === 'get') {
+                    callOperation = 'jsonp';
                   }
 
                   if (config.isSafe(operation)) {

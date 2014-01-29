@@ -413,6 +413,10 @@ All of these fields except for `id` and `selfLink` are handled by Restangular, s
 
 You can now Override HTTP Methods. You can set here the array of methods to override. All those methods will be sent as POST and Restangular will add an X-HTTP-Method-Override header with the real HTTP method we wanted to do.
 
+#### setJsonp
+
+By setting this value to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
+
 #### setDefaultRequestParams
 
 You can set default Query parameters to be sent with every request and every method.

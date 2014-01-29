@@ -27,12 +27,14 @@ describe("Restangular", function() {
     $httpBackend.when("OPTIONS", "/accounts").respond();
 
     $httpBackend.whenGET("/accounts").respond(accountsModel);
+    $httpBackend.whenJSONP("/accounts").respond(accountsModel);
     $httpBackend.whenGET("/accounts/0,1").respond(accountsModel);
     $httpBackend.whenGET("/accounts/messages").respond(messages);
     $httpBackend.whenGET("/accounts/1/message").respond(messages[0]);
     $httpBackend.whenGET("/accounts/1/messages").respond(messages);
     $httpBackend.whenGET("/accounts/0").respond(accountsModel[0]);
     $httpBackend.whenGET("/accounts/1").respond(accountsModel[1]);
+    $httpBackend.whenJSONP("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
 
@@ -123,6 +125,34 @@ describe("Restangular", function() {
       suffixRestangular.allUrl('accounts', 'http://accounts.com/all').getList();
       $httpBackend.flush();
     });
+  });
+
+  describe("JSONp", function() {
+    it("should work for get", function() {
+      Restangular.setJsonp(true);
+      Restangular.one('accounts', 1).get();
+
+      $httpBackend.expectJSONP('/accounts/1');
+      $httpBackend.flush();
+    });
+
+    it("should work for getList", function() {
+      Restangular.setJsonp(true);
+      Restangular.all('accounts').getList();
+
+      $httpBackend.expectJSONP('/accounts');
+      $httpBackend.flush();
+    });
+
+    it("shouldn't override post", function() {
+      Restangular.setJsonp(true);
+      restangularAccounts.post({id: 2, user: "Someone"});
+
+      $httpBackend.expectPOST('/accounts').respond(201, '');
+      $httpBackend.flush();
+    });
+
+    
   });
 
   describe("Local data", function() {
