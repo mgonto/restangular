@@ -2,6 +2,7 @@ describe("Restangular", function() {
   // API
   var Restangular, $httpBackend;
   var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
+  var accountsHalModel;
   var messages, newAccount;
 
   // Load required modules
@@ -13,6 +14,15 @@ describe("Restangular", function() {
     accountsModel = [
       {id: 0, user: "Martin ", amount: 42, transactions: []},
       {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3, id: 0}, {from: "Anonymous", amount: 0.1416, id:1}]}
+    ];
+
+    // HAL model (http://stateless.co/hal_specification.html)
+    accountsHalModel = [
+      {id: 0, user: "Martin", amount: 42, transaction: [], _links: {self: "/accountsHAL/martin"}},
+      {id: 1, user: "Paul", amount: 3.1416, transaction: [
+        {from: "Martin", amount: 3, id: 0, _links: {self: "/accountsHAL/paul/transactions/0"}},
+        {from: "Anonymous", amount: 0.1416, id: 1, _links: {self: "/accountsHAL/paul/transactions/1"}}
+      ], _links: {self: "/accountsHAL/paul"}}
     ];
 
     newAccount = {id: 44, user: "First User", amount: 45, transactions: []};
@@ -37,6 +47,12 @@ describe("Restangular", function() {
     $httpBackend.whenJSONP("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
+
+    $httpBackend.whenGET("/accountsHAL").respond(accountsHalModel);
+    $httpBackend.whenPUT("/accountsHAL/martin").respond(function(method, url, data) {
+      accountsHalModel[0] = angular.fromJson(data);
+      return [200, data, ""];
+    });
 
     // Full URL
     $httpBackend.whenGET('http://accounts.com/all').respond(accountsModel);
@@ -659,6 +675,26 @@ describe("Restangular", function() {
 
       expect(grandchildRestangular.configuration.baseUrl).toEqual('/api/v1');
       expect(grandchildRestangular.configuration.suffix).toEqual('.json');
+    });
+  });
+
+  describe("Self linking", function() {
+    it("Should request the link in HAL format", function() {
+      var linkRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setRestangularFields({
+          selfLink: "_links.self"
+        });
+      });
+
+      var arr = linkRestangular.all('accountsHAL').getList().$object;
+      $httpBackend.flush();
+
+      var account = arr[0];
+      $httpBackend.expectPUT("/accountsHAL/martin");
+      account.name = "Updated";
+      account.put();
+
+      $httpBackend.flush();
     });
   });
 });
