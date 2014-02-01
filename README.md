@@ -428,6 +428,11 @@ You can now Override HTTP Methods. You can set here the array of methods to over
 
 By setting this value to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
 
+You will need to add the 'JSON_CALLBACK' string to your URLs (see [$http.jsonp](http://docs.angularjs.org/api/ng.$http#methods_jsonp)). You can use `setDefaultRequestParams` to accomplish this:
+```javascript
+RestangularProvider.setDefaultRequestParams('jsonp', {callback: 'JSON_CALLBACK'});
+```
+
 #### setDefaultRequestParams
 
 You can set default Query parameters to be sent with every request and every method.
