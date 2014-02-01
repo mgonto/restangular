@@ -126,16 +126,12 @@ You can download this by:
 * Using bower and running `bower install restangular`
 * Using npm and running `npm install restangular`
 * Downloading it manually by clicking [here to download development unminified version](https://raw.github.com/mgonto/restangular/master/dist/restangular.js) or [here to download minified production version](https://raw.github.com/mgonto/restangular/master/dist/restangular.min.js)
-* Using [JsDelivr CDN files](https://github.com/jimaek/jsdelivr/tree/master/files/restangular):
+* Using [CdnJS CDN files](http://cdnjs.com/libraries/restangular/):
 
 ````html
-<!-- Use LATEST folder to always get the latest version-->
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.js"></script>
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
-
-<!-- Or use TAG number for specific version -->
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/1.1.3/restangular.js"></script>
-<script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/1.1.3/restangular.min.js"></script>
+<!-- Or use TAG number for specific version. New versions are auto deployed -->
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
 ````
 
 
