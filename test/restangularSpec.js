@@ -25,6 +25,10 @@ describe("Restangular", function() {
       ], _links: {self: "/accountsHAL/paul"}}
     ];
 
+    infoModel = {
+      id: 0, text: "Some additional account information"
+    }
+
     newAccount = {id: 44, user: "First User", amount: 45, transactions: []};
 
     messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}]
@@ -47,6 +51,13 @@ describe("Restangular", function() {
     $httpBackend.whenJSONP("/accounts/1").respond(accountsModel[1]);
     $httpBackend.whenGET("/accounts/1/transactions").respond(accountsModel[1].transactions);
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
+
+    $httpBackend.whenGET("/info").respond(infoModel);
+    $httpBackend.whenPUT("/info").respond(function(method, url, data) {
+      infoModel = angular.fromJson(data);
+      return [200, data, ""];
+    });
+    $httpBackend.whenGET("/accounts/1/info").respond(infoModel);
 
     $httpBackend.whenGET("/accountsHAL").respond(accountsHalModel);
     $httpBackend.whenPUT("/accountsHAL/martin").respond(function(method, url, data) {
@@ -309,6 +320,24 @@ describe("Restangular", function() {
     it('uses all to get the list without parameters', function() {
       Restangular.one('accounts', 1).all('messages').getList();
       $httpBackend.expectGET('/accounts/1/messages');
+      $httpBackend.flush();
+    });
+
+    it('does not use the id for single resource GET', function() {
+      Restangular.one('info', 0, true).get();
+      $httpBackend.expectGET('/info');
+      $httpBackend.flush();
+    });
+
+    it('does not use the id for single nested resource GET', function() {
+      Restangular.one('accounts', 1).one('info', 0, true).get()
+      $httpBackend.expectGET('/accounts/1/info');
+      $httpBackend.flush();
+    });
+
+    it('does not use the id for single resource PUT', function() {
+      Restangular.one('info', 0, true).put();
+      $httpBackend.expectPUT('/info');
       $httpBackend.flush();
     });
 

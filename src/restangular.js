@@ -197,7 +197,8 @@ module.provider('Restangular', function() {
                 doGETLIST: 'doGETLIST',
                 fromServer: '$fromServer',
                 withConfig: 'withConfig',
-                withHttpConfig: 'withHttpConfig'
+                withHttpConfig: 'withHttpConfig',
+                singleOne: 'singleOne'
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -661,7 +662,7 @@ module.provider('Restangular', function() {
                               elemId = __this.config.getIdFromElem(elem);
                           }
 
-                          if (config.isValidId(elemId)) {
+                          if (config.isValidId(elemId) && !elem.singleOne) {
                               elemUrl += "/" + (__this.config.encodeIds ? encodeURIComponent(elemId) : elemId);
                           }
                       }
@@ -801,7 +802,7 @@ module.provider('Restangular', function() {
 
 
 
-              function one(parent, route, id) {
+              function one(parent, route, id, singleOne) {
                   if (_.isNumber(route) || _.isNumber(parent)) {
                     var error = "You're creating a Restangular entity with the number "
                     error += "instead of the route or the parent. You can't call .one(12)";
@@ -809,6 +810,7 @@ module.provider('Restangular', function() {
                   }
                   var elem = {};
                   config.setIdToElem(elem, id);
+                  config.setFieldToElem(config.restangularFields.singleOne, elem, singleOne);
                   return restangularizeElem(parent, elem , route, false);
               }
 
