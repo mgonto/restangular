@@ -59,6 +59,17 @@ describe("Restangular", function() {
     });
     $httpBackend.whenGET("/accounts/1/info").respond(infoModel);
 
+    $httpBackend.whenPUT("/info").respond(function(method, url, data) {
+      return [200, data, ""];
+    });
+
+    $httpBackend.whenPOST("/info").respond(function(method, url, data) {
+      var newData = angular.fromJson(data);
+      newData.fromServer = true;
+      newData.id = 666;
+      return [200, JSON.stringify(newData), ""];
+    });
+
     $httpBackend.whenGET("/accountsHAL").respond(accountsHalModel);
     $httpBackend.whenPUT("/accountsHAL/martin").respond(function(method, url, data) {
       accountsHalModel[0] = angular.fromJson(data);
@@ -323,24 +334,6 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it('does not use the id for single resource GET', function() {
-      Restangular.one('info', 0, true).get();
-      $httpBackend.expectGET('/info');
-      $httpBackend.flush();
-    });
-
-    it('does not use the id for single nested resource GET', function() {
-      Restangular.one('accounts', 1).one('info', 0, true).get()
-      $httpBackend.expectGET('/accounts/1/info');
-      $httpBackend.flush();
-    });
-
-    it('does not use the id for single resource PUT', function() {
-      Restangular.one('info', 0, true).put();
-      $httpBackend.expectPUT('/info');
-      $httpBackend.flush();
-    });
-
     it("Custom GET methods should work", function() {
       restangularAccounts.customGETLIST("messages").then(function(msgs) {
         expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(messages));
@@ -350,13 +343,13 @@ describe("Restangular", function() {
     });
 
     it("post() should add a new item", function() {
-     restangularAccounts.post({id: 2, user: "Someone"}).then(function() {
-       expect(accountsModel.length).toEqual(2);
-     });
+      restangularAccounts.post({id: 2, user: "Someone"}).then(function() {
+        expect(accountsModel.length).toEqual(2);
+      });
 
-    $httpBackend.expectPOST('/accounts').respond(201, '');
-    $httpBackend.flush();
-   });
+      $httpBackend.expectPOST('/accounts').respond(201, '');
+      $httpBackend.flush();
+    });
 
     it("post() should work with arrays", function() {
      Restangular.all('places').post([{name: "Gonto"}, {name: 'John'}]).then(function(value) {
@@ -723,6 +716,45 @@ describe("Restangular", function() {
       account.name = "Updated";
       account.put();
 
+      $httpBackend.flush();
+    });
+  });
+
+  describe("Singe one (endpoint not expecting an id)", function() {
+    it('does not use the id for single resource GET', function() {
+      Restangular.one('info', 0, true).get();
+      $httpBackend.expectGET('/info');
+      $httpBackend.flush();
+    });
+
+    it('getRestangularUrl() returns still the url without id after GET', function() {
+      record = Restangular.one('info', 0, true);
+      record.get().then(function(data){
+        expect(data.getRestangularUrl()).toEqual("/info")
+      });
+      $httpBackend.expectGET('/info');
+      $httpBackend.flush();
+    });
+
+    it('getRestangularUrl() returns still the url without id after POST', function() {
+      record = Restangular.one('info', 0, true);
+      record.post().then(function(data){
+        expect(data.id).toEqual(666);
+        expect(data.getRestangularUrl()).toEqual("/info");
+      });
+      $httpBackend.expectPOST('/info');
+      $httpBackend.flush();
+    });
+
+    it('does not use the id for single nested resource GET', function() {
+      Restangular.one('accounts', 1).one('info', 0, true).get()
+      $httpBackend.expectGET('/accounts/1/info');
+      $httpBackend.flush();
+    });
+
+    it('does not use the id for single resource PUT', function() {
+      Restangular.one('info', 0, true).put();
+      $httpBackend.expectPUT('/info');
       $httpBackend.flush();
     });
   });

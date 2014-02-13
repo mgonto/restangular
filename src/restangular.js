@@ -19,11 +19,11 @@ module.provider('Restangular', function() {
 
             var absolutePattern = /^https?:\/\//i;
             config.isAbsoluteUrl = function(string) {
-              return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ? 
+              return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ?
                       string && absolutePattern.test(string) :
                       config.absoluteUrl;
             };
-            
+
             config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
             object.setSelfLinkAbsoluteUrl = function(value) {
                 config.absoluteUrl = value;
@@ -475,7 +475,7 @@ module.provider('Restangular', function() {
                 return this;
             };
 
-            
+
 
 
 
@@ -781,7 +781,7 @@ module.provider('Restangular', function() {
                       var parentUrl = config.getUrlFromElem(parent);
 
                       var restangularFieldsForParent = _.union(
-                        _.values( _.pick(config.restangularFields, ['route', 'parentResource']) ),
+                        _.values( _.pick(config.restangularFields, ['route', 'singleOne', 'parentResource']) ),
                         config.extraFields
                       );
                       var parentResource = _.pick(parent, restangularFieldsForParent);
@@ -883,7 +883,7 @@ module.provider('Restangular', function() {
               function resolvePromise(deferred, response, data, filledValue) {
 
                 _.extend(filledValue, data);
-                
+
                 // Trigger the full response interceptor.
                 if (config.fullResponse) {
                   return deferred.resolve(_.extend(response, {
@@ -907,8 +907,8 @@ module.provider('Restangular', function() {
                 } else {
                     return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
                 }
-                        
-                        
+
+
               }
 
               function addCustomOperation(elem) {
@@ -1118,13 +1118,9 @@ module.provider('Restangular', function() {
                       var fullParams = response.config.params;
                       var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
                       if (elem) {
-
-                        if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
-                          resolvePromise(deferred, response, restangularizeElem(__this, elem, what, true, null, fullParams), filledObject);
-                        } else {
-                          resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], true, null, fullParams), filledObject);
-                        }
-
+                        data = restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], true, null, fullParams)
+                        data[config.restangularFields.singleOne] = __this[config.restangularFields.singleOne]
+                        resolvePromise(deferred, response, data, filledObject);
                       } else {
                         resolvePromise(deferred, response, undefined, filledObject);
                       }
