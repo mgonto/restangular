@@ -352,7 +352,7 @@ This can be used together with `addRestangularMethod` (Explained later) to add c
 
 
 #### setResponseInterceptor
-**This is depracated. Use addResponseInterceptor since you can add more than one**.
+**This is deprecated. Use addResponseInterceptor since you can add more than one**.
 
 #### addResponseInterceptor
 The responseInterceptor is called after we get each response from the server. It's a function that receives this arguments:
