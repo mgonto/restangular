@@ -352,7 +352,7 @@ This can be used together with `addRestangularMethod` (Explained later) to add c
 
 
 #### setResponseInterceptor
-**This is depracated. Use addResponseInterceptor since you can add more than one**.
+**This is deprecated. Use addResponseInterceptor since you can add more than one**.
 
 #### addResponseInterceptor
 The responseInterceptor is called after we get each response from the server. It's a function that receives this arguments:
@@ -369,7 +369,7 @@ Some of the use cases of the responseInterceptor are handling wrapped responses 
 The responseInterceptor must return the restangularized data element.
 
 #### setRequestInterceptor
-**This is depracated. Use addRequestInterceptor since you can add more than one**.
+**This is deprecated. Use addRequestInterceptor since you can add more than one**.
 
 #### addRequestInterceptor
 The requestInterceptor is called before sending any data to the server. It's a function that must return the element to be requested. This function receives the following arguments:
@@ -380,7 +380,7 @@ The requestInterceptor is called before sending any data to the server. It's a f
 * **url**: The relative URL being requested. For example: `/api/v1/accounts/123`
 
 #### setFullRequestInterceptor
-**This is depracated. Use addFullRequestInterceptor since you can add more than one**.
+**This is deprecated. Use addFullRequestInterceptor since you can add more than one**.
 
 #### addFullRequestInterceptor
 This adds a new fullRequestInterceptor. The fullRequestInterceptor is similar to the `requestInterceptor` but more powerful. It lets you change the element, the request parameters and the headers as well.
@@ -678,7 +678,7 @@ lengthPromise.then(function(length) {
 ````
 ## Using values directly in templates
 
-Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be depracated soon.
+Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be deprecated soon.
 
 **This means that the following will cease to work**:
 
