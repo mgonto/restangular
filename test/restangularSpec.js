@@ -63,13 +63,6 @@ describe("Restangular", function() {
       return [200, data, ""];
     });
 
-    $httpBackend.whenPOST("/info").respond(function(method, url, data) {
-      var newData = angular.fromJson(data);
-      newData.fromServer = true;
-      newData.id = 666;
-      return [200, JSON.stringify(newData), ""];
-    });
-
     $httpBackend.whenGET("/accountsHAL").respond(accountsHalModel);
     $httpBackend.whenPUT("/accountsHAL/martin").respond(function(method, url, data) {
       accountsHalModel[0] = angular.fromJson(data);
@@ -733,16 +726,6 @@ describe("Restangular", function() {
         expect(data.getRestangularUrl()).toEqual("/info")
       });
       $httpBackend.expectGET('/info');
-      $httpBackend.flush();
-    });
-
-    it('getRestangularUrl() returns still the url without id after POST', function() {
-      record = Restangular.one('info', 0, true);
-      record.post().then(function(data){
-        expect(data.id).toEqual(666);
-        expect(data.getRestangularUrl()).toEqual("/info");
-      });
-      $httpBackend.expectPOST('/info');
       $httpBackend.flush();
     });
 
