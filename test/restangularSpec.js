@@ -53,12 +53,7 @@ describe("Restangular", function() {
     $httpBackend.whenGET("/accounts/1/transactions/1").respond(accountsModel[1].transactions[1]);
 
     $httpBackend.whenGET("/info").respond(infoModel);
-    $httpBackend.whenPUT("/info").respond(function(method, url, data) {
-      infoModel = angular.fromJson(data);
-      return [200, data, ""];
-    });
     $httpBackend.whenGET("/accounts/1/info").respond(infoModel);
-
     $httpBackend.whenPUT("/info").respond(function(method, url, data) {
       return [200, data, ""];
     });
