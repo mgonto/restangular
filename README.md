@@ -1101,7 +1101,7 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * Slim Framework
 * Microsoft ASP.NET Web API 2
 
-# Releases Notes
+# Releases Notes 
 
 New releases notes are together with releases in GitHub at: https://github.com/mgonto/restangular/releases
 
