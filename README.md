@@ -146,7 +146,7 @@ Restangular depends on Angular and Lodash (or Underscore).
 Each time, there're more Production WebApps using `Restangular`. If your webapp uses it and it's not in the list, please create an issue or submit a PR:
 
 * **Life360** is using Restangular to build the WebApp version of their platform
-* **Thomas Reuters** is using Restangular for the new Webapp they've built
+* **Thomson Reuters** is using Restangular for the new Webapp they've built
 
 #Starter Guide
 
