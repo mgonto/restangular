@@ -456,7 +456,12 @@ You can set fullResponse to true to get the whole response every time you do any
 
 #### setDefaultHeaders
 
-You can set default Headers to be sent with every request.
+You can set default Headers to be sent with every request. Send format: {header_name: header_value}
+
+````javascript
+// set default header "token"
+RestangularProvider.setDefaultRequestParams({token: "x-restangular"});
+````
 
 #### setRequestSuffix
 
