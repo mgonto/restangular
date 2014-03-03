@@ -927,7 +927,7 @@ You must add a requestInterceptor for this.
 ````js
 RestangularProvider.setRequestInterceptor(function(elem, operation) {
   if (operation === "remove") {
-     return undefined;
+     return null;
   } 
   return elem;
 })
