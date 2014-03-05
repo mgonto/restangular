@@ -460,7 +460,7 @@ You can set default Headers to be sent with every request. Send format: {header_
 
 ````javascript
 // set default header "token"
-RestangularProvider.setDefaultRequestParams({token: "x-restangular"});
+RestangularProvider.setDefaultHeaders({token: "x-restangular"});
 ````
 
 #### setRequestSuffix
