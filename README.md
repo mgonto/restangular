@@ -969,13 +969,14 @@ app.config(function(RestangularProvider) {
     
     // add a response intereceptor
     RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
-      var extractedData = data;
+      var extractedData;
       // .. to look for getList operations
       if (operation === "getList") {
       	// .. and handle the data and meta data
         extractedData = data.data.data;
         extractedData.meta = data.data.meta;
-        extractedData.status = data.status
+      } else {
+        extractedData = data.data;
       }
       return extractedData;
     });
