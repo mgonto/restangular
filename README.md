@@ -967,20 +967,19 @@ In this case, you'd need to configure Restangular's `responseExtractor` and `lis
 ````javascript
 app.config(function(RestangularProvider) {
     
-    // Now let's configure the response extractor for each request
-    RestangularProvider.setResponseExtractor(function(response, operation, what, url) {
-      // This is a get for a list
-      var newResponse;
+    // add a response intereceptor
+    RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
+      var extractedData = data;
+      // .. to look for getList operations
       if (operation === "getList") {
-        // Here we're returning an Array which has one special property metadata with our extra information
-        newResponse = response.data.data;
-        newResponse.metadata = response.data.meta;
-      } else {
-        // This is an element
-        newResponse = response.data;
+      	// .. and handle the data and meta data
+        extractedData = data.data.data;
+        extractedData.meta = data.data.meta;
+        extractedData.status = data.status
       }
-      return newResponse;
+      return extractedData;
     });
+    
 });
 ````
 
