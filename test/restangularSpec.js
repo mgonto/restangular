@@ -736,4 +736,14 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
   });
+  describe("setSelfLinkAbsoluteUrl", function() {
+    it("works", function() {
+      var childRestangular = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setSelfLinkAbsoluteUrl(false);
+      });
+
+      expect(Restangular.configuration.absoluteUrl).toEqual(true);
+      expect(childRestangular.configuration.absoluteUrl).toEqual(false);
+    })
+  })
 });
