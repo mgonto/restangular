@@ -20,49 +20,51 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
 - [Dependencies](#dependencies)
 - [Production apps using Restangular](#production-apps-using-restangular)
 - [Starter Guide](#starter-guide)
-	- [Quick configuration for Lazy Readers](#quick-configuration-for-lazy-readers)
-	- [Adding dependency to Restangular module in your app](#adding-dependency-to-restangular-module-in-your-app)
-	- [Using Restangular](#using-restangular)
-		- [Creating Main Restangular object](#creating-main-restangular-object)
-		- [Let's code!](#lets-code)
-	- [Configuring Restangular](#configuring-restangular)
-		- [Properties](#properties)
-			- [setBaseUrl](#setbaseurl)
-			- [setExtraFields](#setextrafields)
-			- [setParentless](#setparentless)
-			- [setDefaultHttpFields](#setdefaulthttpfields)
-			- [addElementTransformer](#addelementtransformer)
-			- [setOnElemRestangularized](#setonelemrestangularized)
-			- [setResponseInterceptor (or setResponseExtractor. It's an Alias)](#setresponseinterceptor-or-setresponseextractor-its-an-alias)
-			- [setRequestInterceptor](#setrequestinterceptor)
-			- [setFullRequestInterceptor](#setfullrequestinterceptor)
-			- [setErrorInterceptor](#seterrorinterceptor)
-			- [setRestangularFields](#setrestangularfields)
-			- [setMethodOverriders](#setmethodoverriders)
-			- [setDefaultRequestParams](#setdefaultrequestparams)
-			- [setFullResponse](#setfullresponse)
-			- [setDefaultHeaders](#setdefaultheaders)
-			- [setRequestSuffix](#setrequestsuffix)
-			- [setUseCannonicalId](#setusecannonicalid)
-		- [How to configure them globally](#how-to-configure-them-globally)
-			- [Configuring in the config](#configuring-in-the-config)
-			- [Configuring in the run](#configuring-in-the-run)
-		- [How to create a Restangular service with a different configuration from the global one](#how-to-create-a-restangular-service-with-a-different-configuration-from-the-global-one)
-	- [Methods description](#methods-description)
-		- [Restangular methods](#restangular-methods)
-		- [Element methods](#element-methods)
-		- [Collection methods](#collection-methods)
-		- [Custom methods](#custom-methods) 
-	- [Copying elements](#copying-elements)
-	- [Enhanced promises](#enhanced-promises)
+  - [Quick configuration for Lazy Readers](#quick-configuration-for-lazy-readers)
+  - [Adding dependency to Restangular module in your app](#adding-dependency-to-restangular-module-in-your-app)
+  - [Using Restangular](#using-restangular)
+    - [Creating Main Restangular object](#creating-main-restangular-object)
+    - [Let's code!](#lets-code)
+  - [Configuring Restangular](#configuring-restangular)
+    - [Properties](#properties)
+      - [setBaseUrl](#setbaseurl)
+      - [setExtraFields](#setextrafields)
+      - [setParentless](#setparentless)
+      - [setDefaultHttpFields](#setdefaulthttpfields)
+      - [addElementTransformer](#addelementtransformer)
+      - [setOnElemRestangularized](#setonelemrestangularized)
+      - [setResponseInterceptor (or setResponseExtractor. It's an Alias)](#setresponseinterceptor-or-setresponseextractor-its-an-alias)
+      - [addResponseInterceptor] (#addrequestinterceptor)
+      - [setRequestInterceptor](#setrequestinterceptor)
+      - [addRequestInterceptor] (#addrequestinterceptor)
+      - [setFullRequestInterceptor](#setfullrequestinterceptor)
+      - [setErrorInterceptor](#seterrorinterceptor)
+      - [setRestangularFields](#setrestangularfields)
+      - [setMethodOverriders](#setmethodoverriders)
+      - [setDefaultRequestParams](#setdefaultrequestparams)
+      - [setFullResponse](#setfullresponse)
+      - [setDefaultHeaders](#setdefaultheaders)
+      - [setRequestSuffix](#setrequestsuffix)
+      - [setUseCannonicalId](#setusecannonicalid)
+    - [How to configure them globally](#how-to-configure-them-globally)
+      - [Configuring in the config](#configuring-in-the-config)
+      - [Configuring in the run](#configuring-in-the-run)
+    - [How to create a Restangular service with a different configuration from the global one](#how-to-create-a-restangular-service-with-a-different-configuration-from-the-global-one)
+  - [Methods description](#methods-description)
+    - [Restangular methods](#restangular-methods)
+    - [Element methods](#element-methods)
+    - [Collection methods](#collection-methods)
+    - [Custom methods](#custom-methods) 
+  - [Copying elements](#copying-elements)
+  - [Enhanced promises](#enhanced-promises)
         - [Using values directly in templates](#using-values-directly-in-templates)
-	- [Using Self reference resources](#using-self-reference-resources)
-	- [URL Building](#url-building)
-	- [Creating new Restangular Methods](#creating-new-restangular-methods)
-	- [Adding Custom Methods to Collections](#adding-custom-methods-to-collections)
-		- [Example:](#example)
-	- [Adding Custom Methods to Models](#adding-custom-methods-to-models)
-		- [Example:](#example-1)
+  - [Using Self reference resources](#using-self-reference-resources)
+  - [URL Building](#url-building)
+  - [Creating new Restangular Methods](#creating-new-restangular-methods)
+  - [Adding Custom Methods to Collections](#adding-custom-methods-to-collections)
+    - [Example:](#example)
+  - [Adding Custom Methods to Models](#adding-custom-methods-to-models)
+    - [Example:](#example-1)
 - [FAQ](#faq)
     - [How can I handle errors?](#how-can-i-handle-errors)
     - [I need to send one header in EVERY Restangular request, how do I do this?](#i-need-to-send-one-header-in-every-restangular-request-how-do-i-do-this)
@@ -100,19 +102,19 @@ Restangular has several features that distinguish it from $resource:
 Let's see a quick and short example of these features
 ````javascript
 // Restangular returns promises
-Restangular.one('users').getList()	// GET: /users
+Restangular.one('users').getList()  // GET: /users
 .then(function(users) {
   // returns a list of users
-  $scope.user = users[0];	// first Restangular obj in list: { id: 123 }
+  $scope.user = users[0]; // first Restangular obj in list: { id: 123 }
 })
 
 // Later in the code...
 
 // Restangular objects are self-aware and know how to make their own restful requests
-$scope.user.getList('cars');	// GET: /users/123/cars
+$scope.user.getList('cars');  // GET: /users/123/cars
 
 // You can also use your own custom methods on Restangular objects
-$scope.user.sendMessage();	// POST: /users/123/sendMessage
+$scope.user.sendMessage();  // POST: /users/123/sendMessage
 
 // Chain methods together to easily build complex requests
 $scope.user.one('messages', 123).one('from', 123).getList('unread');
@@ -1127,4 +1129,3 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mgonto/restangular/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
