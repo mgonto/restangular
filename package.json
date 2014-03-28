@@ -46,7 +46,7 @@
     "karma-firefox-launcher": "~0.1.3"
   },
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt test --verbose"
   },
   "license": "MIT"
 }
