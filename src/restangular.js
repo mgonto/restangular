@@ -245,7 +245,7 @@ module.provider('Restangular', function() {
                 return "" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId);
             };
 
-            config.setUrlToElem = function(elem, url) {
+            config.setUrlToElem = function(elem, url, route) {
               config.setFieldToElem(config.restangularFields.selfLink, elem, url);
               return this;
             };
@@ -831,7 +831,7 @@ module.provider('Restangular', function() {
                     throw new Error("Route is mandatory when creating new Restangular objects.");
                   }
                   var elem = {};
-                  config.setUrlToElem(elem, url);
+                  config.setUrlToElem(elem, url, route);
                   return restangularizeElem(parent, elem , route, false);
               }
 
@@ -841,7 +841,7 @@ module.provider('Restangular', function() {
                     throw new Error("Route is mandatory when creating new Restangular objects.");
                   }
                   var elem = {};
-                  config.setUrlToElem(elem, url);
+                  config.setUrlToElem(elem, url, route);
                   return restangularizeCollection(parent, elem , route, false);
               }
               // Promises
