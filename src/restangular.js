@@ -24,7 +24,7 @@ module.provider('Restangular', function() {
                       config.absoluteUrl;
             };
 
-            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
+            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? true : config.absoluteUrl;
             object.setSelfLinkAbsoluteUrl = function(value) {
                 config.absoluteUrl = value;
             };
