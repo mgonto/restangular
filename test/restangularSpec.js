@@ -104,28 +104,37 @@ describe("Restangular", function() {
   describe("Interceptors", function() {
     it("Should add multiple request and response interceptors", function() {
       Restangular.addRequestInterceptor(function(elem) {
-        elem.firstRequestInterceptor = true;
-        return elem;
+        var elemCopy = angular.copy(elem);
+        elemCopy.firstRequestInterceptor = true;
+        return elemCopy;
       });
       Restangular.addRequestInterceptor(function(elem) {
-        elem.secondRequestInterceptor = true;
-        return elem;
+        expect(elem.firstRequestInterceptor).toBeDefined();
+        var elemCopy = angular.copy(elem);
+        elemCopy.secondRequestInterceptor = true;
+        return elemCopy;
       });
       Restangular.addFullRequestInterceptor(function(elem) {
-        elem.thirdRequestInterceptor = true;
+        expect(elem.firstRequestInterceptor).toBeDefined();
+        expect(elem.secondRequestInterceptor).toBeDefined();
+        var elemCopy = angular.copy(elem);
+        elemCopy.thirdRequestInterceptor = true;
         return {
-          element: elem
+          element: elemCopy
         };
       });
 
       Restangular.addResponseInterceptor(function(elem) {
-        elem.firstResponseInterceptor = true;
-        return elem;
+        var elemCopy = angular.copy(elem);
+        elemCopy.firstResponseInterceptor = true;
+        return elemCopy;
       });
 
       Restangular.addResponseInterceptor(function(elem) {
-        elem.secondResponseInterceptor = true;
-        return elem;
+        expect(elem.firstResponseInterceptor).toBeDefined();
+        var elemCopy = angular.copy(elem);
+        elemCopy.secondResponseInterceptor = true;
+        return elemCopy;
       });
 
       $httpBackend.whenPOST("/list").respond(function(method, url, data, headers) {
@@ -144,8 +153,6 @@ describe("Restangular", function() {
        });
 
        $httpBackend.flush();
-
-
     });
   });
 
@@ -736,4 +743,14 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
   });
+  describe("setSelfLinkAbsoluteUrl", function() {
+    it("works", function() {
+      var childRestangular = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setSelfLinkAbsoluteUrl(false);
+      });
+
+      expect(Restangular.configuration.absoluteUrl).toEqual(true);
+      expect(childRestangular.configuration.absoluteUrl).toEqual(false);
+    })
+  })
 });

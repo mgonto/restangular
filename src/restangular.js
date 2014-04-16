@@ -24,7 +24,7 @@ module.provider('Restangular', function() {
                       config.absoluteUrl;
             };
 
-            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
+            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? true : config.absoluteUrl;
             object.setSelfLinkAbsoluteUrl = function(value) {
                 config.absoluteUrl = value;
             };
@@ -245,7 +245,7 @@ module.provider('Restangular', function() {
                 return "" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId);
             };
 
-            config.setUrlToElem = function(elem, url) {
+            config.setUrlToElem = function(elem, url, route) {
               config.setFieldToElem(config.restangularFields.selfLink, elem, url);
               return this;
             };
@@ -325,11 +325,11 @@ module.provider('Restangular', function() {
             config.fullRequestInterceptor = function(element, operation,
               path, url, headers, params, httpConfig) {
                 var interceptors = angular.copy(config.requestInterceptors);
-                interceptors.push(config.defaultInterceptor);
+                var defaultRequest = config.defaultInterceptor(element, operation, path, url, headers, params, httpConfig);
                 return _.reduce(interceptors, function(request, interceptor) {
-                  return _.defaults(request, interceptor(element, operation,
-                    path, url, headers, params, httpConfig));
-                }, {});
+                  return _.extend(request, interceptor(request.element, operation,
+                    path, url, request.headers, request.params, request.httpConfig));
+                }, defaultRequest);
             };
 
             object.addRequestInterceptor = function(interceptor) {
@@ -464,7 +464,7 @@ module.provider('Restangular', function() {
                   isCollection, route, Restangular);
             };
 
-            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? true : config.transformLocalElements;
+            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? false : config.transformLocalElements;
             object.setTransformOnlyServerElements = function(active) {
               config.transformLocalElements = !active;
             }
@@ -831,7 +831,7 @@ module.provider('Restangular', function() {
                     throw new Error("Route is mandatory when creating new Restangular objects.");
                   }
                   var elem = {};
-                  config.setUrlToElem(elem, url);
+                  config.setUrlToElem(elem, url, route);
                   return restangularizeElem(parent, elem , route, false);
               }
 
@@ -841,7 +841,7 @@ module.provider('Restangular', function() {
                     throw new Error("Route is mandatory when creating new Restangular objects.");
                   }
                   var elem = {};
-                  config.setUrlToElem(elem, url);
+                  config.setUrlToElem(elem, url, route);
                   return restangularizeCollection(parent, elem , route, false);
               }
               // Promises
@@ -933,8 +933,8 @@ module.provider('Restangular', function() {
                   elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
               }
 
-              function copyRestangularizedElement(fromElement) {
-                  var copiedElement = angular.copy(fromElement);
+              function copyRestangularizedElement(fromElement, toElement) {
+                  var copiedElement = angular.copy(fromElement, toElement);
                   return restangularizeElem(copiedElement[config.restangularFields.parentResource],
                           copiedElement, copiedElement[config.restangularFields.route], true);
               }
