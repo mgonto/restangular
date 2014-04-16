@@ -325,11 +325,11 @@ module.provider('Restangular', function() {
             config.fullRequestInterceptor = function(element, operation,
               path, url, headers, params, httpConfig) {
                 var interceptors = angular.copy(config.requestInterceptors);
-                interceptors.push(config.defaultInterceptor);
+                var defaultRequest = config.defaultInterceptor(element, operation, path, url, headers, params, httpConfig);
                 return _.reduce(interceptors, function(request, interceptor) {
-                  return _.defaults(request, interceptor(element, operation,
-                    path, url, headers, params, httpConfig));
-                }, {});
+                  return _.extend(request, interceptor(request.element, operation,
+                    path, url, request.headers, request.params, request.httpConfig));
+                }, defaultRequest);
             };
 
             object.addRequestInterceptor = function(interceptor) {
