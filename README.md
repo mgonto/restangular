@@ -165,7 +165,7 @@ angular.module('your-app').controller('MainCtrl', function($scope, Restangular) 
 });
 ````
 
-The Restangular service may be injected into any Controller or Directive :)
+The Restangular service may be injected into any Controller or Directive :)  
 Note: When adding Restangular as a dependency it is not capitalized 'restangular'  
       But when injected into your controller it is 'Restangular'
 
