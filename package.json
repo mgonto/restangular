@@ -28,7 +28,9 @@
       "website": "http://gon.to/"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^2.4.1"
+  },
   "devDependencies": {
     "grunt-cli": ">= 0.1.7",
     "grunt-contrib-concat": "*",
