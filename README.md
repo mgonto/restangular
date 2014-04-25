@@ -250,6 +250,9 @@ baseAccounts.getList().then(function (accounts) {
   firstAccount.put();
   editFirstAccount.put();
 
+  // PUT /accounts/123. Save will do POST or PUT accordingly
+  firstAccount.save();
+
   // DELETE /accounts/123 We don't have first account anymore :(
   firstAccount.remove();
   
@@ -671,6 +674,7 @@ These are the methods that can be called on the Restangular object.
 * **clone()**: Copies the element
 * **plain()**: Returns the plain element received from the server without any of the enhanced methods from Restangular. It's an alias to calling `Restangular.stripRestangular(elem)`
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
+* **save**: Calling save will determine wether to do PUT or POST accordingly
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.

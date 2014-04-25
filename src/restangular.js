@@ -199,7 +199,8 @@ module.provider('Restangular', function() {
                 withConfig: 'withConfig',
                 withHttpConfig: 'withHttpConfig',
                 singleOne: 'singleOne',
-                plain: 'plain'
+                plain: 'plain',
+                save: 'save'
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -968,6 +969,7 @@ module.provider('Restangular', function() {
                   localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
                   localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
                   localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
+                  localElem[config.restangularFields.save] = _.bind(save, localElem);
 
                   addCustomOperation(localElem);
                   return config.transformElem(localElem, false, route, service, true);
@@ -1095,6 +1097,14 @@ module.provider('Restangular', function() {
               function withHttpConfig(httpConfig) {
                  this[config.restangularFields.httpConfig] = httpConfig;
                  return this;
+              }
+
+              function save(params, headers) {
+                if (this[config.restangularFields.fromServer]) {
+                  return this[config.restangularFields.put](params, headers);
+                } else {
+                  return _.bind(elemFunction, this)("post", undefined, params, undefined, headers);
+                }
               }
 
               function elemFunction(operation, what, params, obj, headers) {

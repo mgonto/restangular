@@ -85,6 +85,10 @@ describe("Restangular", function() {
       return [200, "", ""];
     });
 
+    $httpBackend.whenPOST("/accounts/1").respond(function(method, url, data, headers) {
+      return [200, "", ""];
+    });
+
     $httpBackend.whenPUT("/accounts/1").respond(function(method, url, data, headers) {
       accountsModel[1] = angular.fromJson(data);
       return [201, data, ""];
@@ -450,6 +454,24 @@ describe("Restangular", function() {
           .toEqual(Restangular.stripRestangular(accountsModel[1]));
       });
 
+      $httpBackend.flush();
+    });
+
+    it("Should save as put correctly", function() {
+      restangularAccount1.get().then(function(account) {
+        $httpBackend.expectPUT('/accounts/1');
+        account.put();
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("Should save as post correctly", function() {
+      var account1 = angular.copy(restangularAccount1);
+      $httpBackend.expectPOST('/accounts/1');
+      account1.name = "Hey";
+      account1.save();
+      
       $httpBackend.flush();
     });
 
