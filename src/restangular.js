@@ -198,7 +198,8 @@ module.provider('Restangular', function() {
                 fromServer: '$fromServer',
                 withConfig: 'withConfig',
                 withHttpConfig: 'withHttpConfig',
-                singleOne: 'singleOne'
+                singleOne: 'singleOne',
+                plain: 'plain'
             };
             object.setRestangularFields = function(resFields) {
                 config.restangularFields =
@@ -766,6 +767,7 @@ module.provider('Restangular', function() {
                   elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
                   elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
                   elem[config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
+                  elem[config.restangularFields.plain] = _.bind(stripRestangular, elem, elem);
 
                   // RequestLess connection
                   elem[config.restangularFields.one] = _.bind(one, elem, elem);
