@@ -175,25 +175,6 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it("Should decorate element only server if config set", function() {
-
-      Restangular.extendModel('accounts', function(account) {
-        account.extended = function() {return true;}
-        return account;
-      });
-
-      Restangular.setTransformOnlyServerElements(true)
-
-      Restangular.one('accounts', 1).get().then(function(account) {
-        expect(account.extended).toBeDefined();
-      });
-
-      var local = {};
-      Restangular.restangularizeElement(null, local, 'accounts');
-      expect(local.extended).toBeUndefined();
-
-      $httpBackend.flush();
-    });
   });
 
   describe("With Url", function() {
@@ -263,7 +244,7 @@ describe("Restangular", function() {
       expect(obj.amount).toEqual(3.1416);      
     });
 
-    it("Should be restangularized by default", function() {
+    it("Shouldn't be restangularized by default", function() {
       Restangular.extendModel('accounts', function(account) {
         account.extended = function() {return true;}
         return account;
@@ -272,7 +253,7 @@ describe("Restangular", function() {
       var promise = Restangular.one('accounts', 1).get();
       var obj = promise.$object;
       expect(obj).toBeDefined();
-      expect(obj.extended).toBeDefined();
+      expect(obj.extended).toBeUndefined();
 
       $httpBackend.flush();
     });
