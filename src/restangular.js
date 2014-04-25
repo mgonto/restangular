@@ -452,8 +452,8 @@ module.provider('Restangular', function() {
               return object.addElementTransformer(route, false, fn);
             };
 
-            config.transformElem = function(elem, isCollection, route, Restangular) {
-                if (!config.transformLocalElements && !elem[config.restangularFields.fromServer]) {
+            config.transformElem = function(elem, isCollection, route, Restangular, force) {
+                if (!force && !config.transformLocalElements && !elem[config.restangularFields.fromServer]) {
                   return elem;
                 }
                 var typeTransformers = config.transformers[route];
@@ -467,7 +467,7 @@ module.provider('Restangular', function() {
                   isCollection, route, Restangular);
             };
 
-            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? true : config.transformLocalElements;
+            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? false : config.transformLocalElements;
             object.setTransformOnlyServerElements = function(active) {
               config.transformLocalElements = !active;
             }
@@ -970,7 +970,7 @@ module.provider('Restangular', function() {
                   localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
 
                   addCustomOperation(localElem);
-                  return config.transformElem(localElem, false, route, service);
+                  return config.transformElem(localElem, false, route, service, true);
               }
 
               function restangularizeCollection(parent, element, route, fromServer, reqParams) {
@@ -989,7 +989,7 @@ module.provider('Restangular', function() {
                   localElem[config.restangularFields.getList] = _.bind(fetchFunction, localElem, null);
 
                   addCustomOperation(localElem);
-                  return config.transformElem(localElem, true, route, service);
+                  return config.transformElem(localElem, true, route, service, true);
               }
 
               function restangularizeCollectionAndElements(parent, element, route) {
