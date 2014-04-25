@@ -195,7 +195,7 @@ module.provider('Restangular', function() {
                 doDELETE: 'doDELETE',
                 doGET: 'doGET',
                 doGETLIST: 'doGETLIST',
-                fromServer: '$fromServer',
+                fromServer: 'fromServer',
                 withConfig: 'withConfig',
                 withHttpConfig: 'withHttpConfig',
                 singleOne: 'singleOne',
