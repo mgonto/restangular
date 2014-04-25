@@ -1244,10 +1244,21 @@ module.provider('Restangular', function() {
                  return createServiceForConfiguration(newConfig);
              }
 
+             function toService(route, parent) {
+                 var serv = {};
+                 var collection = (parent || service).all(route);
+                 serv.one = _.bind(one, (parent || service), parent, route);
+                 serv.post = _.bind(collection.post, collection);
+                 serv.getList = _.bind(collection.getList, collection);
+                 return serv;
+             }
+
 
               Configurer.init(service, config);
 
               service.copy = _.bind(copyRestangularizedElement, service);
+
+              service.service = _.bind(toService, service);
 
               service.withConfig = _.bind(withConfigurationFunction, service);
 

@@ -50,6 +50,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
       - [Configuring in the config](#configuring-in-the-config)
       - [Configuring in the run](#configuring-in-the-run)
     - [How to create a Restangular service with a different configuration from the global one](#how-to-create-a-restangular-service-with-a-different-configuration-from-the-global-one)
+    - [Decoupled Restangular Services](#decoupled-restangular-services)
   - [Methods description](#methods-description)
     - [Restangular methods](#restangular-methods)
     - [Element methods](#element-methods)
@@ -603,6 +604,36 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
   BingRestangular.all('users').getList()
 });
 ````
+
+### Decoupled Restangular Service
+
+There're some times where you want to use Restangular but you don't want to expose Restangular object anywhere. For those cases, you can actually use the `service` feature of Restangular.
+
+Let's see how it works:
+
+````js
+// Declare factory
+module.factory('Users', function() {
+  return Restangular.service('users');
+});
+
+// In your controller you inject Users
+Users.one(2).get() // GET to /users/1
+Users.post({data}) // POST to /users
+
+// GET to /users
+Users.getList().then(function(user) {
+  user.name = "Gonto";
+  // PUT to /users/1
+  user.put();
+})
+````
+
+We can also use Nested restfull resources with this:
+
+var Cars = Restangular.service('cars', Restangular.one('users', 1));
+
+Cars.getList() // GET to /users/1/cars
 
 ## Methods description
 

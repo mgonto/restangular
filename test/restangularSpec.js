@@ -415,6 +415,34 @@ describe("Restangular", function() {
     });
   });
 
+  describe("Scoped Service", function() {
+
+    it("should correctly work", function() {
+      var Accounts = Restangular.service('accounts');
+      Accounts.post(newAccount);
+      Accounts.one(0).get();
+      Accounts.getList();
+
+      $httpBackend.expectPOST('/accounts');
+      $httpBackend.expectGET('/accounts/0');
+      $httpBackend.expectGET('/accounts');
+      $httpBackend.flush();
+     });
+
+    it("should correctly work with children", function() {
+      var Transactions = Restangular.service('transactions', restangularAccount1);
+      Transactions.post(newAccount);
+      Transactions.one(1).get();
+      Transactions.getList();
+
+      $httpBackend.expectPOST('/accounts/1/transactions');
+      $httpBackend.expectGET('/accounts/1/transactions/1');
+      $httpBackend.expectGET('/accounts/1/transactions');
+      $httpBackend.flush();
+     });
+
+  });
+
   describe("ONE", function() {
     it("get() should return a JSON item", function() {
       restangularAccount1.get().then(function(account) {
