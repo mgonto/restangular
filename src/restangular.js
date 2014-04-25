@@ -464,7 +464,7 @@ module.provider('Restangular', function() {
                   isCollection, route, Restangular);
             };
 
-            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? false : config.transformLocalElements;
+            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? true : config.transformLocalElements;
             object.setTransformOnlyServerElements = function(active) {
               config.transformLocalElements = !active;
             }
