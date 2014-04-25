@@ -1005,7 +1005,7 @@ module.provider('Restangular', function() {
                   var elemToPut = this[idx];
                   var deferred = $q.defer();
                   var filledArray = [];
-                  filledArray = config.transformElem(filledArray, true, whatFetched, service)
+                  filledArray = config.transformElem(filledArray, true, elemToPut[config.restangularFields.route], service)
                   elemToPut.put(params, headers).then(function(serverElem) {
                       var newArray = copyRestangularizedElement(__this);
                       newArray[idx] = serverElem;
