@@ -50,7 +50,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
       - [Configuring in the config](#configuring-in-the-config)
       - [Configuring in the run](#configuring-in-the-run)
     - [How to create a Restangular service with a different configuration from the global one](#how-to-create-a-restangular-service-with-a-different-configuration-from-the-global-one)
-    - [Decoupled Restangular Services](#decoupled-restangular-services)
+    - [Decoupled Restangular Service](#decoupled-restangular-service)
   - [Methods description](#methods-description)
     - [Restangular methods](#restangular-methods)
     - [Element methods](#element-methods)
