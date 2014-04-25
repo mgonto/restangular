@@ -440,6 +440,8 @@ module.provider('Restangular', function() {
                     }
                     return elem;
                 });
+
+                return object;
             };
 
             object.extendCollection = function(route, fn) {
