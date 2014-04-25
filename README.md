@@ -458,6 +458,31 @@ Restangular.setDefaultRequestParams({apikey: "secret key"});
 
 You can set fullResponse to true to get the whole response every time you do any request. The full response has the restangularized data in the `data` field, and also has the headers and config sent. By default, it's set to false.
 
+````javascript
+// set params for multiple methods at once
+Restangular.setFullResponse(true);
+````
+
+Or set it per service
+````javascript
+// Restangular service that uses setFullResponse
+app.factory('RestFullResponse', function(Restangular) {
+  return Restangular.withConfig(function(RestangularConfigurer) {
+    RestangularConfigurer.setFullResponse(true);
+  });
+});
+
+// Let's use it in the controller
+app.controller('MainCtrl', function(Restangular, RestFullResponse) {
+
+  // Uses full response configuration
+  RestFullResponse.all('users').getList().then(function(response) {
+    $scope.users = response.users;
+    console.log(response.headers);
+  });
+});
+````
+
 #### setDefaultHeaders
 
 You can set default Headers to be sent with every request. Send format: {header_name: header_value}
