@@ -400,7 +400,7 @@ It can return an object with any (or all) of following properties:
 If a property isn't returned, the one sent is used.
 
 #### setErrorInterceptor
-The errorInterceptor is called whenever there's an error. It's a function that receives the response and the promise as parameters.
+The errorInterceptor is called whenever there's an error. It's a function that receives the response and the deferred (for the promise) as parameters.
 
 The errorInterceptor function, whenever it returns `false`, prevents the promise linked to a Restangular request to be executed.
 All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
