@@ -460,7 +460,7 @@ Restangular.setDefaultRequestParams({apikey: "secret key"});
 
 #### setFullResponse
 
-You can set fullResponse to true to get the whole response every time you do any request. The full response has the restangularized data in the `data` field, and also has the headers and config sent. By default, it's set to false.
+You can set fullResponse to true to get the whole response every time you do any request. The full response has the restangularized data in the `data` field, and also has the headers and config sent. By default, it's set to false. Please note that in order for Restangular to access custom HTTP headers, your server must respond having the `Access-Control-Expose-Headers:` set.
 
 ````javascript
 // set params for multiple methods at once
