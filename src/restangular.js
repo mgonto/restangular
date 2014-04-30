@@ -1136,7 +1136,7 @@ module.provider('Restangular', function() {
                         if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
                           resolvePromise(deferred, response, restangularizeElem(__this, elem, what, true, null, fullParams), filledObject);
                         } else {
-                          data = restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], true, null, fullParams)
+                          var data = restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], true, null, fullParams)
                           data[config.restangularFields.singleOne] = __this[config.restangularFields.singleOne]
                           resolvePromise(deferred, response, data, filledObject);
                         }
