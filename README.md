@@ -1101,7 +1101,7 @@ Restangular.all('users').getList().then(function(users) {
 When you actually get a list by doing
 
 ````javascript
-$scope.owners = house.getList('owners')
+$scope.owners = house.getList('owners').$object;
 ````
 
 You're actually assigning a Promise to the owners value of the $scope. As Angular knows how to process promises, if in your view you do an ng-repeat of this $scope variable, results will be shown once the promise is resolved (Response arrived).
