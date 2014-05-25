@@ -421,7 +421,7 @@ var refreshAccesstoken = function() {
     return deferred.promise;
 };
 
-var errorHandler = function(response, deferred, responseHandler) {
+Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
     if(response.status === 403) {
         refreshAccesstoken().then(function() {
             $http(response.config).then(responseHandler, deferred.reject);
@@ -431,8 +431,7 @@ var errorHandler = function(response, deferred, responseHandler) {
     }
     
     return true; // error not handled
-};
-Restangular.setErrorInterceptor(errorHandler);
+});
 
 ````
 
