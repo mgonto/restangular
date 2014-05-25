@@ -413,6 +413,14 @@ The feature to prevent the promise to complete is useful whenever you need to in
 
 ````javascript
 
+var refreshAccesstoken = function() { 
+    var deferred = $q.defer();
+    
+    // Refresh access-token logic
+    
+    return deferred.promise;
+};
+
 var errorHandler = function(response, deferred, responseHandler) {
     if(response.status === 403) {
         refreshAccesstoken().then(function() {
