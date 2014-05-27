@@ -34,7 +34,7 @@ It's a perfect fit for any WebApp that consumes data from a RESTful API.
       - [addElementTransformer](#addelementtransformer)
       - [setOnElemRestangularized](#setonelemrestangularized)
       - [setResponseInterceptor (or setResponseExtractor. It's an Alias)](#setresponseinterceptor-or-setresponseextractor-its-an-alias)
-      - [addResponseInterceptor] (#addrequestinterceptor)
+      - [addResponseInterceptor] (#addresponseinterceptor)
       - [setRequestInterceptor](#setrequestinterceptor)
       - [addRequestInterceptor] (#addrequestinterceptor)
       - [setFullRequestInterceptor](#setfullrequestinterceptor)
