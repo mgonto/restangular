@@ -234,7 +234,7 @@ module.provider('Restangular', function() {
               return angular.copy(idValue);
             };
 
-            config.setIdToElem = function(elem, id) {
+            config.setIdToElem = function(elem, id, route) {
               config.setFieldToElem(config.restangularFields.id, elem, id);
               return this;
             };
@@ -792,10 +792,10 @@ module.provider('Restangular', function() {
                       var parentResource = _.pick(parent, restangularFieldsForParent);
 
                       if (config.isValidId(parentId)) {
-                          config.setIdToElem(parentResource, parentId);
+                          config.setIdToElem(parentResource, parentId, route);
                       }
                       if (config.isValidId(parentUrl)) {
-                          config.setUrlToElem(parentResource, parentUrl);
+                          config.setUrlToElem(parentResource, parentUrl, route);
                       }
 
                       elem[config.restangularFields.parentResource] = parentResource;
@@ -814,7 +814,7 @@ module.provider('Restangular', function() {
                     throw new Error(error);
                   }
                   var elem = {};
-                  config.setIdToElem(elem, id);
+                  config.setIdToElem(elem, id, route);
                   config.setFieldToElem(config.restangularFields.singleOne, elem, singleOne);
                   return restangularizeElem(parent, elem , route, false);
               }
