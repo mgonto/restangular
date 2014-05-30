@@ -1053,8 +1053,7 @@ module.provider('Restangular', function() {
                     method = "jsonp";
                   }
 
-                  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
-                          this[config.restangularFields.etag], operation)[method]().then(function(response) {
+                  var okCallback = function(response) {
                       var resData = response.data;
                       var fullParams = response.config.params;
                       var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
@@ -1083,10 +1082,13 @@ module.provider('Restangular', function() {
                       } else {
                           resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route], true, fullParams), filledArray);
                       }
-                  }, function error(response) {
+                  };
+
+                  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
+                          this[config.restangularFields.etag], operation)[method]().then(okCallback, function error(response) {
                       if (response.status === 304 && __this[config.restangularFields.restangularCollection]) {
                         resolvePromise(deferred, response, __this, filledArray);
-                      } else if ( config.errorInterceptor(response, deferred) !== false ) {
+                      } else if ( config.errorInterceptor(response, deferred, okCallback) !== false ) {
                           deferred.reject(response);
                       }
                   });
@@ -1149,7 +1151,7 @@ module.provider('Restangular', function() {
                   var errorCallback = function(response) {
                       if (response.status === 304 && config.isSafe(operation)) {
                         resolvePromise(deferred, response, __this, filledObject);
-                      } else if ( config.errorInterceptor(response, deferred) !== false ) {
+                      } else if ( config.errorInterceptor(response, deferred, okCallback) !== false ) {
                           deferred.reject(response);
                       }
                   };

@@ -404,12 +404,38 @@ It can return an object with any (or all) of following properties:
 If a property isn't returned, the one sent is used.
 
 #### setErrorInterceptor
-The errorInterceptor is called whenever there's an error. It's a function that receives the response and the deferred (for the promise) as parameters.
+The errorInterceptor is called whenever there's an error. It's a function that receives the response, the deferred (for the promise) and the Restangular-response handler as parameters.
 
 The errorInterceptor function, whenever it returns `false`, prevents the promise linked to a Restangular request to be executed.
 All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
 
 The feature to prevent the promise to complete is useful whenever you need to intercept each Restangular error response for every request in your AngularJS application in a single place, increasing debugging capabilities and hooking security features in a single place.
+
+````javascript
+
+var refreshAccesstoken = function() { 
+    var deferred = $q.defer();
+    
+    // Refresh access-token logic
+    
+    return deferred.promise;
+};
+
+Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
+    if(response.status === 403) {
+        refreshAccesstoken().then(function() {
+            // Repeat the request and then call the handlers the usual way.
+            $http(response.config).then(responseHandler, deferred.reject);
+            // Be aware that no request interceptors are called this way.
+        });
+
+        return false; // error handled
+    }
+    
+    return true; // error not handled
+});
+
+````
 
 #### setRestangularFields
 
