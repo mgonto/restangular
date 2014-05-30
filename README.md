@@ -1133,6 +1133,19 @@ $scope.owners = house.getList('owners').$object;
 You're actually assigning a Promise to the owners value of the $scope. As Angular knows how to process promises, if in your view you do an ng-repeat of this $scope variable, results will be shown once the promise is resolved (Response arrived).
 However, changes to that promise that you do from your HTML won't be seen in the scope, as it's not a real array. It's just a promise of an array.
 
+#### Removing an element from a collection, keeping the collection restangularized
+
+While the example above removes the deleted user from the collection, it also overwrites the collection object with a plain array (because of `_.without`) which no longer knows about its Restangular attributes.
+
+If want to keep the restangularized collection, remove the element by modifying the collection in place:
+
+```javascript
+userWithId.remove().then(function() {
+  var index = $scope.users.indexOf(userWithId);
+  if (index > -1) $scope.users.splice(userWithId, 1);
+});
+```
+
 #### When I set baseUrl with a port, it's stripped out.
 
 It won't be stripped out anymore as I've ditched `$resource` :). Now you can happily put the port :).
