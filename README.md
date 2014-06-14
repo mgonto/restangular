@@ -649,11 +649,12 @@ module.factory('Users', function() {
 });
 
 // In your controller you inject Users
-Users.one(2).get() // GET to /users/1
+Users.one(2).get() // GET to /users/2
 Users.post({data}) // POST to /users
 
 // GET to /users
-Users.getList().then(function(user) {
+Users.getList().then(function(users) {
+  var user = users[0]; // user === {id: 1, name: "Tonto"}
   user.name = "Gonto";
   // PUT to /users/1
   user.put();
@@ -662,9 +663,11 @@ Users.getList().then(function(user) {
 
 We can also use Nested restfull resources with this:
 
+````js
 var Cars = Restangular.service('cars', Restangular.one('users', 1));
 
 Cars.getList() // GET to /users/1/cars
+````
 
 ## Methods description
 
@@ -743,6 +746,9 @@ Restangular.one("accounts", 123).customGET("messages")
 // GET /accounts/messages?param=param2
 Restangular.all("accounts").customGET("messages", {param: "param2"})
 ````
+
+All custom methods have an alias where you replace `custom` by `do`. For example, `customeGET` is equal to `doGET`. Just pick whatever syntax you prefer.
+
 ## Copying elements
 Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
 
