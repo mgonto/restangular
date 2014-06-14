@@ -1218,6 +1218,10 @@ New releases notes are together with releases in GitHub at: https://github.com/m
 
 To see old releases notes, [you can click here](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
 
+# Contributors
+Martin Gontovnikas ([@mgonto](twitter.com/mgonto))
+Paul Dijou ([@paul_dijou](twitter.com/paul_dijou))
+
 # License
 
 The MIT License
