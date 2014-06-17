@@ -97,7 +97,7 @@ Restangular has several features that distinguish it from $resource:
 * **It supports self linking elements** If you receive from the server some item that has a link to itself, you can use that to query the server instead of writing the URL manually.
 * **You don't have to create one $resource object per request**. Each time you want to do a request, you can just do it using the object that was returned by Restangular. You don't need to create a new object for this.
 * **You don't have to write or remember ANY URL**. With $resource, you need to write the URL Template. In here, you don't write any urls. You just write the name of the resource you want to fetch and that's it.
-* **It supports nested RestFUL resources**. If you have Nested RestFUL resources, Restangular can handle them for you. You don't have to know the URL, the path, or anything to do all of the HTTP operations you want.
+* **It supports nested RESTful resources**. If you have Nested RESTful resources, Restangular can handle them for you. You don't have to know the URL, the path, or anything to do all of the HTTP operations you want.
 * **Restangular lets you create your own methods**. You can create your own methods to run the operation that you want. The sky is the limit.
 * **Support for wrapped responses**. If your response for a list of element actually returns an object with some property inside which has the list, it's very hard to use $resource. Restangular knows that and it makes it easy on you. Check out https://github.com/mgonto/restangular#my-response-is-actually-wrapped-with-some-metadata-how-do-i-get-the-data-in-that-case
 * **You can build your own URLs with Restangular objects easily**. Restangular lets you create a Restangular object for any url you want with a really nice builder.
@@ -113,7 +113,7 @@ Restangular.all('users').getList()  // GET: /users
 
 // Later in the code...
 
-// Restangular objects are self-aware and know how to make their own restful requests
+// Restangular objects are self-aware and know how to make their own RESTful requests
 $scope.user.getList('cars');  // GET: /users/123/cars
 
 // You can also use your own custom methods on Restangular objects
@@ -498,17 +498,17 @@ Restangular.setFullResponse(true);
 Or set it per service
 ````javascript
 // Restangular service that uses setFullResponse
-app.factory('RestFullResponse', function(Restangular) {
+app.factory('RestFulResponse', function(Restangular) {
   return Restangular.withConfig(function(RestangularConfigurer) {
     RestangularConfigurer.setFullResponse(true);
   });
 });
 
 // Let's use it in the controller
-app.controller('MainCtrl', function(Restangular, RestFullResponse) {
+app.controller('MainCtrl', function(Restangular, RestFulResponse) {
 
   // Uses full response configuration
-  RestFullResponse.all('users').getList().then(function(response) {
+  RestFulResponse.all('users').getList().then(function(response) {
     $scope.users = response.users;
     console.log(response.headers);
   });
@@ -661,7 +661,7 @@ Users.getList().then(function(users) {
 })
 ````
 
-We can also use Nested restfull resources with this:
+We can also use Nested RESTful resources with this:
 
 ````js
 var Cars = Restangular.service('cars', Restangular.one('users', 1));
@@ -1207,7 +1207,7 @@ Also, when using Restangular with version >= 1.1.4, in case you're using Restang
 
 # Server Frameworks
 
-Users reported that this server frameworks play real nice with Restangular, as they let you create a Nested Restful Resources API easily:
+Users reported that this server frameworks play real nice with Restangular, as they let you create a Nested RESTful Resources API easily:
 
 * Ruby on Rails
 * CakePHP, Laravel and FatFREE, Symfony2 with RestBundle, Silex for PHP
