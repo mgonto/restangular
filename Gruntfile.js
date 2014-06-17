@@ -1,6 +1,5 @@
-'use strict';
-
 module.exports = function(grunt) {
+  'use strict';
 
   // Project configuration.
   grunt.initConfig({
@@ -29,7 +28,10 @@ module.exports = function(grunt) {
       }
     },
     zip: {
-      '<%= dirs.dest %>/restangular.zip': ['<%= dirs.dest %>/<%= pkg.name %>.js', '<%= dirs.dest %>/<%= pkg.name %>.min.js']
+      '<%= dirs.dest %>/restangular.zip': [
+        '<%= dirs.dest %>/<%= pkg.name %>.js',
+        '<%= dirs.dest %>/<%= pkg.name %>.min.js'
+      ]
     },
     bowerInstall: {
         install: {
@@ -47,24 +49,7 @@ module.exports = function(grunt) {
     jshint: {
       files: ['Gruntfile.js', 'src/*.js'],
       options: {
-        curly: false,
-        browser: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        expr: true,
-        node: true,
-        globals: {
-          exports: true,
-          angular: false,
-          $: false
-        }
+        jshintrc: true
       }
     },
     karma: {
@@ -118,7 +103,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-bower-task');
 
-  grunt.renameTask("bower", "bowerInstall");
+  grunt.renameTask('bower', 'bowerInstall');
 
   grunt.loadNpmTasks('grunt-karma');
 
@@ -136,7 +121,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
 
   grunt.registerTask('test-debug', ['karma:debug']);
-  
+
   grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore']);
 
   // Provides the "bump" task.

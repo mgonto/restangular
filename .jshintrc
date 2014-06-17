@@ -1,0 +1,23 @@
+{
+  "boss": true,
+  "curly": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "expr": true,
+  "immed": true,
+  "indent": 2,
+  "maxlen": 140,
+  "noarg": true,
+  "onevar": true,
+  "quotmark": "single",
+  "smarttabs": true,
+  "trailing": true,
+  "undef": true,
+  "unused": true,
+  "browser": true,
+  "globals": {
+    "module": true,
+    "angular": true,
+    "_": true
+  }
+}
