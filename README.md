@@ -7,7 +7,7 @@
   <img src="http://jpillora.com/github-twitter-button/img/tweet.png"></img>
 </a>
 
-Restangular is an AngularJS service that simplifies common GET, DELETE, and UPDATE requests with a minimum of client code.
+Restangular is an AngularJS service that simplifies common GET, POST, DELETE, and UPDATE requests with a minimum of client code.
 It's a perfect fit for any WebApp that consumes data from a RESTful API.
 
 **Check out a, [live demo on plunkr](http://plnkr.co/edit/d6yDka?p=preview).** It uses the same example as the official [Angular Javascript Project](http://angularjs.org/#wire-up-a-backend)... but Restangularized!
