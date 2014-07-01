@@ -644,7 +644,7 @@ Let's see how it works:
 
 ````js
 // Declare factory
-module.factory('Users', function() {
+module.factory('Users', function(Restangular) {
   return Restangular.service('users');
 });
 
