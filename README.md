@@ -746,7 +746,7 @@ Restangular.one("accounts", 123).customGET("messages")
 Restangular.all("accounts").customGET("messages", {param: "param2"})
 ````
 
-All custom methods have an alias where you replace `custom` by `do`. For example, `customeGET` is equal to `doGET`. Just pick whatever syntax you prefer.
+All custom methods have an alias where you replace `custom` by `do`. For example, `customGET` is equal to `doGET`. Just pick whatever syntax you prefer.
 
 ## Copying elements
 Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
