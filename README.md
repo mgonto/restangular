@@ -689,7 +689,7 @@ These are the methods that can be called on the Restangular object.
 * **getList(subElement, [queryParams, headers])**: Gets a nested resource. subElement is mandatory. **It's a string with the name of the nested resource (and URL)**. For example `buildings`
 * **put([queryParams, headers])**: Does a put to the current element
 * **post(subElement, elementToPost, [queryParams, headers])**: Does a POST and creates a subElement. Subelement is mandatory and is the nested resource. Element to post is the object to post to the server
-* **remove([queryParams, headers])**: Does a DELETE
+* **remove([queryParams, headers])**: Does a DELETE.  By default, `remove` sends a request with an empty object, which may cause problems with some servers or browsers.  [This](https://github.com/mgonto/restangular/issues/193) shows how to configure RESTangular to have no payload.
 * **head([queryParams, headers])**: Does a HEAD
 * **trace([queryParams, headers])**: Does a TRACE
 * **options([queryParams, headers])**: Does a OPTIONS
@@ -715,7 +715,7 @@ These are the methods that can be called on the Restangular object.
 * **trace: ([queryParams, headers])**: Does a TRACE
 * **options: ([queryParams, headers])**: Does a OPTIONS
 * **patch(object, [queryParams, headers])**: Does a PATCH
-* **remove([queryParams, headers])**: Does a DELETE
+* **remove([queryParams, headers])**: Does a DELETE.  By default, `remove` sends a request with an empty object, which may cause problems with some servers or browsers.  [This](https://github.com/mgonto/restangular/issues/193) shows how to configure RESTangular to have no payload.
 * **putElement(idx, params, headers)**: Puts the element on the required index and returns a promise of the updated new array
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getRequestedUrl()**: Gets the real URL the current object was requested with (incl. GET parameters). Will equal getRestangularUrl() when no parameters were used, before calling `getList()`, or when using on a nested child.
