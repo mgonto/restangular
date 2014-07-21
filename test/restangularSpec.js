@@ -231,7 +231,7 @@ describe("Restangular", function() {
     });
 
     it("Should add multiple error interceptors for a single get too", function() {
-      $httpBackend.expectGET("error/404");
+      $httpBackend.expectGET("/error/404");
 
       var CallbackManager = function() {};
       CallbackManager.successCallback = function() {
