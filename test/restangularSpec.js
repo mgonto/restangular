@@ -218,7 +218,7 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    
+
   });
 
   describe("Local data", function() {
@@ -236,6 +236,25 @@ describe("Restangular", function() {
     });
   });
 
+  describe("restangularizePromiseIntercept", function() {
+    it("should be invoked by restangularizePromise", function() {
+      var calledWithPromise;
+
+      Restangular.setRestangularizePromiseInterceptor(function(promise) {
+        calledWithPromise = promise;
+
+        promise.$object.$custom = true;
+      });
+
+      var promise = Restangular.one('accounts', 1).get();
+
+      expect(calledWithPromise).toBeDefined();
+      expect(promise.$object.$custom).toBeDefined();
+
+      $httpBackend.flush();
+    });
+  });
+
   describe("$object", function() {
     it("Should work for single get", function() {
       var promise = Restangular.one('accounts', 1).get();
@@ -245,7 +264,7 @@ describe("Restangular", function() {
 
       $httpBackend.flush();
 
-      expect(obj.amount).toEqual(3.1416);      
+      expect(obj.amount).toEqual(3.1416);
     });
 
     it("Shouldn't be restangularized by default", function() {
@@ -356,9 +375,9 @@ describe("Restangular", function() {
     it("Doing a post and then other operation (delete) should call right URLs", function() {
       restangularAccounts.post(newAccount).then(function(added) {
         added.remove();
-        $httpBackend.expectDELETE('/accounts/44').respond(201, '');   
-      });      
-      
+        $httpBackend.expectDELETE('/accounts/44').respond(201, '');
+      });
+
       $httpBackend.flush();
     });
 
@@ -471,7 +490,7 @@ describe("Restangular", function() {
       $httpBackend.expectPOST('/accounts/1');
       account1.name = "Hey";
       account1.save();
-      
+
       $httpBackend.flush();
     });
 
@@ -510,7 +529,7 @@ describe("Restangular", function() {
           newAc.remove();
           $httpBackend.expectDELETE("/accounts/1");
         });
-        $httpBackend.expectPUT("/accounts/1");        
+        $httpBackend.expectPUT("/accounts/1");
 
 
       });
@@ -576,7 +595,7 @@ describe("Restangular", function() {
       });
 
       accountsPromise = Restangular.all('accounts').getList();
-      
+
       accountsPromise.then(function(accounts) {
         expect(typeof accounts.totalAmount).toEqual("function");
       });
@@ -586,14 +605,14 @@ describe("Restangular", function() {
 
     it("should allow for a custom method to be placed at the model level when one model is requested", function() {
       var accountPromise;
-      
+
       Restangular.addElementTransformer('accounts', false, function(model) {
          model.prettifyAmount = function() {};
          return model;
       });
 
       accountPromise = Restangular.one('accounts', 1).get();
-      
+
       accountPromise.then(function(account) {
         expect(typeof account.prettifyAmount).toEqual("function");
       });
@@ -603,14 +622,14 @@ describe("Restangular", function() {
 
     it("should allow for a custom method to be placed at the model level when several models are requested", function() {
       var accountPromise;
-      
+
       Restangular.addElementTransformer('accounts', false, function(model) {
          model.prettifyAmount = function() {};
          return model;
       });
 
       accountsPromise = Restangular.all('accounts', 1).getList();
-      
+
       accountsPromise.then(function(accounts) {
         accounts.forEach(function(account, index) {
           expect(typeof account.prettifyAmount).toEqual("function");
@@ -650,47 +669,47 @@ describe("Restangular", function() {
       expect(spy).toHaveBeenCalledWith('accounts', false, fn);
     });
   });
-  
+
   describe("defaultHeaders", function() {
     it("should return defaultHeaders", function() {
       var defaultHeaders = {testheader:'header value'};
-      
+
       Restangular.setDefaultHeaders(defaultHeaders);
-      
+
       expect(Restangular.defaultHeaders).toEqual(defaultHeaders);
     });
   });
-  
+
   describe("defaultRequestParams", function() {
     it("should return defaultRequestParams", function() {
       var defaultRequestParams = {param:'value'};
-      
+
       Restangular.setDefaultRequestParams(defaultRequestParams);
-      
+
       expect(Restangular.requestParams.common).toEqual(defaultRequestParams);
     });
-    
+
     it("should be able to set default params for get, post, put.. methods separately", function() {
       var postParams = {post:'value'},
           putParams = {put:'value'};
-      
+
       Restangular.setDefaultRequestParams('post', postParams);
       expect(Restangular.requestParams.post).toEqual(postParams);
-      
+
       Restangular.setDefaultRequestParams('put', putParams);
       expect(Restangular.requestParams.put).toEqual(putParams);
-      
+
       expect(Restangular.requestParams.common).not.toEqual(putParams);
     });
-    
+
     it("should be able to set default params for multiple methods with array", function() {
       var defaultParams = {param:'value'};
-      
+
       Restangular.setDefaultRequestParams(['post', 'put'], defaultParams);
-      
+
       expect(Restangular.requestParams.post).toEqual(defaultParams);
       expect(Restangular.requestParams.put).toEqual(defaultParams);
-      
+
       expect(Restangular.requestParams.common).not.toEqual(defaultParams);
     });
   });
@@ -703,14 +722,14 @@ describe("Restangular", function() {
 
       expect(Restangular.configuration.baseUrl).toEqual('');
       expect(childRestangular.configuration.baseUrl).toEqual('/api/v1');
-      
+
     });
 
     it("should allow nested configurations", function() {
       var childRestangular = Restangular.withConfig(function(RestangularConfigurer){
         RestangularConfigurer.setBaseUrl('/api/v1');
       });
-    
+
       var grandchildRestangular = childRestangular.withConfig(function(RestangularConfigurer){
         RestangularConfigurer.setRequestSuffix('.json');
       });
