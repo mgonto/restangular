@@ -1224,14 +1224,14 @@ New releases notes are together with releases in GitHub at: https://github.com/m
 To see old releases notes, [you can click here](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
 
 # Contributors
-Martin Gontovnikas ([@mgonto](twitter.com/mgonto))
-Paul Dijou ([@paul_dijou](twitter.com/paul_dijou))
+Martin Gontovnikas ([@mgonto](https://twitter.com/mgonto))
+Paul Dijou ([@paul_dijou](https://twitter.com/paul_dijou))
 
 # License
 
 The MIT License
 
-Copyright (c) 2013 Martin Gontovnikas http://www.gon.to/
+Copyright (c) 2014 Martin Gontovnikas http://www.gon.to/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
