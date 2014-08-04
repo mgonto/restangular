@@ -42,7 +42,6 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
       - [addRequestInterceptor](#addrequestinterceptor)
       - [setFullRequestInterceptor](#setfullrequestinterceptor)
       - [setErrorInterceptor](#seterrorinterceptor)
-      - [addErrorInterceptor](#adderrorinterceptor)
       - [setRestangularFields](#setrestangularfields)
       - [setMethodOverriders](#setmethodoverriders)
       - [setDefaultRequestParams](#setdefaultrequestparams)
@@ -408,13 +407,9 @@ It can return an object with any (or all) of following properties:
 If a property isn't returned, the one sent is used.
 
 #### setErrorInterceptor
-**This is deprecated. Use addErrorInterceptor since you can add more than one**.
+The errorInterceptor is called whenever there's an error. It's a function that receives the response, the deferred (for the promise) and the Restangular-response handler as parameters.
 
-### addErrorInterceptor
-The errorInterceptors are called whenever there's an error. It's a function that receives the response, the deferred (for the promise) and the Restangular-response handler as parameters.
-
-If any of the errorInterceptor functions returns `false` this prevents the promise linked to a Restangular request to be executed.
-All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
+The errorInterceptor function, whenever it returns `false`, prevents the promise linked to a Restangular request to be executed. All other return values (besides `false`) are ignored and the promise follows the usual path, eventually reaching the success or error hooks.
 
 The feature to prevent the promise to complete is useful whenever you need to intercept each Restangular error response for every request in your AngularJS application in a single place, increasing debugging capabilities and hooking security features in a single place.
 
