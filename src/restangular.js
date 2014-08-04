@@ -296,8 +296,15 @@ module.provider('Restangular', function() {
       return this;
     };
 
+    config.errorInterceptors = config.errorInterceptors || [];
+    object.addErrorInterceptor = function(interceptor) {
+      config.errorInterceptors.push(interceptor);
+      return this;
+    };
+
     object.setResponseInterceptor = object.addResponseInterceptor;
     object.setResponseExtractor = object.addResponseInterceptor;
+    object.setErrorInterceptor = object.addErrorInterceptor;
 
     /**
      * Response interceptor is called just before resolving promises.
@@ -347,13 +354,6 @@ module.provider('Restangular', function() {
     };
 
     object.setFullRequestInterceptor = object.addFullRequestInterceptor;
-
-    config.errorInterceptor = config.errorInterceptor || function() {};
-
-    object.setErrorInterceptor = function(interceptor) {
-      config.errorInterceptor = interceptor;
-      return this;
-    };
 
     config.onBeforeElemRestangularized = config.onBeforeElemRestangularized || function(elem) {
       return elem;
@@ -1089,7 +1089,8 @@ module.provider('Restangular', function() {
                 this[config.restangularFields.etag], operation)[method]().then(okCallback, function error(response) {
           if (response.status === 304 && __this[config.restangularFields.restangularCollection]) {
             resolvePromise(deferred, response, __this, filledArray);
-          } else if ( config.errorInterceptor(response, deferred, okCallback) !== false ) {
+          } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
+            // triggered if no callback returns false
             deferred.reject(response);
           }
         });
@@ -1160,7 +1161,8 @@ module.provider('Restangular', function() {
         var errorCallback = function(response) {
           if (response.status === 304 && config.isSafe(operation)) {
             resolvePromise(deferred, response, __this, filledObject);
-          } else if ( config.errorInterceptor(response, deferred, okCallback) !== false ) {
+          } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
+            // triggered if no callback returns false
             deferred.reject(response);
           }
         };

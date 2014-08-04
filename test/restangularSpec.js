@@ -96,6 +96,17 @@ describe("Restangular", function() {
       return [201, data, ""];
     });
 
+    $httpBackend.whenGET("/error").respond(function() {
+      return [500, {}, ""];
+    });
+
+    // return the status code given
+    // e.g.: /error/404 returns 404 Not Found
+    var urlRegex = /\/error\/(\d{3})/;
+    $httpBackend.whenGET(urlRegex).respond(function(method, url, data, headers) {
+      return [url.match(urlRegex)[1], {}, ""];
+    });
+
     Restangular = $injector.get("Restangular");
     restangularAccounts = Restangular.all("accounts");
     restangularAccount0 = Restangular.one("accounts", 0);
@@ -159,6 +170,97 @@ describe("Restangular", function() {
        });
 
        $httpBackend.flush();
+    });
+
+    it("Should add multiple error interceptors", function() {
+      $httpBackend.expectGET("/error");
+
+      var CallbackManager = function() {};
+      CallbackManager.successCallback = function() {
+        expect(CallbackManager.successCallback).not.toHaveBeenCalled();
+      };
+      CallbackManager.errorCallback = function() {
+        expect(CallbackManager.firstErrorInterceptor).toHaveBeenCalled();
+        expect(CallbackManager.secondErrorInterceptor).toHaveBeenCalled();
+      };
+
+      CallbackManager.firstErrorInterceptor = function() {};
+      CallbackManager.secondErrorInterceptor = function() {};
+
+      spyOn(CallbackManager, "successCallback").andCallThrough();
+      spyOn(CallbackManager, "firstErrorInterceptor").andCallThrough();
+      spyOn(CallbackManager, "secondErrorInterceptor").andCallThrough();
+
+      Restangular.addErrorInterceptor(CallbackManager.firstErrorInterceptor);
+      Restangular.addErrorInterceptor(CallbackManager.secondErrorInterceptor);
+
+      Restangular.all("error").getList()
+        .then(CallbackManager.successCallback)
+        .catch(CallbackManager.errorCallback);
+
+      $httpBackend.flush();
+    });
+
+    it("Should add multiple error interceptors but don't reject the promise if one of them returns false", function() {
+      $httpBackend.expectGET("/error");
+
+      var CallbackManager = function() {};
+      CallbackManager.successCallback = function() {
+        expect(CallbackManager.successCallback).not.toHaveBeenCalled();
+      };
+      CallbackManager.errorCallback = function() {
+        expect(CallbackManager.errorCallback).not.toHaveBeenCalled();
+      };
+
+      CallbackManager.firstErrorInterceptor = function() {
+        return true;
+      };
+      CallbackManager.secondErrorInterceptor = function() {
+        return false; // prevent promise to be rejected
+      };
+
+      spyOn(CallbackManager, "successCallback").andCallThrough();
+      spyOn(CallbackManager, "errorCallback").andCallThrough();
+
+      Restangular.addErrorInterceptor(CallbackManager.firstErrorInterceptor);
+      Restangular.addErrorInterceptor(CallbackManager.secondErrorInterceptor);
+
+      Restangular.all("error").getList()
+        .then(CallbackManager.successCallback)
+        .catch(CallbackManager.errorCallback);
+
+      $httpBackend.flush();
+    });
+
+    it("Should add multiple error interceptors for a single get too", function() {
+      $httpBackend.expectGET("/error/404");
+
+      var CallbackManager = function() {};
+      CallbackManager.successCallback = function() {
+        expect(CallbackManager.successCallback).not.toHaveBeenCalled();
+      };
+      CallbackManager.errorCallback = function() {
+        expect(CallbackManager.firstErrorInterceptor).toHaveBeenCalled();
+        expect(CallbackManager.secondErrorInterceptor).toHaveBeenCalled();
+      };
+
+      CallbackManager.firstErrorInterceptor = function(response) {
+        expect(response.status).toEqual(404);
+      };
+      CallbackManager.secondErrorInterceptor = function() {};
+
+      spyOn(CallbackManager, "successCallback").andCallThrough();
+      spyOn(CallbackManager, "firstErrorInterceptor").andCallThrough();
+      spyOn(CallbackManager, "secondErrorInterceptor").andCallThrough();
+
+      Restangular.addErrorInterceptor(CallbackManager.firstErrorInterceptor);
+      Restangular.addErrorInterceptor(CallbackManager.secondErrorInterceptor);
+
+      Restangular.one("error", 404).get()
+          .then(CallbackManager.successCallback)
+          .catch(CallbackManager.errorCallback);
+
+      $httpBackend.flush();
     });
   });
 
