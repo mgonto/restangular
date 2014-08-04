@@ -35,10 +35,11 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
       - [setDefaultHttpFields](#setdefaulthttpfields)
       - [addElementTransformer](#addelementtransformer)
       - [setOnElemRestangularized](#setonelemrestangularized)
-      - [setResponseInterceptor (or setResponseExtractor. It's an Alias)](#setresponseinterceptor-or-setresponseextractor-its-an-alias)
-      - [addResponseInterceptor] (#addresponseinterceptor)
+      - [setResponseInterceptor](#setresponseinterceptor)
+      - [setResponseExtractor (alias of setResponseInterceptor)](#setresponseinterceptor)
+      - [addResponseInterceptor](#addresponseinterceptor)
       - [setRequestInterceptor](#setrequestinterceptor)
-      - [addRequestInterceptor] (#addrequestinterceptor)
+      - [addRequestInterceptor](#addrequestinterceptor)
       - [setFullRequestInterceptor](#setfullrequestinterceptor)
       - [setErrorInterceptor](#seterrorinterceptor)
       - [setRestangularFields](#setrestangularfields)
@@ -509,7 +510,7 @@ app.controller('MainCtrl', function(Restangular, RestFulResponse) {
 
   // Uses full response configuration
   RestFulResponse.all('users').getList().then(function(response) {
-    $scope.users = response.users;
+    $scope.users = response.data;
     console.log(response.headers);
   });
 });
@@ -1070,7 +1071,7 @@ app.config(function(RestangularProvider) {
       var extractedData;
       // .. to look for getList operations
       if (operation === "getList") {
-      	// .. and handle the data and meta data
+        // .. and handle the data and meta data
         extractedData = data.data.data;
         extractedData.meta = data.data.meta;
       } else {
