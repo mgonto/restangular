@@ -33,6 +33,7 @@ describe("Restangular", function() {
 
     messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}]
 
+    accountsDoSomethingModel = { result: 1 };
 
     $httpBackend = $injector.get("$httpBackend");
 
@@ -41,6 +42,7 @@ describe("Restangular", function() {
     $httpBackend.when("OPTIONS", "/accounts").respond();
 
     $httpBackend.whenGET("/accounts").respond(accountsModel);
+    $httpBackend.whenGET("/accounts/do-something").respond(accountsDoSomethingModel);
     $httpBackend.whenJSONP("/accounts").respond(accountsModel);
     $httpBackend.whenGET("/accounts/0,1").respond(accountsModel);
     $httpBackend.whenGET("/accounts/messages").respond(messages);
@@ -445,6 +447,28 @@ describe("Restangular", function() {
       $httpBackend.flush();
      });
 
+    it("should add custom collection method added with withConfig", function() {
+      var Accounts = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.addElementTransformer('accounts', true, function(worker) {
+          worker.addRestangularMethod('doSomething', 'get', 'do-something');
+          return worker;
+        });
+      }).service('accounts');
+
+      expect(Accounts.doSomething).toBeDefined();
+      expect(_.isFunction(Accounts.doSomething)).toBeTruthy();
+
+      Accounts.post(newAccount);
+      Accounts.one(0).get();
+      Accounts.getList();
+      Accounts.doSomething();
+
+      $httpBackend.expectPOST('/accounts');
+      $httpBackend.expectGET('/accounts/0');
+      $httpBackend.expectGET('/accounts');
+      $httpBackend.expectGET('/accounts/do-something');
+      $httpBackend.flush();
+    });
   });
 
   describe("ONE", function() {

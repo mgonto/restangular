@@ -1265,11 +1265,19 @@ module.provider('Restangular', function() {
       }
 
       function toService(route, parent) {
+        var knownCollectionMethods = _.values(config.restangularFields);
         var serv = {};
         var collection = (parent || service).all(route);
         serv.one = _.bind(one, (parent || service), parent, route);
         serv.post = _.bind(collection.post, collection);
         serv.getList = _.bind(collection.getList, collection);
+
+        for (var prop in collection) {
+          if (collection.hasOwnProperty(prop) && _.isFunction(collection[prop]) && !_.contains(knownCollectionMethods, prop)) {
+            serv[prop] = _.bind(collection[prop], collection);
+          }
+        }
+
         return serv;
       }
 
