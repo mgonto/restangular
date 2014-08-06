@@ -198,7 +198,8 @@ module.provider('Restangular', function() {
       withHttpConfig: 'withHttpConfig',
       singleOne: 'singleOne',
       plain: 'plain',
-      save: 'save'
+      save: 'save',
+      restangularized: 'restangularized'
     };
     object.setRestangularFields = function(resFields) {
       config.restangularFields =
@@ -207,7 +208,7 @@ module.provider('Restangular', function() {
     };
 
     config.isRestangularized = function(obj) {
-      return !!obj[config.restangularFields.one] || !!obj[config.restangularFields.all];
+      return !!obj[config.restangularFields.restangularized];
     };
 
     config.setFieldToElem = function(field, elem, value) {
@@ -758,6 +759,9 @@ module.provider('Restangular', function() {
         elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
         elem[config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
         elem[config.restangularFields.plain] = _.bind(stripRestangular, elem, elem);
+
+        // Tag element as restangularized
+        elem[config.restangularFields.restangularized] = true;
 
         // RequestLess connection
         elem[config.restangularFields.one] = _.bind(one, elem, elem);
