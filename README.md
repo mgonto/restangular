@@ -1149,7 +1149,7 @@ If want to keep the restangularized collection, remove the element by modifying 
 ```javascript
 userWithId.remove().then(function() {
   var index = $scope.users.indexOf(userWithId);
-  if (index > -1) $scope.users.splice(userWithId, 1);
+  if (index > -1) $scope.users.splice(index, 1);
 });
 ```
 
