@@ -348,6 +348,25 @@ describe("Restangular", function() {
     });
   });
 
+  describe("restangularizePromiseIntercept", function() {
+    it("should be invoked by restangularizePromise", function() {
+      var calledWithPromise;
+
+      Restangular.setRestangularizePromiseInterceptor(function(promise) {
+        calledWithPromise = promise;
+
+        promise.$object.$custom = true;
+      });
+
+      var promise = Restangular.one('accounts', 1).get();
+
+      expect(calledWithPromise).toBeDefined();
+      expect(promise.$object.$custom).toBeDefined();
+
+      $httpBackend.flush();
+    });
+  });
+
   describe("$object", function() {
     it("Should work for single get", function() {
       var promise = Restangular.one('accounts', 1).get();

@@ -364,6 +364,11 @@ module.provider('Restangular', function() {
       return this;
     };
 
+    object.setRestangularizePromiseInterceptor = function(interceptor) {
+      config.restangularizePromiseInterceptor = interceptor;
+      return this;
+    };
+
     /**
      * This method is called after an element has been "Restangularized".
      *
@@ -846,6 +851,9 @@ module.provider('Restangular', function() {
             promise.push = _.bind(promiseCall, promise, 'push');
         }
         promise.$object = valueToFill;
+        if (config.restangularizePromiseInterceptor) {
+          config.restangularizePromiseInterceptor(promise);
+        }
         return promise;
       }
 
