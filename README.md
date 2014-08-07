@@ -423,7 +423,7 @@ var refreshAccesstoken = function() {
     return deferred.promise;
 };
 
-Restangular.addErrorInterceptor(function(response, deferred, responseHandler) {
+Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
     if(response.status === 403) {
         refreshAccesstoken().then(function() {
             // Repeat the request and then call the handlers the usual way.
