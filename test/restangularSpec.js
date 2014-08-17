@@ -957,5 +957,9 @@ describe("Restangular", function() {
       });
       $httpBackend.flush();
     });
+
+    it("should not stip non-restangularized elements", function () {
+      expect(Restangular.stripRestangular(["test","test2"])).toEqual(["test","test2"]);
+    });
   });
 });
