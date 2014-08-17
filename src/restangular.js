@@ -900,7 +900,7 @@ module.provider('Restangular', function() {
         if (_.isArray(elem)) {
           var array = [];
           _.each(elem, function(value) {
-              array.push(stripRestangular(value));
+              array.push(_.isObject(value) ?  stripRestangular(value) : value);
           });
           return array;
         } else {
