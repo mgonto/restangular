@@ -780,39 +780,6 @@ lengthPromise.then(function(length) {
 });
 ````
 
-### Extending enhanced promises
-
-You can also decorate Restangular's enhanced promises to add additional behavior using `RestangularConfigurer.setRestangularizePromiseInterceptor`. For example to create a directive that displayed a 'loading' indicator for in-flight Restangular requests you could first decorate all Restangular promises like so:
-
-```js
-var restangular =
-  Restangular.withConfig(
-    function(RestangularConfigurer) {
-      RestangularConfigurer.setRestangularizePromiseInterceptor(
-        function(promise) {
-          promise.$object.$isLoading = true;
-          promise['finally'](function() {
-            delete promise.$object.$isLoading;
-          })
-        });
-    });
-```
-
-Next you could create a directive to wrap any content that depended on data being loaded by Restangular:
-
-```html
-<div>
-  <div ng-if="$object.$isLoading" class="loading-indicator">
-    <i class="fa fa-circle-o-notch fa-spin"></i>
-    Loading...
-  </div>
-
-  <div ng-if="!$object.$isLoading">
-    <div ng-transclude></div> <!-- Only show content once Restangular finishes loading -->
-  </div>
-</div>
-```
-
 ## Using values directly in templates
 
 Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be deprecated soon.
