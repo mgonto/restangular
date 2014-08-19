@@ -1061,7 +1061,7 @@ So, let's assume that your data is the following:
 }
 ````
 
-In this case, you'd need to configure Restangular's `responseExtractor`. See the following:
+In this case, you'd need to use RestangularProvider's `addResponseInterceptor`. See the following:
 
 ````javascript
 app.config(function(RestangularProvider) {
