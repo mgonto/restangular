@@ -153,6 +153,7 @@ Each time, there're more Production WebApps using `Restangular`. If your webapp 
 
 * **Life360** is using Restangular to build the WebApp version of their platform
 * **Thomson Reuters** is using Restangular for the new Webapp they've built
+* **Quran.com** is using Restangular for their alpha/beta app and soon to be main site
 
 #Starter Guide
 
