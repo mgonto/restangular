@@ -343,7 +343,7 @@ You can add as many element transformers as you want. The signature of this meth
 * **addElementTransformer(route, isCollection, transformer)**: Transformer is called with all elements that have been restangularized and match the specification regarding if it's a collection or not (true | false)
 
 #### setTransformOnlyServerElements
-This sets wether transformers will be run for local objects and not by objects returned by the server. This is by default true but can be changed to false if needed (Most people won't need this).
+This sets whether transformers will be run for local objects and not by objects returned by the server. This is by default true but can be changed to false if needed (Most people won't need this).
 
 
 #### setOnElemRestangularized
@@ -705,7 +705,7 @@ These are the methods that can be called on the Restangular object.
 * **clone()**: Copies the element
 * **plain()**: Returns the plain element received from the server without any of the enhanced methods from Restangular. It's an alias to calling `Restangular.stripRestangular(elem)`
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
-* **save**: Calling save will determine wether to do PUT or POST accordingly
+* **save**: Calling save will determine whether to do PUT or POST accordingly
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
