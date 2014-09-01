@@ -323,7 +323,7 @@ These are the fields that you want to save from your parent resources if you nee
 #### setParentless
 Use this property to control whether Restangularized elements to have a parent or not. So, for example if you get an account and then get a nested list of buildings, you may want the buildings URL to be simple `/buildings/123` instead of `/accounts/123/buildings/123`. This property lets you do that.
 
-This method accepts 2 parameters:
+This method accepts 1 parameter, it could be:
 
 * Boolean: Specifies if all elements should be parentless or not
 * Array: Specifies the routes (types) of all elements that should be parentless. For example `['buildings']`
