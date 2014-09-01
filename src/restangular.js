@@ -804,7 +804,7 @@ module.provider('Restangular', function() {
       function one(parent, route, id, singleOne) {
         if (_.isNumber(route) || _.isNumber(parent)) {
           var error = 'You\'re creating a Restangular entity with the number ';
-          error += 'instead of the route or the parent. You can\'t call .one(12)';
+          error += 'instead of the route or the parent. For example, you can\'t call .one(12)';
           throw new Error(error);
         }
         var elem = {};
