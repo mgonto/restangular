@@ -930,11 +930,11 @@ RestangularProvider.addElementTransformer('users', true, function(user) {
 
 // If something is set to any of this variables, the default set in the method creation will be overridden
 // If nothing is set, then the defaults are sent
-Restangular.one('building', 123).evaluate({myParam: 'param'});
+Restangular.one('buildings', 123).evaluate({myParam: 'param'});
 
 // GET to /buildings/123/evaluate?myParam=param with headers myHeader: specialHeaderCase
 
-Restangular.one('building', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
+Restangular.one('buildings', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
 
 // Here the body of the POST is going to be {key: value} as POST is an unsafe operation
 Restangular.all('users').login({key: value});
