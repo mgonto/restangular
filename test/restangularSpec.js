@@ -775,6 +775,7 @@ describe("Restangular", function() {
 
       accountsPromise.then(function(accounts) {
         accounts.forEach(function(account, index) {
+
           expect(typeof account.prettifyAmount).to.eql("function");
         });
       });

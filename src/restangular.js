@@ -754,8 +754,9 @@ module.provider('Restangular', function() {
       urlHandler.setConfig(config);
 
       function restangularizeBase(parent, elem, route, reqParams, fromServer) {
+
         elem[config.restangularFields.route] = route;
-        elem[config.restangularFields.getRestangularUrl] = _.bind(urlHandler.fetchUrl, urlHandler, elem);
+
         elem[config.restangularFields.getRequestedUrl] = _.bind(urlHandler.fetchRequestedUrl, urlHandler, elem);
         elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
         elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
@@ -902,7 +903,11 @@ module.provider('Restangular', function() {
           });
           return array;
         } else {
-          return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+          // TODO change the removal of RestangularBase properties
+          return _.omit(
+              _.omit(elem, _.values(_.omit(config.restangularFields, 'id'))),
+              '__config', '__urlHandler'
+              );
         }
       }
 
@@ -937,6 +942,8 @@ module.provider('Restangular', function() {
       function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
         var elem = config.onBeforeElemRestangularized(element, false, route);
 
+        // TODO Change later to use another strategy
+        elem.__proto__ = new RestangularElement(config, urlHandler);
         var localElem = restangularizeBase(parent, elem, route, reqParams, fromServer);
 
         if (config.useCannonicalId) {
@@ -967,6 +974,9 @@ module.provider('Restangular', function() {
 
       function restangularizeCollection(parent, element, route, fromServer, reqParams) {
         var elem = config.onBeforeElemRestangularized(element, true, route);
+
+        // TODO Change later to use another strategy
+        elem.__proto__ = new RestangularCollection(config, urlHandler);
 
         var localElem = restangularizeBase(parent, elem, route, reqParams, fromServer);
         localElem[config.restangularFields.restangularCollection] = true;
