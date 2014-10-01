@@ -1,7 +1,7 @@
 
 function RestangularCollection(config, urlHandler) {
-  this.__config = config;
-  this.__urlHandler = urlHandler;
+  this.$config = config;
+  this.$urlHandler = urlHandler;
   // route y reqParams restangularized fromServer
 }
 

@@ -1,7 +1,8 @@
 
-function RestangularElement(config, urlHandler) {
-  this.__config = config;
-  this.__urlHandler = urlHandler;
+function RestangularElement(config, urlHandler, restangularizeElem) {
+  this.$config = config;
+  this.$urlHandler = urlHandler;
+  this.$restangularizeElem = restangularizeElem;
   // route y reqParams restangularized fromServer
 }
 

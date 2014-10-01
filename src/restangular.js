@@ -758,7 +758,6 @@ module.provider('Restangular', function() {
 
 
         elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
-        elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
         elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
         elem[config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
         elem[config.restangularFields.plain] = _.bind(stripRestangular, elem, elem);
@@ -905,7 +904,7 @@ module.provider('Restangular', function() {
           // TODO change the removal of RestangularBase properties
           return _.omit(
               _.omit(elem, _.values(_.omit(config.restangularFields, 'id'))),
-              '__config', '__urlHandler'
+              '$config', '$urlHandler', '$restangularizeElem'
               );
         }
       }
@@ -932,17 +931,11 @@ module.provider('Restangular', function() {
         elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
       }
 
-      function copyRestangularizedElement(fromElement, toElement) {
-        var copiedElement = angular.copy(fromElement, toElement);
-        return restangularizeElem(copiedElement[config.restangularFields.parentResource],
-                copiedElement, copiedElement[config.restangularFields.route], true);
-      }
-
       function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
         var elem = config.onBeforeElemRestangularized(element, false, route);
 
         // TODO Change later to use another strategy
-        elem.__proto__ = new RestangularElement(config, urlHandler);
+        elem.__proto__ = new RestangularElement(config, urlHandler, restangularizeElem);
         var localElem = restangularizeBase(parent, elem, route, reqParams, fromServer);
 
         if (config.useCannonicalId) {
@@ -1286,7 +1279,9 @@ module.provider('Restangular', function() {
 
       Configurer.init(service, config);
 
-      service.copy = _.bind(copyRestangularizedElement, service);
+      service.copy = function (elem) {
+        return elem.clone();
+      };
 
       service.service = _.bind(toService, service);
 

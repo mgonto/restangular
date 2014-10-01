@@ -1,10 +1,16 @@
 
 var RestangularBase = {
   getRestangularUrl: function() {
-    return this.__urlHandler.fetchUrl(this);
+    return this.$urlHandler.fetchUrl(this);
   },
   getRequestedUrl: function() {
-    return this.__urlHandler.fetchRequestedUrl(this);
+    return this.$urlHandler.fetchRequestedUrl(this);
+  },
+  clone: function() {
+    var copiedElement = _.cloneDeep(this);
+    // TODO remove restangularizeElem() call
+    return this.$restangularizeElem(copiedElement[this.$config.restangularFields.parentResource],
+            copiedElement, copiedElement[this.$config.restangularFields.route], true);
   }
 
 };
