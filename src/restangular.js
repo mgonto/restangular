@@ -168,7 +168,6 @@ module.provider('Restangular', function() {
       patch: 'patch',
       getRestangularUrl: 'getRestangularUrl',
       getRequestedUrl: 'getRequestedUrl',
-      putElement: 'putElement',
       addRestangularMethod: 'addRestangularMethod',
       getParentList: 'getParentList',
       clone: 'clone',
@@ -757,7 +756,7 @@ module.provider('Restangular', function() {
 
         elem[config.restangularFields.route] = route;
 
-        elem[config.restangularFields.getRequestedUrl] = _.bind(urlHandler.fetchRequestedUrl, urlHandler, elem);
+
         elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
         elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
         elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
@@ -984,7 +983,6 @@ module.provider('Restangular', function() {
         localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
         localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
         localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
-        localElem[config.restangularFields.putElement] = _.bind(putElementFunction, localElem);
         localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
         localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
         localElem[config.restangularFields.get] = _.bind(getById, localElem);
@@ -1004,24 +1002,6 @@ module.provider('Restangular', function() {
 
       function getById(id, reqParams, headers){
         return this.customGET(id.toString(), reqParams, headers);
-      }
-
-      function putElementFunction(idx, params, headers) {
-        var __this = this;
-        var elemToPut = this[idx];
-        var deferred = $q.defer();
-        var filledArray = [];
-        filledArray = config.transformElem(filledArray, true, elemToPut[config.restangularFields.route], service);
-        elemToPut.put(params, headers).then(function(serverElem) {
-          var newArray = copyRestangularizedElement(__this);
-          newArray[idx] = serverElem;
-          filledArray = newArray;
-          deferred.resolve(newArray);
-        }, function(response) {
-          deferred.reject(response);
-        });
-
-        return restangularizePromise(deferred.promise, true, filledArray);
       }
 
       function parseResponse(resData, operation, route, fetchUrl, response, deferred) {
