@@ -38,10 +38,12 @@
     "grunt-contrib-uglify": "*",
     "grunt-bower": "*",
     "grunt-bower-task": "*",
+
     "grunt-karma": "latest",
     "grunt-conventional-changelog": "0.0.12",
     "grunt-zip": "*",
     "karma": "~0.12.1",
+    "karma-mocha-reporter": "0.2.8",
     "karma-jasmine": "~0.1.5",
     "karma-chrome-launcher": "~0.1.2",
     "karma-phantomjs-launcher": "~0.1.2",
