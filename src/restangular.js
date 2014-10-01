@@ -1,5 +1,3 @@
-(function() {
-
 var module = angular.module('restangular', []);
 
 module.provider('Restangular', function() {
@@ -1326,5 +1324,3 @@ module.provider('Restangular', function() {
     return createServiceForConfiguration(globalConfiguration);
   }];
 });
-
-})();
