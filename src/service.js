@@ -1,5 +1,7 @@
 function RestangularService(config) {
   this.config = config;
+  this.urlHandler = new config.urlCreatorFactory[config.urlCreator]();
+  urlHandler.setConfig(config);
 }
 
 RestangularService.prototype.one = function(parent, route, id, singleOne) {

@@ -8,6 +8,10 @@ function RestangularCollection(service) {
 // TODO proper way of doing inheritance or Array like object
 RestangularCollection.prototype = new Array();
 
+RestangularCollection.prototype.getById = function(id, reqParams, headers){
+  return this.customGET(id.toString(), reqParams, headers);
+}
+
 mixin(RestangularCollection, RestangularBase, { chain: false });
 
 

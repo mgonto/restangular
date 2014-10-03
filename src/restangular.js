@@ -13,48 +13,6 @@ module.provider('Restangular', function() {
     function createServiceForConfiguration(config) {
       var service = {};
 
-      var urlHandler = new config.urlCreatorFactory[config.urlCreator]();
-      urlHandler.setConfig(config);
-
-      // Promises
-      function restangularizePromise(promise, isCollection, valueToFill) {
-        promise.call = _.bind(promiseCall, promise);
-        promise.get = _.bind(promiseGet, promise);
-        promise[config.restangularFields.restangularCollection] = isCollection;
-        if (isCollection) {
-            promise.push = _.bind(promiseCall, promise, 'push');
-        }
-        promise.$object = valueToFill;
-        if (config.restangularizePromiseInterceptor) {
-          config.restangularizePromiseInterceptor(promise);
-        }
-        return promise;
-      }
-
-      function promiseCall(method) {
-        var deferred = $q.defer();
-        var callArgs = arguments;
-        var filledValue = {};
-        this.then(function(val) {
-          var params = Array.prototype.slice.call(callArgs, 1);
-          var func = val[method];
-          func.apply(val, params);
-          filledValue = val;
-          deferred.resolve(val);
-        });
-        return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
-      }
-
-      function promiseGet(what) {
-        var deferred = $q.defer();
-        var filledValue = {};
-        this.then(function(val) {
-          filledValue = val[what];
-          deferred.resolve(filledValue);
-        });
-        return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
-      }
-
       function resolvePromise(deferred, response, data, filledValue) {
         _.extend(filledValue, data);
 
@@ -69,10 +27,6 @@ module.provider('Restangular', function() {
       }
 
 
-
-      function getById(id, reqParams, headers){
-        return this.customGET(id.toString(), reqParams, headers);
-      }
 
       function parseResponse(resData, operation, route, fetchUrl, response, deferred) {
         var data = config.responseExtractor(resData, operation, route, fetchUrl, response, deferred);
@@ -165,7 +119,7 @@ module.provider('Restangular', function() {
           }
         });
 
-        return restangularizePromise(deferred.promise, true, filledArray);
+        return PromiseExtension(deferred.promise, true, filledArray);
       }
 
       function withHttpConfig(httpConfig) {
@@ -253,7 +207,7 @@ module.provider('Restangular', function() {
             what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
         }
 
-        return restangularizePromise(deferred.promise, false, filledObject);
+        return PromiseExtension(deferred.promise, false, filledObject);
       }
 
 
