@@ -87,33 +87,33 @@ var RestangularBase = {
     return _.bind(elemFunction, this)('patch', undefined, params, elem, headers);
   },
 
-  restangularized: true
+  restangularized: true,
+
+  // TODO should this be public?
+  customOperation: function(operation, path, params, headers, elem) {
+    return _.bind(elemFunction, this)(operation, path, params, elem, headers);
+  },
+
+  // TODO check expected attributes. elem?
+  doGET: function(path, params, headers, elem) {
+    return this.customOperation('get', path, params, headers, elem);
+  },
+
+  // TODO check expected attributes. elem?
+  doDELETE: function(path, params, headers, elem) {
+    return this.customOperation('remove', path, params, headers, elem);
+  },
+
+  doPUT: function(elem, path, params, headers) {
+    return this.customOperation('put', path, params, headers, elem);
+  },
+
+  doPOST: function(elem, path, params, headers) {
+    return this.customOperation('post', path, params, headers, elem);
+  },
+
+  doGETLIST: function(what, params, headers) {
+    return _.bind(fetchFunction, this)(what, params, headers);
+  }
 
 };
-
-function addCustomOperation(elem) {
-  elem[config.restangularFields.customOperation] = _.bind(customFunction, elem);
-  _.each(['put', 'post', 'get', 'delete'], function(oper) {
-    _.each(['do', 'custom'], function(alias) {
-      var callOperation = oper === 'delete' ? 'remove' : oper;
-      var name = alias + oper.toUpperCase();
-      var callFunction;
-
-      if (callOperation !== 'put' && callOperation !== 'post') {
-        callFunction = customFunction;
-      } else {
-        callFunction = function(operation, elem, path, params, headers) {
-          return _.bind(customFunction, this)(operation, path, params, headers, elem);
-        };
-      }
-      elem[name] = _.bind(callFunction, elem, callOperation);
-    });
-  });
-  elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
-  elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
-}
-
-
-function customFunction(operation, path, params, headers, elem) {
-  return _.bind(elemFunction, this)(operation, path, params, elem, headers);
-}

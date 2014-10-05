@@ -100,8 +100,6 @@ RestangularService.prototype.restangularizeElem = function (parent, element, rou
   localElem[this.config.restangularFields.restangularCollection] = false;
   localElem[this.config.restangularFields.getList] = _.bind(fetchFunction, localElem);
 
-
-  addCustomOperation(localElem);
   return this.config.transformElem(localElem, false, route, service, true);
 };
 
@@ -118,7 +116,6 @@ RestangularService.prototype.restangularizeCollection = function (parent, elemen
   localElem[this.config.restangularFields.get] = _.bind(getById, localElem);
   localElem[this.config.restangularFields.getList] = _.bind(fetchFunction, localElem, null);
 
-  addCustomOperation(localElem);
   return this.config.transformElem(localElem, true, route, service, true);
 };
 
