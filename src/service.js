@@ -111,14 +111,6 @@ RestangularService.prototype.restangularizeCollection = function (parent, elemen
   return this.config.transformElem(localElem, true, route, service, true);
 };
 
-RestangularService.prototype.restangularizeCollectionAndElements = function (parent, element, route) {
-  var collection = this.restangularizeCollection(parent, element, route, false);
-  _.each(collection, function(elem) {
-    this.restangularizeElem(parent, elem, route, false);
-  }, this);
-  return collection;
-};
-
 // Elements
 RestangularService.prototype.stripRestangular = function (elem) {
   if (_.isArray(elem)) {
