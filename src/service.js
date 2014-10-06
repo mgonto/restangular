@@ -162,7 +162,7 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
   var okCallback = function(response) {
     var resData = response.data;
     var fullParams = response.config.params;
-    var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
+    var data = __this.parseResponse(resData, operation, whatFetched, url, response, deferred);
 
     // support empty response for getList() calls (some APIs respond with 204 and empty body)
     if (_.isUndefined(data) || '' === data) {
@@ -183,7 +183,7 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
     processedData = _.extend(data, processedData);
 
     if (!baseElem.restangularCollection) {
-      resolvePromise(
+      __this.resolvePromise(
         deferred,
         response,
         __this.restangularizeCollection(
@@ -196,7 +196,7 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
         filledArray
       );
     } else {
-      resolvePromise(
+      __this.resolvePromise(
         deferred,
         response,
         __this.restangularizeCollection(
@@ -215,7 +215,7 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
   urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
     baseElem[__this.config.restangularFields.etag], operation)[method]().then(okCallback, function error(response) {
     if (response.status === 304 && baseElem.restangularCollection) {
-      resolvePromise(deferred, response, baseElem, filledArray);
+      __this.resolvePromise(deferred, response, baseElem, filledArray);
     } else if ( _.every(__this.config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
       // triggered if no callback returns false
       deferred.reject(response);
@@ -223,4 +223,116 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
   });
 
   return PromiseExtension(deferred.promise, true, filledArray);
-}
+};
+
+
+RestangularService.prototype.elemFunction = function (baseElement, operation, what, params, obj, headers) {
+  var __this = this;
+
+  // FIXME don't use $q here
+  var deferred = $q.defer();
+
+  var resParams = params || {};
+  var route = what || baseElement[this.config.restangularFields.route];
+  var fetchUrl = this.urlHandler.fetchUrl(baseElement, what);
+
+  var callObj = obj || baseElement;
+  // fallback to etag on restangular object (since for custom methods we probably don't explicitly specify the etag field)
+  var etag = callObj[this.config.restangularFields.etag] || (operation !== 'post' ? baseElement[this.config.restangularFields.etag] : null);
+
+  if (_.isObject(callObj) && this.config.isRestangularized(callObj)) {
+    callObj = stripRestangular(callObj);
+  }
+  var request = this.config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
+      headers || {}, resParams || {}, baseElement[this.config.restangularFields.httpConfig] || {});
+
+  // FIXME replace service with something else
+  var filledObject = {};
+  filledObject = this.config.transformElem(filledObject, false, route, service);
+
+  var okCallback = function(response) {
+    var resData = response.data;
+    var fullParams = response.config.params;
+    var elem = __this.parseResponse(resData, operation, route, fetchUrl, response, deferred);
+    if (elem) {
+
+      if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
+        __this.resolvePromise(deferred, response, __this.restangularizeElem(baseElement, elem, what, true, null, fullParams), filledObject);
+      } else {
+        var data = __this.restangularizeElem(
+          baseElement[__this.config.restangularFields.parentResource],
+          elem,
+          baseElement[__this.config.restangularFields.route],
+          true,
+          null,
+          fullParams
+        );
+
+        data[__this.config.restangularFields.singleOne] = baseElement[__this.config.restangularFields.singleOne];
+        __this.resolvePromise(deferred, response, data, filledObject);
+      }
+
+    } else {
+      __this.resolvePromise(deferred, response, undefined, filledObject);
+    }
+  };
+
+  var errorCallback = function(response) {
+    if (response.status === 304 && __this.config.isSafe(operation)) {
+      __this.resolvePromise(deferred, response, __this, filledObject);
+    } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
+      // triggered if no callback returns false
+      deferred.reject(response);
+    }
+  };
+  // Overring HTTP Method
+  var callOperation = operation;
+  var callHeaders = _.extend({}, request.headers);
+  var isOverrideOperation = __this.config.isOverridenMethod(operation);
+  if (isOverrideOperation) {
+    callOperation = 'post';
+    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
+  } else if (config.jsonp && callOperation === 'get') {
+    callOperation = 'jsonp';
+  }
+
+  // FIXME don't use $http here
+  if (__this.config.isSafe(operation)) {
+    if (isOverrideOperation) {
+      this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+        what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
+    } else {
+      this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+        what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
+    }
+  } else {
+    this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+      what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
+  }
+
+  return PromiseExtension(deferred.promise, false, filledObject);
+};
+
+// TODO Make private or remove config dependency
+RestangularService.prototype.resolvePromise = function (deferred, response, data, filledValue) {
+  _.extend(filledValue, data);
+
+  // Trigger the full response interceptor.
+  if (this.config.fullResponse) {
+    return deferred.resolve(_.extend(response, {
+      data: data
+    }));
+  } else {
+    deferred.resolve(data);
+  }
+};
+
+// TODO Make private or remove config dependency
+RestangularService.prototype.parseResponse = function (resData, operation, route, fetchUrl, response, deferred) {
+  var data = this.config.responseExtractor(resData, operation, route, fetchUrl, response, deferred);
+  var etag = response.headers('ETag');
+  if (data && etag) {
+    data[this.config.restangularFields.etag] = etag;
+  }
+  return data;
+};

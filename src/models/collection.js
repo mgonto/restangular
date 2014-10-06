@@ -19,7 +19,7 @@ RestangularCollection.prototype.getById = function(id, reqParams, headers){
 
 
 RestangularCollection.prototype.post = function (elem, params, headers) {
-  return _.bind(elemFunction, this)('post', null, params, elem, headers);
+  return this.$service.elemFunction(this, 'post', null, params, elem, headers);
 };
 
 // TODO improve signature

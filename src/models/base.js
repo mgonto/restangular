@@ -68,30 +68,30 @@ var RestangularBase = {
   },
 
   remove:function (params, headers) {
-    return _.bind(elemFunction, this)('remove', undefined, params, undefined, headers);
+    return this.$service.elemFunction(this, 'remove', undefined, params, undefined, headers);
   },
 
    head: function (params, headers) {
-    return _.bind(elemFunction, this)('head', undefined, params, undefined, headers);
+    return this.$service.elemFunction(this, 'head', undefined, params, undefined, headers);
   },
 
   trace: function (params, headers) {
-    return _.bind(elemFunction, this)('trace', undefined, params, undefined, headers);
+    return this.$service.elemFunction(this, 'trace', undefined, params, undefined, headers);
   },
 
   options: function (params, headers) {
-    return _.bind(elemFunction, this)('options', undefined, params, undefined, headers);
+    return this.$service.elemFunction(this, 'options', undefined, params, undefined, headers);
   },
 
   patch: function (elem, params, headers) {
-    return _.bind(elemFunction, this)('patch', undefined, params, elem, headers);
+    return this.$service.elemFunction(this, 'patch', undefined, params, elem, headers);
   },
 
   restangularized: true,
 
   // TODO should this be public?
   customOperation: function(operation, path, params, headers, elem) {
-    return _.bind(elemFunction, this)(operation, path, params, elem, headers);
+    return this.$service.elemFunction(this, operation, path, params, elem, headers);
   },
 
   // TODO check expected attributes. elem?

@@ -13,23 +13,23 @@ mixin(RestangularElement, RestangularBase, { chain: false });
 
 
 RestangularElement.prototype.put = function (params, headers) {
-  return _.bind(elemFunction, this)('put', undefined, params, undefined, headers);
+  return this.$service.elemFunction(this, 'put', undefined, params, undefined, headers);
 };
 
 RestangularElement.prototype.save = function (params, headers) {
   if (this[this.$config.restangularFields.fromServer]) {
     return this.put(params, headers);
   } else {
-    return _.bind(elemFunction, this)('post', undefined, params, undefined, headers);
+    return this.$service.elemFunction(this, 'post', undefined, params, undefined, headers);
   }
 };
 
 RestangularElement.prototype.get = function (params, headers) {
-  return _.bind(elemFunction, this)('get', undefined, params, undefined, headers);
+  return this.$service.elemFunction(this, 'get', undefined, params, undefined, headers);
 };
 
 RestangularElement.prototype.post = function (what, elem, params, headers) {
-  return _.bind(elemFunction, this)('post', what, params, elem, headers);
+  return this.$service.elemFunction(this, 'post', what, params, elem, headers);
 };
 
 // TODO improve signature
