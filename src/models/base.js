@@ -34,7 +34,7 @@ var RestangularBase = {
       return bindedFunction(callParams.params, callParams.headers, callParams.elem);
     };
 
-    if (this.$config.isSafe(operation)) {
+    if (utils.isSafeOperation(operation)) {
       this[name] = createdFunction;
     } else {
       this[name] = function(elem, params, headers) {

@@ -278,7 +278,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   };
 
   var errorCallback = function(response) {
-    if (response.status === 304 && __this.config.isSafe(operation)) {
+    if (response.status === 304 && utils.isSafeOperation(operation)) {
       __this.resolvePromise(deferred, response, __this, filledObject);
     } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
       // triggered if no callback returns false
@@ -297,7 +297,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   }
 
   // FIXME don't use $http here
-  if (__this.config.isSafe(operation)) {
+  if (utils.isSafeOperation(operation)) {
     if (isOverrideOperation) {
       this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
         what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);

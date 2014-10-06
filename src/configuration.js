@@ -1,15 +1,20 @@
+/**
+ * Those are HTTP safe methods for which there is no need to pass any data with the request.
+ */
+var safeMethods = ['get', 'head', 'options', 'trace', 'getlist'];
+function isSafeOperation(operation) {
+  return _.contains(safeMethods, operation.toLowerCase());
+};
+
+
+var utils = {
+  isSafe: isSafe
+};
+
 // Configuration
 var Configurer = {};
 Configurer.init = function (object, config) {
   object.configuration = config;
-
-  /**
-   * Those are HTTP safe methods for which there is no need to pass any data with the request.
-   */
-  var safeMethods = ['get', 'head', 'options', 'trace', 'getlist'];
-  config.isSafe = function (operation) {
-    return _.contains(safeMethods, operation.toLowerCase());
-  };
 
   var absolutePattern = /^https?:\/\//i;
   config.isAbsoluteUrl = function (string) {
@@ -478,7 +483,7 @@ Configurer.init = function (object, config) {
         delete value.params;
       }
 
-      if (config.isSafe(value.method)) {
+      if (utils.isSafeOperation(value.method)) {
 
         resource[key] = function () {
           return $http(_.extend(value, {
@@ -507,7 +512,7 @@ Configurer.init = function (object, config) {
     var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
 
     if (etag) {
-      if (!config.isSafe(operation)) {
+      if (!utils.isSafeOperation(operation)) {
         headers['If-Match'] = etag;
       } else {
         headers['If-None-Match'] = etag;
