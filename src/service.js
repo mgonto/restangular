@@ -51,7 +51,6 @@ RestangularService.prototype.restangularizeBase = function (parent, elem, route,
   elem[this.config.restangularFields.route] = route;
 
   elem[this.config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
-  elem[this.config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
 
 
   // RequestLess connection
