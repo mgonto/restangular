@@ -120,5 +120,10 @@ var RestangularBase = {
     this._$httpConfig = httpConfig;
     return this;
   }
-
 };
+
+RestangularBase.customGET = RestangularBase.doGET;
+RestangularBase.customPUT = RestangularBase.doPUT;
+RestangularBase.customDELETE = RestangularBase.doDELETE;
+RestangularBase.customPOST = RestangularBase.doPOST;
+RestangularBase.customGETLIST = RestangularBase.doGETLIST;
