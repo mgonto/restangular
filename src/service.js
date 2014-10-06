@@ -2,6 +2,7 @@ function RestangularService(config) {
   this.config = config;
   this.urlHandler = new config.urlCreatorFactory[config.urlCreator]();
   this.urlHandler.setConfig(config);
+  Configurer.init(this, config);
 }
 
 RestangularService.prototype.one = function(parent, route, id, singleOne) {
@@ -336,3 +337,56 @@ RestangularService.prototype.parseResponse = function (resData, operation, route
   }
   return data;
 };
+
+// TODO remove dependency to angular.copy
+RestangularService.prototype.withConfig = function (configurer) {
+  var newConfig = angular.copy(_.omit(this.config, 'configuration'));
+  Configurer.init(newConfig, newConfig);
+  configurer(newConfig);
+  return new RestangularService(newConfig).asPublicAdapter();
+};
+
+RestangularService.prototype.asPublicAdapter = function() {
+  if (this._publicAdapter == null) {
+    this._publicAdapter = createPublicAdapter(this);
+  }
+  return this._publicAdapter;
+};
+
+RestangularService.prototype.copy = function (elem) {
+  return elem.clone();
+};
+
+// TODO review this method (I don't know what is for)
+RestangularService.prototype.service = function(route, parent) {
+  var knownCollectionMethods = _.values(this.config.restangularFields);
+  var serv = {};
+  var collection = (parent || this).all(route);
+  serv.one = _.bind(one, (parent || this), parent, route);
+  serv.post = _.bind(collection.post, collection);
+  serv.getList = _.bind(collection.getList, collection);
+
+  for (var prop in collection) {
+    if (collection.hasOwnProperty(prop) && _.isFunction(collection[prop]) && !_.contains(knownCollectionMethods, prop)) {
+      serv[prop] = _.bind(collection[prop], collection);
+    }
+  }
+
+  return serv;
+};
+
+function createPublicAdapter(service) {
+  var adapter = {};
+
+  ['service', 'withConfig', 'stripRestangular', 'restangularizeElement', 'restangularizeCollection']
+    .forEach(function (fn) {
+      adapter[fn] = service[fn].bind(service);
+  });
+
+  ['one', 'all', 'several', 'oneUrl', 'allUrl'].forEach(function (fn) {
+    adapter[fn] = service[fn].bind(service, null);
+  });
+
+  return adapter;
+}
+
