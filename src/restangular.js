@@ -37,12 +37,6 @@ module.provider('Restangular', function() {
         return data;
       }
 
-      function withHttpConfig(httpConfig) {
-        this[config.restangularFields.httpConfig] = httpConfig;
-        return this;
-      }
-
-
       function elemFunction(operation, what, params, obj, headers) {
         var __this = this;
         var deferred = $q.defer();

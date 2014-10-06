@@ -114,6 +114,11 @@ var RestangularBase = {
 
   doGETLIST: function(what, params, headers) {
     return this.$service.fetchList(this, what, params, headers);
+  },
+
+  withHttpConfig: function (httpConfig) {
+    this._$httpConfig = httpConfig;
+    return this;
   }
 
 };
