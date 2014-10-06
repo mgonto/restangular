@@ -126,7 +126,7 @@ RestangularService.prototype.stripRestangular = function (elem) {
     var array = [];
     _.each(elem, function(value) {
       array.push(this.config.isRestangularized(value) ?  this.stripRestangular(value) : value);
-    });
+    }, this);
     return array;
   } else {
     // TODO change the removal of RestangularBase properties
