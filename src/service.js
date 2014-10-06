@@ -1,7 +1,7 @@
 function RestangularService(config) {
   this.config = config;
   this.urlHandler = new config.urlCreatorFactory[config.urlCreator]();
-  urlHandler.setConfig(config);
+  this.urlHandler.setConfig(config);
 }
 
 RestangularService.prototype.one = function(parent, route, id, singleOne) {
@@ -97,9 +97,6 @@ RestangularService.prototype.restangularizeElem = function (parent, element, rou
     };
   }
 
-  localElem[this.config.restangularFields.restangularCollection] = false;
-  localElem[this.config.restangularFields.getList] = _.bind(fetchFunction, localElem);
-
   return this.config.transformElem(localElem, false, route, service, true);
 };
 
@@ -110,11 +107,6 @@ RestangularService.prototype.restangularizeCollection = function (parent, elemen
   elem.__proto__ = new RestangularCollection(this);
 
   var localElem = this.restangularizeBase(parent, elem, route, reqParams, fromServer);
-  localElem[this.config.restangularFields.restangularCollection] = true;
-
-
-  localElem[this.config.restangularFields.get] = _.bind(getById, localElem);
-  localElem[this.config.restangularFields.getList] = _.bind(fetchFunction, localElem, null);
 
   return this.config.transformElem(localElem, true, route, service, true);
 };
@@ -143,3 +135,92 @@ RestangularService.prototype.stripRestangular = function (elem) {
     );
   }
 };
+
+RestangularService.prototype.fetchList = function (baseElem, what, reqParams, headers) {
+  var __this = this;
+
+  // FIXME we can't use $q here
+  var deferred = $q.defer();
+
+  var operation = 'getList';
+  var url = this.urlHandler.fetchUrl(baseElem, what);
+  var whatFetched = what || baseElem[this.config.restangularFields.route];
+
+  var request = this.config.fullRequestInterceptor(null, operation,
+    whatFetched, url, headers || {}, reqParams || {}, baseElem[this.config.restangularFields.httpConfig] || {});
+
+  // FIXME service is undefined and it should be the 'Restangular' instance
+  var filledArray = [];
+  filledArray = this.config.transformElem(filledArray, true, whatFetched, service);
+
+  var method = 'getList';
+
+  if (config.jsonp) {
+    method = 'jsonp';
+  }
+
+  var okCallback = function(response) {
+    var resData = response.data;
+    var fullParams = response.config.params;
+    var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
+
+    // support empty response for getList() calls (some APIs respond with 204 and empty body)
+    if (_.isUndefined(data) || '' === data) {
+      data = [];
+    }
+    if (!_.isArray(data)) {
+      throw new Error('Response for getList SHOULD be an array and not an object or something else');
+    }
+    var processedData = _.map(data, function(elem) {
+      if (!baseElem.restangularCollection) {
+        return __this.restangularizeElem(baseElem, elem, what, true, data);
+      } else {
+        return __this.restangularizeElem(baseElem[__this.config.restangularFields.parentResource],
+          elem, baseElem[__this.config.restangularFields.route], true, data);
+      }
+    });
+
+    processedData = _.extend(data, processedData);
+
+    if (!baseElem.restangularCollection) {
+      resolvePromise(
+        deferred,
+        response,
+        __this.restangularizeCollection(
+          baseElem,
+          processedData,
+          what,
+          true,
+          fullParams
+        ),
+        filledArray
+      );
+    } else {
+      resolvePromise(
+        deferred,
+        response,
+        __this.restangularizeCollection(
+          baseElem[__this.config.restangularFields.parentResource],
+          processedData,
+          baseElem[__this.config.restangularFields.route],
+          true,
+          fullParams
+        ),
+        filledArray
+      );
+    }
+  };
+
+  // FIXME we can't use $http here
+  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
+    baseElem[__this.config.restangularFields.etag], operation)[method]().then(okCallback, function error(response) {
+    if (response.status === 304 && baseElem.restangularCollection) {
+      resolvePromise(deferred, response, baseElem, filledArray);
+    } else if ( _.every(__this.config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
+      // triggered if no callback returns false
+      deferred.reject(response);
+    }
+  });
+
+  return PromiseExtension(deferred.promise, true, filledArray);
+}

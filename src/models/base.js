@@ -16,7 +16,7 @@ var RestangularBase = {
   addRestangularMethod: function (name, operation, path, defaultParams, defaultHeaders, defaultElem) {
     var bindedFunction;
     if (operation === 'getList') {
-      bindedFunction = _.bind(fetchFunction, this, path);
+      bindedFunction = _.bind(this.$service.fetchList, this.$service, this, path);
     } else {
       bindedFunction = _.bind(customFunction, this, operation, path);
     }
@@ -56,7 +56,7 @@ var RestangularBase = {
   },
 
   several: function(/*parent, route , ..ids */) {
-    return this.$service.serveral.apply(this.$service, [this].concat(arguments));
+    return this.$service.several.apply(this.$service, [this].concat(arguments));
   },
 
   oneUrl: function(/*parent, route, url*/) {
@@ -113,7 +113,7 @@ var RestangularBase = {
   },
 
   doGETLIST: function(what, params, headers) {
-    return _.bind(fetchFunction, this)(what, params, headers);
+    return this.$service.fetchList(this, what, params, headers);
   }
 
 };
