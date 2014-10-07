@@ -141,9 +141,8 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
   var request = this.config.fullRequestInterceptor(null, operation,
     whatFetched, url, headers || {}, reqParams || {}, baseElem[this.config.restangularFields.httpConfig] || {});
 
-  // FIXME service is undefined and it should be the 'Restangular' instance
   var filledArray = [];
-  filledArray = this.config.transformElem(filledArray, true, whatFetched, service);
+  filledArray = this.config.transformElem(filledArray, true, whatFetched, this.asPublicAdapter());
 
   var method = 'getList';
 
