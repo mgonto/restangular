@@ -2,8 +2,12 @@ function RestangularService(config) {
   this.config = config;
   this.urlHandler = new config.urlCreatorFactory[config.urlCreator]();
   this.urlHandler.setConfig(config);
+  this.elemService = new ElemService(config);
+  this.urlService = new UrlService(config);
   Configurer.init(this, config);
 }
+
+
 
 RestangularService.prototype.one = function(parent, route, id, singleOne) {
   if (_.isNumber(route) || _.isNumber(parent)) {
@@ -12,8 +16,8 @@ RestangularService.prototype.one = function(parent, route, id, singleOne) {
     throw new Error(error);
   }
   var elem = {};
-  this.config.setIdToElem(elem, id, route);
-  this.config.setFieldToElem(this.config.restangularFields.singleOne, elem, singleOne);
+  this.elemService.setIdToElem(elem, id, route);
+  this.elemService.setFieldToElem(this.config.restangularFields.singleOne, elem, singleOne);
   return this.restangularizeElem(parent, elem , route, false);
 };
 
@@ -32,7 +36,7 @@ RestangularService.prototype.oneUrl = function(parent, route, url) {
     throw new Error('Route is mandatory when creating new Restangular objects.');
   }
   var elem = {};
-  this.config.setUrlToElem(elem, url, route);
+  this.elemService.setUrlToElem(elem, url, route);
   return this.restangularizeElem(parent, elem , route, false);
 };
 
@@ -42,7 +46,7 @@ RestangularService.prototype.allUrl = function(parent, route, url) {
     throw new Error('Route is mandatory when creating new Restangular objects.');
   }
   var elem = {};
-  this.config.setUrlToElem(elem, url, route);
+  this.elemService.setUrlToElem(elem, url, route);
   return this.restangularizeCollection(parent, elem , route, false);
 };
 
@@ -57,8 +61,8 @@ RestangularService.prototype.restangularizeBase = function (parent, elem, route,
   elem[this.config.restangularFields.fromServer] = !!fromServer;
 
   if (parent && this.config.shouldSaveParent(route)) {
-    var parentId = this.config.getIdFromElem(parent);
-    var parentUrl = this.config.getUrlFromElem(parent);
+    var parentId = this.elemService.getIdFromElem(parent);
+    var parentUrl = this.elemService.getUrlFromElem(parent);
 
     var restangularFieldsForParent = _.union(
       _.values( _.pick(this.config.restangularFields, ['route', 'singleOne', 'parentResource']) ),
@@ -66,11 +70,11 @@ RestangularService.prototype.restangularizeBase = function (parent, elem, route,
     );
     var parentResource = _.pick(parent, restangularFieldsForParent);
 
-    if (this.config.isValidId(parentId)) {
-      this.config.setIdToElem(parentResource, parentId, route);
+    if (this.elemService.isValidId(parentId)) {
+      this.elemService.setIdToElem(parentResource, parentId, route);
     }
-    if (this.config.isValidId(parentUrl)) {
-      this.config.setUrlToElem(parentResource, parentUrl, route);
+    if (this.elemService.isValidId(parentUrl)) {
+      this.elemService.setUrlToElem(parentResource, parentUrl, route);
     }
 
     elem[this.config.restangularFields.parentResource] = parentResource;
@@ -88,7 +92,7 @@ RestangularService.prototype.restangularizeElem = function (parent, element, rou
   var localElem = this.restangularizeBase(parent, elem, route, reqParams, fromServer);
 
   if (this.config.useCannonicalId) {
-    localElem[this.config.restangularFields.cannonicalId] = this.config.getIdFromElem(localElem);
+    localElem[this.config.restangularFields.cannonicalId] = this.elemService.getIdFromElem(localElem);
   }
 
   if (collection) {
@@ -97,7 +101,7 @@ RestangularService.prototype.restangularizeElem = function (parent, element, rou
     };
   }
 
-  return this.config.transformElem(localElem, false, route, service, true);
+  return this.transformElem(localElem, false, route, service, true);
 };
 
 RestangularService.prototype.restangularizeCollection = function (parent, element, route, fromServer, reqParams) {
@@ -108,7 +112,7 @@ RestangularService.prototype.restangularizeCollection = function (parent, elemen
 
   var localElem = this.restangularizeBase(parent, elem, route, reqParams, fromServer);
 
-  return this.config.transformElem(localElem, true, route, service, true);
+  return this.transformElem(localElem, true, route, service, true);
 };
 
 // Elements
@@ -116,7 +120,7 @@ RestangularService.prototype.stripRestangular = function (elem) {
   if (_.isArray(elem)) {
     var array = [];
     _.each(elem, function(value) {
-      array.push(this.config.isRestangularized(value) ?  this.stripRestangular(value) : value);
+      array.push(this.elemService.isRestangularized(value) ?  this.stripRestangular(value) : value);
     }, this);
     return array;
   } else {
@@ -142,7 +146,7 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
     whatFetched, url, headers || {}, reqParams || {}, baseElem[this.config.restangularFields.httpConfig] || {});
 
   var filledArray = [];
-  filledArray = this.config.transformElem(filledArray, true, whatFetched, this.asPublicAdapter());
+  filledArray = this.transformElem(filledArray, true, whatFetched, this.asPublicAdapter());
 
   var method = 'getList';
 
@@ -231,7 +235,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   // fallback to etag on restangular object (since for custom methods we probably don't explicitly specify the etag field)
   var etag = callObj[this.config.restangularFields.etag] || (operation !== 'post' ? baseElement[this.config.restangularFields.etag] : null);
 
-  if (_.isObject(callObj) && this.config.isRestangularized(callObj)) {
+  if (_.isObject(callObj) && this.elemService.isRestangularized(callObj)) {
     callObj = stripRestangular(callObj);
   }
   var request = this.config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
@@ -239,7 +243,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
 
   // FIXME replace service with something else
   var filledObject = {};
-  filledObject = this.config.transformElem(filledObject, false, route, service);
+  filledObject = this.transformElem(filledObject, false, route, service);
 
   var okCallback = function(response) {
     var resData = response.data;
@@ -269,7 +273,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   };
 
   var errorCallback = function(response) {
-    if (response.status === 304 && utils.isSafeOperation(operation)) {
+    if (response.status === 304 && urlService.isSafe(operation)) {
       __this.resolvePromise(deferred, response, __this, filledObject);
     } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
       // triggered if no callback returns false
@@ -279,7 +283,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   // Overring HTTP Method
   var callOperation = operation;
   var callHeaders = _.extend({}, request.headers);
-  var isOverrideOperation = __this.config.isOverridenMethod(operation);
+  var isOverrideOperation = __this.urlService.isOverridenMethod(operation);
   if (isOverrideOperation) {
     callOperation = 'post';
     callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
@@ -288,7 +292,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   }
 
   // FIXME don't use $http here
-  if (utils.isSafeOperation(operation)) {
+  if (__this.urlService.isSafe(operation)) {
     if (isOverrideOperation) {
       this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
         what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
@@ -346,6 +350,20 @@ RestangularService.prototype.asPublicAdapter = function() {
 RestangularService.prototype.copy = function (elem) {
   return elem.clone();
 };
+
+RestangularService.prototype.transformElem = function (elem, isCollection, route, Restangular, force) {
+    if (!force && !this.config.transformLocalElements && !elem[this.config.restangularFields.fromServer]) {
+      return elem;
+    }
+    var typeTransformers = this.config.transformers[route];
+    var changedElem = elem;
+    if (typeTransformers) {
+      _.each(typeTransformers, function (transformer) {
+        changedElem = transformer(isCollection, changedElem);
+      });
+    }
+    return this.config.onElemRestangularized(changedElem, isCollection, route, Restangular);
+  };
 
 // TODO review this method (I don't know what is for)
 RestangularService.prototype.service = function(route, parent) {
