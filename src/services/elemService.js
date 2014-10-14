@@ -54,7 +54,7 @@ ElemService.prototype.setUrlToElem = function (elem, url) {
   return this;
 };
 
-ElemService.prototype..getUrlFromElem = function (elem) {
+ElemService.prototype.getUrlFromElem = function (elem) {
   return this.getFieldFromElem(this.config.restangularFields.selfLink, elem);
 };
 

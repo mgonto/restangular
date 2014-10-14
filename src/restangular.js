@@ -8,6 +8,6 @@ module.provider('Restangular', function() {
 
   this.$get = ['$http', '$q', function($http, $q) {
 
-    return new RestangularService(globalConfiguration);
+    return new RestangularService(globalConfiguration, $q, $http).asPublicAdapter();
   }];
 });

@@ -11,7 +11,7 @@ function RestangularCollection(service) {
 // TODO proper way of doing inheritance or Array like object
 RestangularCollection.prototype = new Array();
 
-mixin(RestangularCollection, RestangularBase, { chain: false });
+mixin(RestangularCollection, new RestangularBase(), { chain: false });
 
 RestangularCollection.prototype.getById = function(id, reqParams, headers){
   return this.customGET(id.toString(), reqParams, headers);
@@ -23,6 +23,6 @@ RestangularCollection.prototype.post = function (elem, params, headers) {
 };
 
 // TODO improve signature
-RestangularElement.prototype.getList = function (/* same arguments as fetchList */) {
+RestangularCollection.prototype.getList = function (/* same arguments as fetchList */) {
   return this.$service.fetchList.apply(this.$service, [this, null].concat(arguments));
 };

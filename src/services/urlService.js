@@ -9,7 +9,7 @@ UrlService.prototype.isAbsoluteUrl = function (string) {
     this.config.absoluteUrl;
 };
 
-UrlService.protoype.isOverridenMethod = function (method, values) {
+UrlService.prototype.isOverridenMethod = function (method, values) {
   var search = values || this.config.methodOverriders;
   return !_.isUndefined(_.find(search, function (one) {
     return one.toLowerCase() === method.toLowerCase();
@@ -17,7 +17,7 @@ UrlService.protoype.isOverridenMethod = function (method, values) {
 };
 
 var safeMethods = ['get', 'head', 'options', 'trace', 'getlist'];
-UrlService.protoype.isSafe = function (operation) {
+UrlService.prototype.isSafe = function (operation) {
   return _.contains(safeMethods, operation.toLowerCase());
 };
 

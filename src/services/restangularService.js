@@ -1,10 +1,14 @@
-function RestangularService(config) {
+function RestangularService(config, $q, $http) {
   this.config = config;
   this.urlHandler = new config.urlCreatorFactory[config.urlCreator]();
   this.urlHandler.setConfig(config);
   this.elemService = new ElemService(config);
   this.urlService = new UrlService(config);
   Configurer.init(this, config);
+
+
+  this.$q = $q;
+  this.$http = $http;
 }
 
 
@@ -101,7 +105,7 @@ RestangularService.prototype.restangularizeElem = function (parent, element, rou
     };
   }
 
-  return this.transformElem(localElem, false, route, service, true);
+  return this.transformElem(localElem, false, route, this.asPublicAdapter(), true);
 };
 
 RestangularService.prototype.restangularizeCollection = function (parent, element, route, fromServer, reqParams) {
@@ -112,7 +116,7 @@ RestangularService.prototype.restangularizeCollection = function (parent, elemen
 
   var localElem = this.restangularizeBase(parent, elem, route, reqParams, fromServer);
 
-  return this.transformElem(localElem, true, route, service, true);
+  return this.transformElem(localElem, true, route, this.asPublicAdapter(), true);
 };
 
 // Elements
@@ -132,25 +136,41 @@ RestangularService.prototype.stripRestangular = function (elem) {
   }
 };
 
+/**
+ *
+ * @param baseElem {RestangularBase}
+ * @param what
+ * @param reqParams
+ * @param headers
+ * @returns {*}
+ */
 RestangularService.prototype.fetchList = function (baseElem, what, reqParams, headers) {
   var __this = this;
 
+  // the 'url' is formed with baseElement + what
+  // what can be null
+
   // FIXME we can't use $q here
-  var deferred = $q.defer();
+  var deferred = this.$q.defer();
 
   var operation = 'getList';
   var url = this.urlHandler.fetchUrl(baseElem, what);
   var whatFetched = what || baseElem[this.config.restangularFields.route];
 
   var request = this.config.fullRequestInterceptor(null, operation,
-    whatFetched, url, headers || {}, reqParams || {}, baseElem[this.config.restangularFields.httpConfig] || {});
+    whatFetched,
+    url,
+    headers || {},
+    reqParams || {},
+    baseElem[this.config.restangularFields.httpConfig] || {}
+  );
 
-  var filledArray = [];
-  filledArray = this.transformElem(filledArray, true, whatFetched, this.asPublicAdapter());
+  // this is a hack right?
+  var filledArray = this.transformElem([], true, whatFetched, this.asPublicAdapter());
 
   var method = 'getList';
 
-  if (config.jsonp) {
+  if (this.config.jsonp) {
     method = 'jsonp';
   }
 
@@ -206,18 +226,49 @@ RestangularService.prototype.fetchList = function (baseElem, what, reqParams, he
     }
   };
 
-  // FIXME we can't use $http here
-  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
-    baseElem[__this.config.restangularFields.etag], operation)[method]().then(okCallback, function error(response) {
+  var errorCallback = function error(response) {
     if (response.status === 304 && baseElem.restangularCollection) {
       __this.resolvePromise(deferred, response, baseElem, filledArray);
     } else if ( _.every(__this.config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
       // triggered if no callback returns false
       deferred.reject(response);
     }
-  });
+  };
 
-  return PromiseExtension(deferred.promise, true, filledArray);
+  // FIXME we can't use $http here
+  /*
+    // create uri parameters
+    var currentParams = request.params
+    var defaultParams = this.config.defaultRquestParams.common;
+   var defaultMethodParams = this.config.defaultRquestParams[method];
+    var params = createParams(currentParams, defaultParams);
+
+    // create uri
+    var uri = joinUris(this.basePath(), what, config.suffix)
+
+    // create headers
+    var currentHeaders = request.headers;
+    var etag = if (isSafeOperation(operation) { baseElem[__this.config.restangularFields.etag] };
+    var defaultHeaders = this.config.defaultHeaders
+    var headers = createHeaders(currentHeaders, defaultHeaders, etag);
+
+
+
+    addEtagToParams(request.params, baseElem[__this.config.restangularFields.etag]);
+    this.httpclient.doRequest(method, uri, headers).then(okCallBack, errorCallback);
+   */
+  this.urlHandler.makeRequest(
+    baseElem,
+    this.$http,
+    request.httpConfig,
+    request.headers,
+    request.params,
+    what,
+    baseElem[__this.config.restangularFields.etag],
+    operation)
+  .then(okCallback, errorCallback);
+
+  return PromiseExtension(deferred.promise, true, filledArray, this.$q, this.config);
 };
 
 
@@ -225,7 +276,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   var __this = this;
 
   // FIXME don't use $q here
-  var deferred = $q.defer();
+  var deferred = this.$q.defer();
 
   var resParams = params || {};
   var route = what || baseElement[this.config.restangularFields.route];
@@ -236,14 +287,14 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   var etag = callObj[this.config.restangularFields.etag] || (operation !== 'post' ? baseElement[this.config.restangularFields.etag] : null);
 
   if (_.isObject(callObj) && this.elemService.isRestangularized(callObj)) {
-    callObj = stripRestangular(callObj);
+    callObj = this.stripRestangular(callObj);
   }
   var request = this.config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
       headers || {}, resParams || {}, baseElement[this.config.restangularFields.httpConfig] || {});
 
   // FIXME replace service with something else
   var filledObject = {};
-  filledObject = this.transformElem(filledObject, false, route, service);
+  filledObject = this.transformElem(filledObject, false, route, this.asPublicAdapter());
 
   var okCallback = function(response) {
     var resData = response.data;
@@ -251,7 +302,7 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
     var elem = __this.parseResponse(resData, operation, route, fetchUrl, response, deferred);
     if (elem) {
 
-      if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
+      if (operation === 'post' && !__this[__this.config.restangularFields.restangularCollection]) {
         __this.resolvePromise(deferred, response, __this.restangularizeElem(baseElement, elem, what, true, null, fullParams), filledObject);
       } else {
         var data = __this.restangularizeElem(
@@ -287,25 +338,25 @@ RestangularService.prototype.elemFunction = function (baseElement, operation, wh
   if (isOverrideOperation) {
     callOperation = 'post';
     callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
-  } else if (config.jsonp && callOperation === 'get') {
+  } else if (__this.config.jsonp && callOperation === 'get') {
     callOperation = 'jsonp';
   }
 
   // FIXME don't use $http here
   if (__this.urlService.isSafe(operation)) {
     if (isOverrideOperation) {
-      this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+      this.urlHandler.resource(baseElement, this.$http, request.httpConfig, callHeaders, request.params,
         what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
     } else {
-      this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+      this.urlHandler.resource(baseElement, this.$http, request.httpConfig, callHeaders, request.params,
         what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
     }
   } else {
-    this.urlHandler.resource(baseElement, $http, request.httpConfig, callHeaders, request.params,
+    this.urlHandler.resource(baseElement, this.$http, request.httpConfig, callHeaders, request.params,
       what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
   }
 
-  return PromiseExtension(deferred.promise, false, filledObject);
+  return PromiseExtension(deferred.promise, false, filledObject, this.$q, this.config);
 };
 
 // TODO Make private or remove config dependency
@@ -337,7 +388,7 @@ RestangularService.prototype.withConfig = function (configurer) {
   var newConfig = angular.copy(_.omit(this.config, 'configuration'));
   Configurer.init(newConfig, newConfig);
   configurer(newConfig);
-  return new RestangularService(newConfig).asPublicAdapter();
+  return new RestangularService(newConfig, this.$q, this.$http).asPublicAdapter();
 };
 
 RestangularService.prototype.asPublicAdapter = function() {
@@ -386,14 +437,27 @@ RestangularService.prototype.service = function(route, parent) {
 function createPublicAdapter(service) {
   var adapter = {};
 
-  ['service', 'withConfig', 'stripRestangular', 'restangularizeElement', 'restangularizeCollection']
+  adapter.restangularizeElement = _.bind(service.restangularizeElem, service);
+  ['service', 'withConfig', 'stripRestangular', 'restangularizeCollection']
     .forEach(function (fn) {
-      adapter[fn] = service[fn].bind(service);
+      adapter[fn] = _.bind(service[fn], service);
   });
 
   ['one', 'all', 'several', 'oneUrl', 'allUrl'].forEach(function (fn) {
-    adapter[fn] = service[fn].bind(service, null);
+    adapter[fn] = _.bind(service[fn], service, null);
   });
+
+  // things added by Configuration.init() to RestangularService
+  // TODO remove this Configuration.init strategy
+  ['addRequestInterceptor', 'addFullRequestInterceptor', 'setFullRequestInterceptor', 'setResponseInterceptor',
+   'setResponseExtractor', 'setErrorInterceptor', 'addResponseInterceptor', 'addErrorInterceptor', 'setUseCannonicalId',
+   'setRestangularFields', 'setUrlCreator', 'setJsonp', 'setMethodOverriders', 'setDefaultHeaders',
+   'setDefaultRequestParams', 'setEncodeIds', 'setDefaultHttpFields', 'setExtraFields', 'setBaseUrl',
+    'setSelfLinkAbsoluteUrl', 'extendModel']
+    .forEach(function (fn) {
+      adapter[fn] = _.bind(service[fn], service);
+    });
+
 
   return adapter;
 }

@@ -8,9 +8,11 @@ function RestangularElement(service) {
   this.restangularCollection = false;
 }
 
-mixin(RestangularElement, RestangularBase, { chain: false });
+// subclass extends superclass
+RestangularElement.prototype = Object.create(RestangularBase.prototype);
+RestangularElement.prototype.constructor = RestangularElement;
 
-
+//mixin(RestangularElement, RestangularBase, { chain: false });
 
 RestangularElement.prototype.put = function (params, headers) {
   return this.$service.elemFunction(this, 'put', undefined, params, undefined, headers);

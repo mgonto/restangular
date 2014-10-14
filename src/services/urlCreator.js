@@ -22,7 +22,7 @@ BaseCreator.prototype.parentsArray = function (current) {
 };
 
 /// FIXME: Make this part of the Prototype ionstead of a separated and weird function
-function RestangularResource(config, $http, url, configurer) {
+function RestangularResource(config, $http, url, configurer, urlService) {
   var resource = {};
   var __this = this;
   _.each(_.keys(configurer), function (key) {
@@ -36,7 +36,7 @@ function RestangularResource(config, $http, url, configurer) {
     }
 
     // XXX: This doesn't work. Will fix when moved to prototype
-    if (__this.urlService.isSafe(value.method)) {
+    if (urlService.isSafe(value.method)) {
 
       resource[key] = function () {
         return $http(_.extend(value, {
@@ -63,6 +63,7 @@ BaseCreator.prototype.resource = function (current, $http, localHttpConfig, call
 
   var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
   var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
+
 
   if (etag) {
     if (!this.urlService.isSafe(operation)) {
@@ -140,7 +141,124 @@ BaseCreator.prototype.resource = function (current, $http, localHttpConfig, call
       {method: 'PATCH',
         params: params,
         headers: headers})
-  });
+  },this.urlService);
+};
+
+
+// TODO what's the difference between operation and method?
+// It's called method in fetchListn and callOperation in elemFunction.
+// Also, there is a httpMethod, that is configured on Resource
+// My guess:
+// Is the same, but method can be jsonp for getList and get.
+/**
+ * Perfoms a request based on all the give parameters.
+ *
+ * @param current {RestangularBase}
+ * @param $http {$http}
+ * @param localHttpConfig {object}
+ * @param callHeaders {object}
+ * @param callParams {object}
+ * @param what {string}
+ * @param etag {string}
+ * @param operation {string}
+ * @param method {string}
+ * @returns {Promise}
+ */
+BaseCreator.prototype.makeRequest = function (current, $http, localHttpConfig, callHeaders, callParams, what, etag, operation) {
+  var config = this.config;
+
+  function computeParameters(current, methodDefault, commonDefault) {
+    // Aca un cambio, dado que hoy por hoy, method pisa a common y a current (pero no deberia)
+    return _.defaults(current, methodDefault, commonDefault);
+  }
+
+  function computeHeaders(current, commonDefault, currentEtag, isSafeOperation) {
+    var headers = _.defaults(callHeaders || {}, config.defaultHeaders);
+
+    if (currentEtag) {
+      if (!isSafeOperation) {
+        headers['If-Match'] = currentEtag;
+      } else {
+        headers['If-None-Match'] = currentEtag;
+      }
+    }
+
+    return headers;
+  }
+
+  function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) === -1;
+  }
+
+  function computeUrl(baseElementPath, requestExtraPath, configuredSuffix) {
+    var url = baseElementPath;
+
+    if (requestExtraPath) {
+      var add = '';
+      if (!/\/$/.test(url)) {
+        add += '/';
+      }
+      add += requestExtraPath;
+      url += add;
+    }
+
+    if (configuredSuffix && endsWith(url, configuredSuffix)) {
+      url += configuredSuffix;
+    }
+
+    return url;
+  }
+
+  function mapOperationToMethod(operation) {
+    if (operation === 'getList') {
+      return 'get';
+    } else if (operation === 'remove') {
+      return 'delete';
+    } else {
+      return operation.toLowerCase();
+    }
+  }
+
+  function applyJsonpIfnecessary(method, withJsonp) {
+    if (withJsonp && method === 'get') {
+      return 'jsonp';
+    } else {
+      return method;
+    }
+
+  }
+
+  function isSafeOperation(operation) {
+    return _.contains(['get', 'head', 'options', 'trace', 'getlist'], operation.toLowerCase());
+  };
+
+  var httpConfig = {}
+
+  httpConfig.method = applyJsonpIfnecessary(mapOperationToMethod(operation), config.jsonp);
+
+  httpConfig.params = computeParameters(callParams || {}, config.defaultRequestParams[httpConfig.method], config.defaultRequestParams.common);
+
+  httpConfig.headers = computeHeaders(callHeaders || {}, config.defaultHeaders, etag, isSafeOperation(operation));
+
+  var suffix = this.elemService.getUrlFromElem(current) ? null : config.suffix;
+  httpConfig.url = computeUrl(this.base(current), what, suffix);
+
+
+  // XXX this replaces config.withHttpValues()
+  var resultHttpConfig = _.defaults(httpConfig, localHttpConfig, config.defaultHttpFields);
+
+  // TODO is this necessary??
+  // We don't want the ? if no params are there
+  if (_.isEmpty(resultHttpConfig.params)) {
+    delete resultHttpConfig.params;
+  }
+
+  // XXX this seems to have a race condition problem.
+  current[config.restangularFields.httpConfig] = undefined;
+
+  // TODO ojo q operation y method son cosas distintas!
+
+  return $http(resultHttpConfig);
 };
 
 /**
@@ -180,7 +298,7 @@ Path.prototype.base = function (current) {
           elemId = __this.elemService.getIdFromElem(elem);
         }
 
-        if (config.isValidId(elemId) && !elem.singleOne) {
+        if (__this.elemService.isValidId(elemId) && !elem.singleOne) {
           elemUrl += '/' + (__this.config.encodeIds ? encodeURIComponent(elemId) : elemId);
         }
       }
@@ -260,3 +378,6 @@ Path.prototype.fetchRequestedUrl = function (current, what) {
 
   return url + (this.config.suffix || '') + ((url.indexOf('?') === -1) ? '?' : '&') + parts.join('&');
 };
+
+
+

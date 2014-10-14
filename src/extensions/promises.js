@@ -1,5 +1,5 @@
 // Promises
-var PromiseExtension = function(promise, isCollection, valueToFill) {
+var PromiseExtension = function(promise, isCollection, valueToFill, $q, config) {
 
   // Helpers
   function promiseCall(method) {
