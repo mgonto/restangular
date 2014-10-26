@@ -459,8 +459,11 @@ All of these fields except for `id` and `selfLink` are handled by Restangular, s
 You can now Override HTTP Methods. You can set here the array of methods to override. All those methods will be sent as POST and Restangular will add an X-HTTP-Method-Override header with the real HTTP method we wanted to do.
 
 #### setJsonp
+Typical web browsers prohibit requesting data from a server in a different domain (same-origin policy). JSONP or "JSON with padding" is a communication technique used in JavaScript programs running in web browsers to get around this.
 
-By setting this value to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
+For JSONP to work, a server must know how to reply with JSONP-formatted results. JSONP does not work with JSON-formatted results. The JSONP parameters passed as arguments to a script are defined by the server.
+
+By setting the value of setJsonp to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
 
 You will need to add the 'JSON_CALLBACK' string to your URLs (see [$http.jsonp](http://docs.angularjs.org/api/ng.$http#methods_jsonp)). You can use `setDefaultRequestParams` to accomplish this:
 ```javascript
