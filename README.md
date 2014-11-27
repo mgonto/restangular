@@ -1212,7 +1212,7 @@ Users reported that this server frameworks play real nice with Restangular, as t
 
 * Ruby on Rails
 * CakePHP, Laravel and FatFREE, Symfony2 with RestBundle, Silex for PHP
-* Play1 & 2 for Java & scala
+* Play1 & 2 and Dropwizard for Java & scala
 * Restify and Express for NodeJS
 * Tastypie and Django Rest Framework for Django
 * Slim Framework
