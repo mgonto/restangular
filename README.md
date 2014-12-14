@@ -165,8 +165,6 @@ Each time, there're more Production WebApps using `Restangular`. If your webapp 
 
 #Starter Guide
 
-**[Back to top](#table-of-contents)**
-
 ## Quick Configuration (For Lazy Readers)
 This is all you need to start using all the basic Restangular features.
 
@@ -204,6 +202,8 @@ Restangular.one('accounts', 1234)
 // Gets a list of all of those accounts
 Restangular.several('accounts', 1234, 123, 12345);
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Let's code!
 
@@ -551,6 +551,8 @@ You can set this to either `true` or `false`. By default it's false. If set to t
 
 You can set here if you want to URL Encode IDs or not. By default, it's true.
 
+**[Back to top](#table-of-contents)**
+
 ### Accessing configuration
 
 You can also access the configuration via `RestangularProvider` and `Restangular` via the `configuration` property if you don't want to use the setters. Check it out:
@@ -558,6 +560,8 @@ You can also access the configuration via `RestangularProvider` and `Restangular
 ````js
 Restangular.configuration.requestSuffix = '/';
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### How to configure them globally
 
@@ -621,6 +625,8 @@ app.run(function(Restangular, BaseUrlCalculator) {
 });
 ````
 
+**[Back to top](#table-of-contents)**
+
 ### How to create a Restangular service with a different configuration from the global one
 Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. This scoped configuration will inherit all defaults from the global one. Let's see how.
 
@@ -650,6 +656,8 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
   BingRestangular.all('users').getList()
 });
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Decoupled Restangular Service
 
@@ -700,6 +708,7 @@ These are the methods that can be called on the Restangular object.
 * **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
 
+**[Back to top](#table-of-contents)**
 
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
@@ -724,6 +733,8 @@ These are the methods that can be called on the Restangular object.
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 * **save**: Calling save will determine whether to do PUT or POST accordingly
 
+**[Back to top](#table-of-contents)**
+
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
 * **get([id]): Gets one item from the collection by id**.
@@ -743,6 +754,8 @@ These are the methods that can be called on the Restangular object.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **clone()**: Copies the collection
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
+
+**[Back to top](#table-of-contents)**
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
@@ -1009,6 +1022,8 @@ Create custom methods for your models using Restangular.extendModel(). This is a
 ```js
   Restangular.addElementTransformer(route, false, fn);
 ```
+
+**[Back to top](#table-of-contents)**
 
 ### Example:
 ```js
@@ -1289,3 +1304,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mgonto/restangular/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+**[Back to top](#table-of-contents)**
