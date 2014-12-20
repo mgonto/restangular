@@ -1216,6 +1216,7 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * Restify and Express for NodeJS
 * Tastypie and Django Rest Framework for Django
 * Slim Framework
+* Symfony2 with FOSRestBundle (PHP)
 * Microsoft ASP.NET Web API 2
 
 # Releases Notes
