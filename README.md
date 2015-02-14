@@ -92,7 +92,7 @@ Restangular has several features that distinguish it from $resource:
 
 * **It uses [promises](http://docs.angularjs.org/api/ng.$q)**. Instead of doing the "magic" filling of objects like $resource, it uses promises.
 * **You can use this in $routeProvider.resolve**. As Restangular returns promises, you can return any of the methods in the `$routeProvider.resolve` and you'll get the real object injected into your controller if you want.
-* **It doesn't have all those `$resource` bugs**. Restangular doesn't have problem with trailling slashes, additional `:` in the URL, escaping information, expecting only arrays for getting lists, etc.
+* **It doesn't have all those `$resource` bugs**. Restangular doesn't have problem with trailing slashes, additional `:` in the URL, escaping information, expecting only arrays for getting lists, etc.
 * **It supports all HTTP methods**.
 * **It supports ETag out of the box**. You don't have to do anything. ETags and If-None-Match will be used in all of your requests
 * **It supports self linking elements** If you receive from the server some item that has a link to itself, you can use that to query the server instead of writing the URL manually.
