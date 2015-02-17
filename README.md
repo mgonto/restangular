@@ -1176,6 +1176,16 @@ RestangularProvider.setResponseExtractor(function(response) {
   return newResponse;
 });
 ````
+Alternatively, if you just want the stripped out response on any given call, you can use the .plain() method, doing something like this:
+
+````javascript
+
+$scope.showData = function () {
+  baseUrl.post(someData).then(function(response) {
+    console.log(response.plain());
+  });
+};
+````
 
 **Addendum :** If you want originalElement to be the original response object instead of having an original value for each key in your newResponse array, replace
 
