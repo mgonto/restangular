@@ -648,6 +648,7 @@ module.provider('Restangular', function() {
           }
         } else {
           elemUrl = elem[__this.config.restangularFields.route];
+          elemUrl = elemUrl.replace(/\/$/, '');
 
           if (elem[__this.config.restangularFields.restangularCollection]) {
             var ids = elem[__this.config.restangularFields.ids];
