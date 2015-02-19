@@ -728,7 +728,7 @@ These are the methods that can be called on the Restangular object.
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getRequestedUrl()**: Gets the real URL the current object was requested with (incl. GET parameters). Will equal getRestangularUrl() when no parameters were used, before calling `get()`, or when using on a nested child.
 * **getParentList()**: Gets the parent list to which it belongs (if any)
-* **clone()**: Copies the element
+* **clone()**: Copies the element. It's an alias to calling `Restangular.copy(elem)`.
 * **plain()**: Returns the plain element received from the server without any of the enhanced methods from Restangular. It's an alias to calling `Restangular.stripRestangular(elem)`
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 * **save**: Calling save will determine whether to do PUT or POST accordingly
@@ -752,7 +752,7 @@ These are the methods that can be called on the Restangular object.
 * **several(route, ids*)**: Used for RequestLess connections and URL Building. See section below.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
-* **clone()**: Copies the collection
+* **clone()**: Copies the collection. It's an alias to calling `Restangular.copy(collection)`.
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 
 **[Back to top](#table-of-contents)**
