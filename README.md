@@ -86,6 +86,8 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
 - [Releases Notes](#releases-notes)
 - [License](#license)
 
+**[Back to top](#table-of-contents)**
+
 ## Differences with $resource
 
 Restangular has several features that distinguish it from $resource:
@@ -127,6 +129,8 @@ $scope.user.one('messages', 123).one('from', 123).getList('unread');
 
 ````
 
+**[Back to top](#table-of-contents)**
+
 #How do I add this to my project?
 
 You can download this by:
@@ -142,10 +146,13 @@ You can download this by:
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
 ````
 
+**[Back to top](#table-of-contents)**
 
 #Dependencies
 
 Restangular depends on Angular and Lodash (or Underscore).
+
+**[Back to top](#table-of-contents)**
 
 # Production apps using Restangular
 
@@ -153,6 +160,8 @@ Each time, there're more Production WebApps using `Restangular`. If your webapp 
 
 * **Life360** is using Restangular to build the WebApp version of their platform
 * **Thomson Reuters** is using Restangular for the new Webapp they've built
+
+**[Back to top](#table-of-contents)**
 
 #Starter Guide
 
@@ -173,6 +182,8 @@ The Restangular service may be injected into any Controller or Directive :)
 Note: When adding Restangular as a dependency it is not capitalized 'restangular'
       But when injected into your controller it is 'Restangular'
 
+**[Back to top](#table-of-contents)**      
+
 ## Using Restangular
 
 ### Creating Main Restangular object
@@ -191,6 +202,8 @@ Restangular.one('accounts', 1234)
 // Gets a list of all of those accounts
 Restangular.several('accounts', 1234, 123, 12345);
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Let's code!
 
@@ -307,6 +320,8 @@ account.customPOST({name: "My Message"}, "messages", {param: "myParam"}, {})
 
 
 ````
+
+**[Back to top](#table-of-contents)**
 
 ## Configuring Restangular
 
@@ -536,6 +551,8 @@ You can set this to either `true` or `false`. By default it's false. If set to t
 
 You can set here if you want to URL Encode IDs or not. By default, it's true.
 
+**[Back to top](#table-of-contents)**
+
 ### Accessing configuration
 
 You can also access the configuration via `RestangularProvider` and `Restangular` via the `configuration` property if you don't want to use the setters. Check it out:
@@ -543,6 +560,8 @@ You can also access the configuration via `RestangularProvider` and `Restangular
 ````js
 Restangular.configuration.requestSuffix = '/';
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### How to configure them globally
 
@@ -606,6 +625,8 @@ app.run(function(Restangular, BaseUrlCalculator) {
 });
 ````
 
+**[Back to top](#table-of-contents)**
+
 ### How to create a Restangular service with a different configuration from the global one
 Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. This scoped configuration will inherit all defaults from the global one. Let's see how.
 
@@ -635,6 +656,8 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
   BingRestangular.all('users').getList()
 });
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Decoupled Restangular Service
 
@@ -669,6 +692,8 @@ var Cars = Restangular.service('cars', Restangular.one('users', 1));
 Cars.getList() // GET to /users/1/cars
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Methods description
 
 There are 3 sets of methods. Collections have some methods and elements have others. There are are also some common methods for all of them
@@ -683,6 +708,7 @@ These are the methods that can be called on the Restangular object.
 * **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
 
+**[Back to top](#table-of-contents)**
 
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
@@ -707,6 +733,8 @@ These are the methods that can be called on the Restangular object.
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 * **save**: Calling save will determine whether to do PUT or POST accordingly
 
+**[Back to top](#table-of-contents)**
+
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
 * **get([id]): Gets one item from the collection by id**.
@@ -726,6 +754,8 @@ These are the methods that can be called on the Restangular object.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **clone()**: Copies the collection
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
+
+**[Back to top](#table-of-contents)**
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
@@ -748,8 +778,12 @@ Restangular.all("accounts").customGET("messages", {param: "param2"})
 
 All custom methods have an alias where you replace `custom` by `do`. For example, `customGET` is equal to `doGET`. Just pick whatever syntax you prefer.
 
+**[Back to top](#table-of-contents)**
+
 ## Copying elements
 Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
+
+**[Back to top](#table-of-contents)**
 
 ## Enhanced promises
 
@@ -780,6 +814,8 @@ lengthPromise.then(function(length) {
 });
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Using values directly in templates
 
 Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be deprecated soon.
@@ -809,6 +845,8 @@ $scope.accounts = Restangular.all('accounts').getList().$object;
 ````
 
 The `$object` property is a new property I've added to promises. By default, it'll be an empty array or object. Once the sever has responded with the real value, that object or array is filled with the correct response, therefore making the ng-repeat work :). Pretty neat :D
+
+**[Back to top](#table-of-contents)**
 
 ## Using Self reference resources
 
@@ -862,6 +900,8 @@ Restangular.all('people').getList().then(function(people) {
 })
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## URL Building
 Sometimes, we have a lot of nested entities (and their IDs), but we just want the last child. In those cases, doing a request for everything to get the last child is overkill. For those cases, I've added the possibility to create URLs using the same API as creating a new Restangular object. This connections are created without making any requests. Let's see how to do this:
 
@@ -882,6 +922,8 @@ Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name:
 Restangular.one("accounts", 123).one("buildings", 456).remove();
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Using local $http configuration
 
 There're sometimes when you want to set a specific configuration $http configuration just for one Restangular's call. For that, you can use `withHttpConfig`. You must call that method just before doing the HTTP request. Let's learn how to use it with the following example:
@@ -891,6 +933,8 @@ Restangular.one('accounts', 123).withHttpConfig({timeout: 100}).getList('buildin
 
 $scope.account.withHttpConfig({timeout: 100}).put();
 ````
+
+**[Back to top](#table-of-contents)**
 
 ## Creating new Restangular Methods
 
@@ -941,6 +985,8 @@ Restangular.all('users').login({key: value});
 
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Adding Custom Methods to Collections
 
 Create custom methods for your collection using Restangular.extendCollection(). This is an alias for:
@@ -967,6 +1013,8 @@ Create custom methods for your collection using Restangular.extendCollection(). 
   });
 ```
 
+**[Back to top](#table-of-contents)**
+
 ## Adding Custom Methods to Models
 
 Create custom methods for your models using Restangular.extendModel(). This is an alias for:
@@ -974,6 +1022,8 @@ Create custom methods for your models using Restangular.extendModel(). This is a
 ```js
   Restangular.addElementTransformer(route, false, fn);
 ```
+
+**[Back to top](#table-of-contents)**
 
 ### Example:
 ```js
@@ -988,6 +1038,8 @@ Create custom methods for your models using Restangular.extendModel(). This is a
     account.prettifyAmount(); // invoke your custom model method
   });
 ```
+
+**[Back to top](#table-of-contents)**
 
 # FAQ
 
@@ -1208,6 +1260,7 @@ This is a very good question. I could've done the code so that I don't depend on
 With these libraries, you always work with immutable stuff, you get compatibility for browsers which don't implement ECMA5 nor some of these cool methods, and they're actually quicker.
 So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
 
+**[Back to top](#table-of-contents)**
 
 # Supported Angular versions
 
@@ -1215,6 +1268,7 @@ Restangular supports all angular versions including 1.0.X, 1.1.X and 1.2.X (1.2.
 
 Also, when using Restangular with version >= 1.1.4, in case you're using Restangular inside a callback not handled by Angular, you have to wrap the whole request with `$scope.apply` to make it work or you need to run one extra `$digest` manually. Check out https://github.com/mgonto/restangular/issues/71
 
+**[Back to top](#table-of-contents)**
 
 # Server Frameworks
 
@@ -1230,16 +1284,22 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * Symfony2 with FOSRestBundle (PHP)
 * Microsoft ASP.NET Web API 2
 
+**[Back to top](#table-of-contents)**
+
 # Releases Notes
 
 New releases notes are together with releases in GitHub at: https://github.com/mgonto/restangular/releases
 
 To see old releases notes, [you can click here](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
 
+**[Back to top](#table-of-contents)**
+
 # Contributors
 
 * Martin Gontovnikas ([@mgonto](https://twitter.com/mgonto))
 * Paul Dijou ([@paul_dijou](https://twitter.com/paul_dijou))
+
+**[Back to top](#table-of-contents)**
 
 # License
 
@@ -1256,3 +1316,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mgonto/restangular/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+**[Back to top](#table-of-contents)**
