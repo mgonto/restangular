@@ -963,3 +963,113 @@ describe("Restangular", function() {
     });
   });
 });
+
+describe("Restangular url path normalize", function() {
+  var Restangular, $httpBackend;
+  var customers, publications, newCustomer, allCustomers;
+  beforeEach(angular.mock.module("restangular"));
+
+  beforeEach(inject(function($injector) {
+    customers = [
+      {
+        id: 0,
+        name: "Alice",
+        status: 'active',
+        credit: 4000.0
+      },
+      {
+        id: 1,
+        name: "Bob",
+        status: 'active',
+        credit: 4000.0
+      },
+      {
+        id: 2,
+        name: "Carl",
+        status: 'active',
+        credit: 4000.0
+      }
+    ];
+    publications = [
+      {
+        id: 1,
+        title: "Sample",
+        content: "Rich data",
+        tags: [
+          'science',
+          'chemistry'
+        ]
+      }
+    ];
+    newCustomer = {
+      id: 3,
+      name: "New",
+      status: 'active',
+      credit: 4000.0
+    };
+
+    $httpBackend = $injector.get("$httpBackend");
+    Restangular = $injector.get("Restangular");
+
+    $httpBackend.whenGET("/customers/").respond(customers);
+    $httpBackend.whenGET("/customers/?active=true").respond(customers);
+    $httpBackend.whenGET("/customers/publications/?tags=chemistry").respond(publications);
+    $httpBackend.whenPUT("/customers/0").respond(function (method, url, data) {
+      customers[0] = angular.fromJson(data);
+      return [200, data, ""];
+    });
+    $httpBackend.whenPOST("/customers/").respond(function (method, url, data, headers) {
+      var newData = angular.fromJson(data);
+      newData.fromServer = true;
+      return [201, JSON.stringify(newData), ""];
+    });
+
+    allCustomers = Restangular.all('customers/').getList().$object;
+
+  }));
+
+  afterEach(function() {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
+
+  describe("get list from endpoint ", function () {
+
+    it("should get a list of objects", function () {
+      Restangular.all('customers/').getList().then(function(res){
+        res.getList({active: true});
+        $httpBackend.expectGET('/customers/?active=true');
+        //res.getList('publications/', {tags: 'chemistry'});
+        //$httpBackend.expectGET('/customers/publications/?tags=chemistry');
+      });
+      $httpBackend.expectGET('/customers/');
+      $httpBackend.flush();
+    });
+
+    it("should get a list of objects even if the path has extra slashes", function () {
+      Restangular.all('customers///').getList().then(function(res){
+        res.getList({active: true});
+        $httpBackend.expectGET('/customers/?active=true');
+      });
+      $httpBackend.expectGET('/customers/');
+      $httpBackend.flush();
+    });
+
+    it("should post with slash at the end", function () {
+      Restangular.all('customers/').getList().then(function(res){
+        res.post(newCustomer);
+        $httpBackend.expectPOST('/customers/');
+      });
+      $httpBackend.expectGET('/customers/');
+      $httpBackend.flush();
+    });
+
+    it("should put with slash at the end", function () {
+      Restangular.all('customers/').getList().then(function(customers){
+        customers[0].put();
+        $httpBackend.expectPUT('/customers/0');
+      });
+      $httpBackend.flush();
+    });
+  });
+});

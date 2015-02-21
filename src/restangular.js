@@ -635,6 +635,10 @@ module.provider('Restangular', function() {
 
     Path.prototype = new BaseCreator();
 
+    Path.prototype.normalizeUrl = function (url){
+      return url.replace(/[\\\/]+/g, '/');
+    };
+
     Path.prototype.base = function(current) {
       var __this = this;
       return  _.reduce(this.parentsArray(current), function(acum, elem) {
@@ -648,7 +652,6 @@ module.provider('Restangular', function() {
           }
         } else {
           elemUrl = elem[__this.config.restangularFields.route];
-          elemUrl = elemUrl.replace(/\/$/, '');
 
           if (elem[__this.config.restangularFields.restangularCollection]) {
             var ids = elem[__this.config.restangularFields.ids];
@@ -668,8 +671,8 @@ module.provider('Restangular', function() {
             }
           }
         }
-
-        return acum.replace(/\/$/, '') + '/' + elemUrl;
+        acum = acum.replace(/\/$/, '') + '/' + elemUrl;
+        return __this.normalizeUrl(acum);
 
       }, this.config.baseUrl);
     };

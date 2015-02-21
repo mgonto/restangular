@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.4.0 - 2015-02-16 * @link https://github.com/mgonto/restangular
+ * @version v1.4.0 - 2015-02-20 * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gon.to>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */(function() {
@@ -640,6 +640,10 @@ module.provider('Restangular', function() {
 
     Path.prototype = new BaseCreator();
 
+    Path.prototype.normalizeUrl = function (url){
+      return url.replace(/[\\\/]+/g, '/');
+    };
+
     Path.prototype.base = function(current) {
       var __this = this;
       return  _.reduce(this.parentsArray(current), function(acum, elem) {
@@ -653,7 +657,6 @@ module.provider('Restangular', function() {
           }
         } else {
           elemUrl = elem[__this.config.restangularFields.route];
-          elemUrl = elemUrl.replace(/\/$/, '');
 
           if (elem[__this.config.restangularFields.restangularCollection]) {
             var ids = elem[__this.config.restangularFields.ids];
@@ -673,8 +676,8 @@ module.provider('Restangular', function() {
             }
           }
         }
-
-        return acum.replace(/\/$/, '') + '/' + elemUrl;
+        acum = acum.replace(/\/$/, '') + '/' + elemUrl;
+        return __this.normalizeUrl(acum);
 
       }, this.config.baseUrl);
     };
