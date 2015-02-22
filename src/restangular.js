@@ -808,9 +808,9 @@ module.provider('Restangular', function() {
           error += 'instead of the route or the parent. For example, you can\'t call .one(12).';
           throw new Error(error);
         }
-        if (_.isUndefined(route) || _.isUndefined(id)) {
-          error = 'You\'re creating a Restangular entity either without the path or without the ID. ';
-          error += 'For example you can\'t call .one(), .one(12), .one(\'accounts\').';
+        if (_.isUndefined(route)) {
+          error = 'You\'re creating a Restangular entity either without the path. ';
+          error += 'For example you can\'t call .one(). Please check if your arguments are valid.';
           throw new Error(error);
         }
         var elem = {};
