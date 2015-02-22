@@ -80,6 +80,7 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
     - [How do I handle CRUD operations in a List returned by Restangular?](#how-do-i-handle-crud-operations-in-a-list-returned-by-restangular)
     - [When I set baseUrl with a port, it's stripped out.](#when-i-set-baseurl-with-a-port-its-stripped-out)
     - [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
+    - [Restangular fails with status code 0](#restangular-fails-with-status-code-0)
     - [Why does this depend on Lodash / Underscore?](#why-does-this-depend-on-lodash--underscore)
 - [Supported Angular versions](#supported-angular-versions)
 - [Server Frameworks](#server-frameworks)
@@ -1239,6 +1240,10 @@ $scope.showData = function () {
   });
 };
 ````
+
+#### Restangular fails with status code 0
+
+This is typically caused by Cross Origin Request policy. In order to enable cross domain communication and get correct response with appropriate status codes, you must have the CORS headers attached, even in error responses. If the server does not attach the CORS headers to the response then the XHR object won't parse it, thus the XHR object won't have any response body, status or any other response data inside which typically will cause your request to fail with status code 0.
 
 **Addendum :** If you want originalElement to be the original response object instead of having an original value for each key in your newResponse array, replace
 
