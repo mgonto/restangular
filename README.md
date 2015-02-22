@@ -1,6 +1,6 @@
 #Restangular
 
-[![Build Status](https://travis-ci.org/mgonto/restangular.png)](https://travis-ci.org/mgonto/restangular)
+[![Build Status](https://travis-ci.org/mgonto/restangular.svg?branch=master)](https://travis-ci.org/mgonto/restangular)
 [![PayPayl donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=martin%40gon%2eto&lc=US&item_name=Martin%20Gontovnikas&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate once-off to this project using Paypal")
 [![Donate on Gittip](http://img.shields.io/gittip/mgonto.svg)](https://www.gittip.com/mgonto/)
 <a href="https://twitter.com/intent/tweet?hashtags=&original_referer=http%3A%2F%2Fgithub.com%2F&text=Check+out+Restangular%2C+a+service+for+%23AngularJS+that+makes+it+easy+to+use+Rest+APIs&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2Fmgonto%2Frestangular" target="_blank">
@@ -80,11 +80,14 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
     - [How do I handle CRUD operations in a List returned by Restangular?](#how-do-i-handle-crud-operations-in-a-list-returned-by-restangular)
     - [When I set baseUrl with a port, it's stripped out.](#when-i-set-baseurl-with-a-port-its-stripped-out)
     - [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
+    - [Restangular fails with status code 0](#restangular-fails-with-status-code-0)
     - [Why does this depend on Lodash / Underscore?](#why-does-this-depend-on-lodash--underscore)
 - [Supported Angular versions](#supported-angular-versions)
 - [Server Frameworks](#server-frameworks)
 - [Releases Notes](#releases-notes)
 - [License](#license)
+
+**[Back to top](#table-of-contents)**
 
 ## Differences with $resource
 
@@ -92,7 +95,7 @@ Restangular has several features that distinguish it from $resource:
 
 * **It uses [promises](http://docs.angularjs.org/api/ng.$q)**. Instead of doing the "magic" filling of objects like $resource, it uses promises.
 * **You can use this in $routeProvider.resolve**. As Restangular returns promises, you can return any of the methods in the `$routeProvider.resolve` and you'll get the real object injected into your controller if you want.
-* **It doesn't have all those `$resource` bugs**. Restangular doesn't have problem with trailling slashes, additional `:` in the URL, escaping information, expecting only arrays for getting lists, etc.
+* **It doesn't have all those `$resource` bugs**. Restangular doesn't have problem with trailing slashes, additional `:` in the URL, escaping information, expecting only arrays for getting lists, etc.
 * **It supports all HTTP methods**.
 * **It supports ETag out of the box**. You don't have to do anything. ETags and If-None-Match will be used in all of your requests
 * **It supports self linking elements** If you receive from the server some item that has a link to itself, you can use that to query the server instead of writing the URL manually.
@@ -127,6 +130,8 @@ $scope.user.one('messages', 123).one('from', 123).getList('unread');
 
 ````
 
+**[Back to top](#table-of-contents)**
+
 #How do I add this to my project?
 
 You can download this by:
@@ -142,10 +147,13 @@ You can download this by:
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
 ````
 
+**[Back to top](#table-of-contents)**
 
 #Dependencies
 
 Restangular depends on Angular and Lodash (or Underscore).
+
+**[Back to top](#table-of-contents)**
 
 # Production apps using Restangular
 
@@ -153,6 +161,9 @@ Each time, there're more Production WebApps using `Restangular`. If your webapp 
 
 * **Life360** is using Restangular to build the WebApp version of their platform
 * **Thomson Reuters** is using Restangular for the new Webapp they've built
+* **Quran.com** is using Restangular for their alpha/beta app and soon to be main site
+
+**[Back to top](#table-of-contents)**
 
 #Starter Guide
 
@@ -173,6 +184,8 @@ The Restangular service may be injected into any Controller or Directive :)
 Note: When adding Restangular as a dependency it is not capitalized 'restangular'
       But when injected into your controller it is 'Restangular'
 
+**[Back to top](#table-of-contents)**      
+
 ## Using Restangular
 
 ### Creating Main Restangular object
@@ -191,6 +204,8 @@ Restangular.one('accounts', 1234)
 // Gets a list of all of those accounts
 Restangular.several('accounts', 1234, 123, 12345);
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Let's code!
 
@@ -307,6 +322,8 @@ account.customPOST({name: "My Message"}, "messages", {param: "myParam"}, {})
 
 
 ````
+
+**[Back to top](#table-of-contents)**
 
 ## Configuring Restangular
 
@@ -536,6 +553,8 @@ You can set this to either `true` or `false`. By default it's false. If set to t
 
 You can set here if you want to URL Encode IDs or not. By default, it's true.
 
+**[Back to top](#table-of-contents)**
+
 ### Accessing configuration
 
 You can also access the configuration via `RestangularProvider` and `Restangular` via the `configuration` property if you don't want to use the setters. Check it out:
@@ -543,6 +562,8 @@ You can also access the configuration via `RestangularProvider` and `Restangular
 ````js
 Restangular.configuration.requestSuffix = '/';
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### How to configure them globally
 
@@ -606,6 +627,8 @@ app.run(function(Restangular, BaseUrlCalculator) {
 });
 ````
 
+**[Back to top](#table-of-contents)**
+
 ### How to create a Restangular service with a different configuration from the global one
 Let's assume that for most requests you need some configuration (The global one), and for just a bunch of methods you need another configuration. In that case, you'll need to create another Restangular service with this particular configuration. This scoped configuration will inherit all defaults from the global one. Let's see how.
 
@@ -635,6 +658,8 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
   BingRestangular.all('users').getList()
 });
 ````
+
+**[Back to top](#table-of-contents)**
 
 ### Decoupled Restangular Service
 
@@ -669,6 +694,8 @@ var Cars = Restangular.service('cars', Restangular.one('users', 1));
 Cars.getList() // GET to /users/1/cars
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Methods description
 
 There are 3 sets of methods. Collections have some methods and elements have others. There are are also some common methods for all of them
@@ -683,6 +710,7 @@ These are the methods that can be called on the Restangular object.
 * **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
 
+**[Back to top](#table-of-contents)**
 
 ### Element methods
 * **get([queryParams, headers])**: Gets the element. Query params and headers are optionals
@@ -702,10 +730,12 @@ These are the methods that can be called on the Restangular object.
 * **getRestangularUrl()**: Gets the URL of the current object.
 * **getRequestedUrl()**: Gets the real URL the current object was requested with (incl. GET parameters). Will equal getRestangularUrl() when no parameters were used, before calling `get()`, or when using on a nested child.
 * **getParentList()**: Gets the parent list to which it belongs (if any)
-* **clone()**: Copies the element
+* **clone()**: Copies the element. It's an alias to calling `Restangular.copy(elem)`.
 * **plain()**: Returns the plain element received from the server without any of the enhanced methods from Restangular. It's an alias to calling `Restangular.stripRestangular(elem)`
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
 * **save**: Calling save will determine whether to do PUT or POST accordingly
+
+**[Back to top](#table-of-contents)**
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
@@ -724,8 +754,10 @@ These are the methods that can be called on the Restangular object.
 * **several(route, ids*)**: Used for RequestLess connections and URL Building. See section below.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
-* **clone()**: Copies the collection
+* **clone()**: Copies the collection. It's an alias to calling `Restangular.copy(collection)`.
 * **withHttpConfig(httpConfig)**: It lets you set a configuration for $http only for the next call. Check the Local Config HTTP section for an example.
+
+**[Back to top](#table-of-contents)**
 
 ### Custom methods
 * **customGET(path, [params, headers])**: Does a GET to the specific path. Optionally you can set params and headers.
@@ -748,8 +780,12 @@ Restangular.all("accounts").customGET("messages", {param: "param2"})
 
 All custom methods have an alias where you replace `custom` by `do`. For example, `customGET` is equal to `doGET`. Just pick whatever syntax you prefer.
 
+**[Back to top](#table-of-contents)**
+
 ## Copying elements
 Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
+
+**[Back to top](#table-of-contents)**
 
 ## Enhanced promises
 
@@ -780,6 +816,8 @@ lengthPromise.then(function(length) {
 });
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Using values directly in templates
 
 Since Angular 1.2, Promise unwrapping in templates has been disabled by default and will be deprecated soon.
@@ -809,6 +847,8 @@ $scope.accounts = Restangular.all('accounts').getList().$object;
 ````
 
 The `$object` property is a new property I've added to promises. By default, it'll be an empty array or object. Once the sever has responded with the real value, that object or array is filled with the correct response, therefore making the ng-repeat work :). Pretty neat :D
+
+**[Back to top](#table-of-contents)**
 
 ## Using Self reference resources
 
@@ -862,6 +902,8 @@ Restangular.all('people').getList().then(function(people) {
 })
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## URL Building
 Sometimes, we have a lot of nested entities (and their IDs), but we just want the last child. In those cases, doing a request for everything to get the last child is overkill. For those cases, I've added the possibility to create URLs using the same API as creating a new Restangular object. This connections are created without making any requests. Let's see how to do this:
 
@@ -882,6 +924,8 @@ Restangular.one("accounts", 123).one("buildings", 456).all("spaces").post({name:
 Restangular.one("accounts", 123).one("buildings", 456).remove();
 ````
 
+**[Back to top](#table-of-contents)**
+
 ## Using local $http configuration
 
 There're sometimes when you want to set a specific configuration $http configuration just for one Restangular's call. For that, you can use `withHttpConfig`. You must call that method just before doing the HTTP request. Let's learn how to use it with the following example:
@@ -891,6 +935,8 @@ Restangular.one('accounts', 123).withHttpConfig({timeout: 100}).getList('buildin
 
 $scope.account.withHttpConfig({timeout: 100}).put();
 ````
+
+**[Back to top](#table-of-contents)**
 
 ## Creating new Restangular Methods
 
@@ -930,16 +976,18 @@ RestangularProvider.addElementTransformer('users', true, function(user) {
 
 // If something is set to any of this variables, the default set in the method creation will be overridden
 // If nothing is set, then the defaults are sent
-Restangular.one('building', 123).evaluate({myParam: 'param'});
+Restangular.one('buildings', 123).evaluate({myParam: 'param'});
 
 // GET to /buildings/123/evaluate?myParam=param with headers myHeader: specialHeaderCase
 
-Restangular.one('building', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
+Restangular.one('buildings', 123).evaluate({myParam: 'param'}, {'myHeader': 'specialHeaderCase'});
 
 // Here the body of the POST is going to be {key: value} as POST is an unsafe operation
 Restangular.all('users').login({key: value});
 
 ````
+
+**[Back to top](#table-of-contents)**
 
 ## Adding Custom Methods to Collections
 
@@ -967,6 +1015,8 @@ Create custom methods for your collection using Restangular.extendCollection(). 
   });
 ```
 
+**[Back to top](#table-of-contents)**
+
 ## Adding Custom Methods to Models
 
 Create custom methods for your models using Restangular.extendModel(). This is an alias for:
@@ -974,6 +1024,8 @@ Create custom methods for your models using Restangular.extendModel(). This is a
 ```js
   Restangular.addElementTransformer(route, false, fn);
 ```
+
+**[Back to top](#table-of-contents)**
 
 ### Example:
 ```js
@@ -988,6 +1040,8 @@ Create custom methods for your models using Restangular.extendModel(). This is a
     account.prettifyAmount(); // invoke your custom model method
   });
 ```
+
+**[Back to top](#table-of-contents)**
 
 # FAQ
 
@@ -1176,6 +1230,16 @@ RestangularProvider.setResponseExtractor(function(response) {
   return newResponse;
 });
 ````
+Alternatively, if you just want the stripped out response on any given call, you can use the .plain() method, doing something like this:
+
+````javascript
+
+$scope.showData = function () {
+  baseUrl.post(someData).then(function(response) {
+    console.log(response.plain());
+  });
+};
+````
 
 **Addendum :** If you want originalElement to be the original response object instead of having an original value for each key in your newResponse array, replace
 
@@ -1192,12 +1256,17 @@ By
       newResponse.originalElement[key] = angular.copy(value);
 ````
 
+#### Restangular fails with status code 0
+
+This is typically caused by Cross Origin Request policy. In order to enable cross domain communication and get correct response with appropriate status codes, you must have the CORS headers attached, even in error responses. If the server does not attach the CORS headers to the response then the XHR object won't parse it, thus the XHR object won't have any response body, status or any other response data inside which typically will cause your request to fail with status code 0.
+
 #### Why does this depend on Lodash / Underscore?
 
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc.
 With these libraries, you always work with immutable stuff, you get compatibility for browsers which don't implement ECMA5 nor some of these cool methods, and they're actually quicker.
 So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
 
+**[Back to top](#table-of-contents)**
 
 # Supported Angular versions
 
@@ -1205,6 +1274,7 @@ Restangular supports all angular versions including 1.0.X, 1.1.X and 1.2.X (1.2.
 
 Also, when using Restangular with version >= 1.1.4, in case you're using Restangular inside a callback not handled by Angular, you have to wrap the whole request with `$scope.apply` to make it work or you need to run one extra `$digest` manually. Check out https://github.com/mgonto/restangular/issues/71
 
+**[Back to top](#table-of-contents)**
 
 # Server Frameworks
 
@@ -1213,10 +1283,14 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * Ruby on Rails
 * CakePHP, Laravel and FatFREE, Symfony2 with RestBundle, Silex for PHP
 * Play1 & 2 for Java & scala
+* Dropwizard for Java
 * Restify and Express for NodeJS
 * Tastypie and Django Rest Framework for Django
 * Slim Framework
+* Symfony2 with FOSRestBundle (PHP)
 * Microsoft ASP.NET Web API 2
+
+**[Back to top](#table-of-contents)**
 
 # Releases Notes
 
@@ -1224,10 +1298,14 @@ New releases notes are together with releases in GitHub at: https://github.com/m
 
 To see old releases notes, [you can click here](https://github.com/mgonto/restangular/blob/master/CHANGELOG.md)
 
+**[Back to top](#table-of-contents)**
+
 # Contributors
 
 * Martin Gontovnikas ([@mgonto](https://twitter.com/mgonto))
 * Paul Dijou ([@paul_dijou](https://twitter.com/paul_dijou))
+
+**[Back to top](#table-of-contents)**
 
 # License
 
@@ -1244,3 +1322,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mgonto/restangular/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+**[Back to top](#table-of-contents)**
