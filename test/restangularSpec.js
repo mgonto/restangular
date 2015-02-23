@@ -293,12 +293,41 @@ describe("Restangular", function() {
 
   });
 
-  describe("With Url", function() {
-    it("Shouldn't add suffix to URL", function() {
+  describe("With Suffix", function() {
+    it("shouldn't add suffix to getRestangularUrl", function() {
       var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
+      var collection = suffixRestangular.all('accounts');
+      expect(collection.getRestangularUrl()).toBe('/accounts');
+      expect(collection.one('1').getRestangularUrl()).toBe('/accounts/1');
+    });
 
+    it("should add suffix to getRequestedUrl", function() {
+      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setRequestSuffix('.json');
+      });
+      var collection = suffixRestangular.all('accounts');
+      expect(collection.getRequestedUrl()).toBe('/accounts.json');
+      expect(collection.one('1').getRequestedUrl()).toBe('/accounts/1.json');
+    });
+
+    it("should add suffix to request", function() {
+      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setRequestSuffix('.json');
+      });
+      var collection = suffixRestangular.all('accounts');
+      $httpBackend.expectGET('/accounts.json').respond(200);
+      $httpBackend.expectGET('/accounts/1.json').respond(200);
+      collection.getList();
+      collection.get('1');
+      $httpBackend.flush();
+    });
+
+    it("shouldn't add suffix to allUrl", function() {
+      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setRequestSuffix('.json');
+      });
       $httpBackend.expectGET('http://accounts.com/all');
       suffixRestangular.allUrl('accounts', 'http://accounts.com/all').getList();
       $httpBackend.flush();

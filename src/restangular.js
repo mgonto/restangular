@@ -720,7 +720,7 @@ restangular.provider('Restangular', function() {
                    replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
       }
 
-      if (!params) { return url; }
+      if (!params) { return url + (this.config.suffix || ''); }
 
       var parts = [];
       forEachSorted(params, function(value, key) {
