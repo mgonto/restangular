@@ -119,6 +119,62 @@ describe("Restangular", function() {
     restangularAccounts = Restangular.all("accounts");
     restangularAccount0 = Restangular.one("accounts", 0);
     restangularAccount1 = Restangular.one("accounts", 1);
+
+
+    // Another API for testing
+    customers = [
+      {
+        id: 0,
+        name: "Alice",
+        status: 'active',
+        credit: 4000.0
+      },
+      {
+        id: 1,
+        name: "Bob",
+        status: 'active',
+        credit: 4000.0
+      },
+      {
+        id: 2,
+        name: "Carl",
+        status: 'active',
+        credit: 4000.0
+      }
+    ];
+    publications = [
+      {
+        id: 1,
+        title: "Sample",
+        content: "Rich data",
+        tags: [
+          'science',
+          'chemistry'
+        ]
+      }
+    ];
+    newCustomer = {
+      id: 3,
+      name: "New",
+      status: 'active',
+      credit: 4000.0
+    };
+
+    $httpBackend.whenGET("/customers/").respond(customers);
+    $httpBackend.whenGET("http://localhost:8080/customers/").respond(customers);
+    $httpBackend.whenGET("api.new.domain/customers/").respond(customers);
+    $httpBackend.whenGET("/customers/?active=true").respond(customers);
+    $httpBackend.whenGET("/customers/publications/?tags=chemistry").respond(publications);
+    $httpBackend.whenPUT("/customers/0").respond(function (method, url, data) {
+      customers[0] = angular.fromJson(data);
+      return [200, data, ""];
+    });
+    $httpBackend.whenPOST("/customers/").respond(function (method, url, data, headers) {
+      var newData = angular.fromJson(data);
+      newData.fromServer = true;
+      return [201, JSON.stringify(newData), ""];
+    });
+
   }));
 
   afterEach(function() {
@@ -962,78 +1018,8 @@ describe("Restangular", function() {
       expect(Restangular.stripRestangular(["test","test2"])).toEqual(["test","test2"]);
     });
   });
-});
 
-describe("Restangular url path normalize", function() {
-  var Restangular, $httpBackend;
-  var customers, publications, newCustomer, allCustomers;
-  beforeEach(angular.mock.module("restangular"));
-
-  beforeEach(inject(function($injector) {
-    customers = [
-      {
-        id: 0,
-        name: "Alice",
-        status: 'active',
-        credit: 4000.0
-      },
-      {
-        id: 1,
-        name: "Bob",
-        status: 'active',
-        credit: 4000.0
-      },
-      {
-        id: 2,
-        name: "Carl",
-        status: 'active',
-        credit: 4000.0
-      }
-    ];
-    publications = [
-      {
-        id: 1,
-        title: "Sample",
-        content: "Rich data",
-        tags: [
-          'science',
-          'chemistry'
-        ]
-      }
-    ];
-    newCustomer = {
-      id: 3,
-      name: "New",
-      status: 'active',
-      credit: 4000.0
-    };
-
-    $httpBackend = $injector.get("$httpBackend");
-    Restangular = $injector.get("Restangular");
-
-    $httpBackend.whenGET("/customers/").respond(customers);
-    $httpBackend.whenGET("/customers/?active=true").respond(customers);
-    $httpBackend.whenGET("/customers/publications/?tags=chemistry").respond(publications);
-    $httpBackend.whenPUT("/customers/0").respond(function (method, url, data) {
-      customers[0] = angular.fromJson(data);
-      return [200, data, ""];
-    });
-    $httpBackend.whenPOST("/customers/").respond(function (method, url, data, headers) {
-      var newData = angular.fromJson(data);
-      newData.fromServer = true;
-      return [201, JSON.stringify(newData), ""];
-    });
-
-    allCustomers = Restangular.all('customers/').getList().$object;
-
-  }));
-
-  afterEach(function() {
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
-  });
-
-  describe("get list from endpoint ", function () {
+  describe("testing normilize url", function () {
 
     it("should get a list of objects", function () {
       Restangular.all('customers/').getList().then(function(res){
@@ -1069,6 +1055,30 @@ describe("Restangular url path normalize", function() {
         customers[0].put();
         $httpBackend.expectPUT('/customers/0');
       });
+      $httpBackend.flush();
+    });
+
+    it("should return a normilized URL even it has extra slashes", function() {
+      var restangularSpaces = Restangular.one("accounts//", 123).one("buildings//", 456).all("spaces///");
+      expect(restangularSpaces.getRestangularUrl()).toEqual("/accounts/123/buildings/456/spaces/");
+    });
+
+    it("should create a new service and still working normilized URL", function() {
+      var newRes = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setBaseUrl('http://localhost:8080');
+      });
+      expect(newRes.configuration.baseUrl).toEqual('http://localhost:8080');
+      newRes.all("customers////").getList();
+      $httpBackend.expectGET('http://localhost:8080/customers/');
+
+      var newApi = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setBaseUrl('api.new.domain');
+      });
+
+      expect(newApi.configuration.baseUrl).toEqual('api.new.domain');
+      newApi.all("customers////").getList();
+      $httpBackend.expectGET('api.new.domain/customers/');
+
       $httpBackend.flush();
     });
   });
