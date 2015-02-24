@@ -883,13 +883,21 @@ describe("Restangular", function() {
     });
   });
 
-  describe("defaultHeaders", function() {
+  describe("headers", function() {
     it("should return defaultHeaders", function() {
       var defaultHeaders = {testheader:'header value'};
-
       Restangular.setDefaultHeaders(defaultHeaders);
-
       expect(Restangular.defaultHeaders).toEqual(defaultHeaders);
+    });
+
+    it("should pass uppercase methods in X-HTTP-Method-Override", function() {
+      Restangular.setMethodOverriders(["put"]);
+      $httpBackend.expectPOST('/overriders/1').respond(function(method, url, data, headers) {
+        expect(headers['X-HTTP-Method-Override']).toBe('PUT');
+        return {};
+      });
+      Restangular.one('overriders', 1).put();
+      $httpBackend.flush();
     });
   });
 

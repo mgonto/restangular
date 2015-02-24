@@ -1198,13 +1198,13 @@ module.provider('Restangular', function() {
             deferred.reject(response);
           }
         };
-        // Overring HTTP Method
+        // Overriding HTTP Method
         var callOperation = operation;
         var callHeaders = _.extend({}, request.headers);
         var isOverrideOperation = config.isOverridenMethod(operation);
         if (isOverrideOperation) {
           callOperation = 'post';
-          callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
+          callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation.toUpperCase()});
         } else if (config.jsonp && callOperation === 'get') {
           callOperation = 'jsonp';
         }
