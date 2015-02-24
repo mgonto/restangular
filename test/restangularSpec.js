@@ -700,7 +700,6 @@ describe("Restangular", function() {
       account1.name = "Hey";
       account1.save().then(function(accountFromServer) {
         accountFromServer.id = 1;
-        console.log(accountFromServer);
         return accountFromServer.save();
       }).then(function(accountFromServer2) {
         expect(accountFromServer2.route).toBe(account1.route);
