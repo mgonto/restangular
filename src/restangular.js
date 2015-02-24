@@ -1162,7 +1162,15 @@ module.provider('Restangular', function() {
           if (elem) {
 
             if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
-              resolvePromise(deferred, response, restangularizeElem(__this, elem, what, true, null, fullParams), filledObject);
+              var data = restangularizeElem(
+                __this[config.restangularFields.parentResource],
+                elem,
+                route,
+                true,
+                null,
+                fullParams
+              );
+              resolvePromise(deferred, response, data, filledObject);
             } else {
               var data = restangularizeElem(
                 __this[config.restangularFields.parentResource],

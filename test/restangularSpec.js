@@ -693,6 +693,21 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
+    it("Should keep route property when element is created", function() {
+      var account1 = Restangular.restangularizeElement(null, {}, 'accounts');
+      $httpBackend.expectPOST('/accounts');
+      $httpBackend.expectPUT('/accounts/1');
+      account1.name = "Hey";
+      account1.save().then(function(accountFromServer) {
+        accountFromServer.id = 1;
+        console.log(accountFromServer);
+        return accountFromServer.save();
+      }).then(function(accountFromServer2) {
+        expect(accountFromServer2.route).toBe(account1.route);
+      });
+      $httpBackend.flush()
+    });
+
     it("Should make RequestLess connections with one", function() {
       restangularAccount1.one("transactions", 1).get().then(function(transaction) {
         expect(Restangular.stripRestangular(transaction))
