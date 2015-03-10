@@ -1159,7 +1159,7 @@ RestangularProvider.configuration.getIdFromElem = function(elem) {
 ````
 With that, you'd get what you need :)
 
-#### **How can I send files in my request using Restangular?
+#### **How can I send files in my request using Restangular?**
 
 This can be done using the customPOST / customPUT method. Look at the following example: 
 ````js
