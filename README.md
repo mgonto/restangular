@@ -1157,8 +1157,18 @@ RestangularProvider.configuration.getIdFromElem = function(elem) {
   return elem[_.initial(elem.route).join('') + "ID"];
 }
 ````
-
 With that, you'd get what you need :)
+
+#### **How can I send files in my request using Restangular?
+
+This can be done using the customPOST / customPUT method. Look at the following example: 
+````js
+Restangular.all('users')
+          .withHttpConfig({transformRequest: angular.identity})
+          .customPOST(formData, undefined, undefined, 
+            { 'Content-Type': undefined });
+````
+This basically tells the request to use the *Content-Type: multipart/form-data* as the header. Also *formData* is the body of the request, be sure to add all the params here, including the File you want to send of course. There is an issue already closed but with a lot of information from other users and @mgonto as well: [GitHub - Restangular](https://github.com/mgonto/restangular/issues/420) 
 
 #### **How do I handle CRUD operations in a List returned by Restangular?**
 
