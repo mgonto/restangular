@@ -706,7 +706,7 @@ These are the methods that can be called on the Restangular object.
 * **all(route)**: This will create a new Restangular object that is just a pointer to a list of elements for the specified path.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
-* **copy(fromElement)**: This will create a copy of the from element so that we can modified the copied one.
+* **copy(fromElement)**: This will create a copy of the from element so that we can modify the copied one.
 * **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
 
