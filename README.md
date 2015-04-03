@@ -184,7 +184,7 @@ The Restangular service may be injected into any Controller or Directive :)
 Note: When adding Restangular as a dependency it is not capitalized 'restangular'
       But when injected into your controller it is 'Restangular'
 
-**[Back to top](#table-of-contents)**      
+**[Back to top](#table-of-contents)**
 
 ## Using Restangular
 
@@ -674,7 +674,7 @@ module.factory('Users', function(Restangular) {
 });
 
 // In your controller you inject Users
-Users.one(2).get() // GET to /users/2
+Users.get(2) // GET to /users/2
 Users.post({data}) // POST to /users
 
 // GET to /users

@@ -635,6 +635,12 @@ restangular.provider('Restangular', function() {
 
     Path.prototype = new BaseCreator();
 
+    Path.prototype.normalizeUrl = function (url){
+      var parts = /(http[s]?:\/\/)?(.*)?/.exec(url);
+      parts[2] = parts[2].replace(/[\\\/]+/g, '/');
+      return (typeof parts[1] !== 'undefined')? parts[1] + parts[2] : parts[2];
+    };
+
     Path.prototype.base = function(current) {
       var __this = this;
       return  _.reduce(this.parentsArray(current), function(acum, elem) {
@@ -667,8 +673,8 @@ restangular.provider('Restangular', function() {
             }
           }
         }
-
-        return acum.replace(/\/$/, '') + '/' + elemUrl;
+        acum = acum.replace(/\/$/, '') + '/' + elemUrl;
+        return __this.normalizeUrl(acum);
 
       }, this.config.baseUrl);
     };
@@ -802,9 +808,15 @@ restangular.provider('Restangular', function() {
       }
 
       function one(parent, route, id, singleOne) {
+        var error;
         if (_.isNumber(route) || _.isNumber(parent)) {
-          var error = 'You\'re creating a Restangular entity with the number ';
-          error += 'instead of the route or the parent. For example, you can\'t call .one(12)';
+          error = 'You\'re creating a Restangular entity with the number ';
+          error += 'instead of the route or the parent. For example, you can\'t call .one(12).';
+          throw new Error(error);
+        }
+        if (_.isUndefined(route)) {
+          error = 'You\'re creating a Restangular entity either without the path. ';
+          error += 'For example you can\'t call .one(). Please check if your arguments are valid.';
           throw new Error(error);
         }
         var elem = {};
@@ -1150,7 +1162,15 @@ restangular.provider('Restangular', function() {
           if (elem) {
 
             if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
-              resolvePromise(deferred, response, restangularizeElem(__this, elem, what, true, null, fullParams), filledObject);
+              var data = restangularizeElem(
+                __this[config.restangularFields.parentResource],
+                elem,
+                route,
+                true,
+                null,
+                fullParams
+              );
+              resolvePromise(deferred, response, data, filledObject);
             } else {
               var data = restangularizeElem(
                 __this[config.restangularFields.parentResource],
@@ -1178,13 +1198,13 @@ restangular.provider('Restangular', function() {
             deferred.reject(response);
           }
         };
-        // Overring HTTP Method
+        // Overriding HTTP Method
         var callOperation = operation;
         var callHeaders = _.extend({}, request.headers);
         var isOverrideOperation = config.isOverridenMethod(operation);
         if (isOverrideOperation) {
           callOperation = 'post';
-          callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
+          callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation.toUpperCase()});
         } else if (config.jsonp && callOperation === 'get') {
           callOperation = 'jsonp';
         }
