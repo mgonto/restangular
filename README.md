@@ -125,7 +125,7 @@ $scope.user.sendMessage();  // POST: /users/123/sendMessage
 
 // Chain methods together to easily build complex requests
 $scope.user.one('messages', 123).one('from', 123).getList('unread');
-// GET: /user/123/messages/123/from/123/unread
+// GET: /users/123/messages/123/from/123/unread
 
 
 ````
@@ -706,7 +706,7 @@ These are the methods that can be called on the Restangular object.
 * **all(route)**: This will create a new Restangular object that is just a pointer to a list of elements for the specified path.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
-* **copy(fromElement)**: This will create a copy of the from element so that we can modified the copied one.
+* **copy(fromElement)**: This will create a copy of the from element so that we can modify the copied one.
 * **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
 * **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
 
@@ -1157,8 +1157,18 @@ RestangularProvider.configuration.getIdFromElem = function(elem) {
   return elem[_.initial(elem.route).join('') + "ID"];
 }
 ````
-
 With that, you'd get what you need :)
+
+#### **How can I send files in my request using Restangular?**
+
+This can be done using the customPOST / customPUT method. Look at the following example: 
+````js
+Restangular.all('users')
+          .withHttpConfig({transformRequest: angular.identity})
+          .customPOST(formData, undefined, undefined, 
+            { 'Content-Type': undefined });
+````
+This basically tells the request to use the *Content-Type: multipart/form-data* as the header. Also *formData* is the body of the request, be sure to add all the params here, including the File you want to send of course. There is an issue already closed but with a lot of information from other users and @mgonto as well: [GitHub - Restangular](https://github.com/mgonto/restangular/issues/420) 
 
 #### **How do I handle CRUD operations in a List returned by Restangular?**
 
