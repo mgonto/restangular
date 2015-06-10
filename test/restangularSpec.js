@@ -431,6 +431,16 @@ describe("Restangular", function() {
       expect(collection[0].getRestangularUrl()).toBe('/accounts/0');
 
     });
+
+    it("Should restangularize a function with arguments OK", function() {
+      var collection = function(a, b) { };
+
+      Restangular.restangularizeCollection(null, collection, 'accounts');
+
+      expect(_.has(collection, 'get')).toBe(true);
+
+      expect(collection.getRestangularUrl()).toBe('/accounts');
+    });
   });
 
   describe("restangularizePromiseIntercept", function() {
