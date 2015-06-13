@@ -1149,7 +1149,7 @@ RestangularProvider.setRestangularFields({
 
 #### **What if each of my models has a different ID name like CustomerID for Customer**
 
-In some cases, people have different ID name for each entity. For example, they have CustomerID for customer and EquipmentID for Equipment. If that's the case, you can override's Restangular's getIdFromElem. For that, you need to do:
+In some cases, people have different ID name for each entity. For example, they have CustomerID for customer and EquipmentID for Equipment. If that's the case, you can override Restangular's getIdFromElem. For that, you need to do:
 
 ````js
 RestangularProvider.configuration.getIdFromElem = function(elem) {
