@@ -49,6 +49,7 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
       - [setDefaultHeaders](#setdefaultheaders)
       - [setRequestSuffix](#setrequestsuffix)
       - [setUseCannonicalId](#setusecannonicalid)
+      - [setPlainByDefault](#setplainbydefault)
     - [How to configure them globally](#how-to-configure-them-globally)
       - [Configuring in the config](#configuring-in-the-config)
       - [Configuring in the run](#configuring-in-the-run)
@@ -551,6 +552,10 @@ If all of your requests require to send some suffix to work, you can set it here
 #### setUseCannonicalId
 
 You can set this to either `true` or `false`. By default it's false. If set to true, then the cannonical ID from the element will be used for URL creation (in DELETE, PUT, POST, etc.). What this means is that if you change the ID of the element and then you do a put, if you set this to true, it'll use the "old" ID which was received from the server. If set to false, it'll use the new ID assigned to the element.
+
+#### setPlainByDefault
+
+You can set this to `true` or `false`. By default it's false. If set to true, data retrieved will be returned with no embed methods from restangular.
 
 #### setEncodeIds
 

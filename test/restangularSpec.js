@@ -1143,4 +1143,32 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
   });
+
+  describe("setPlainByDefault", function() {
+    
+    it("should not add restangularized methods to response object", function() {
+      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setPlainByDefault(true);
+      });
+
+      expect(newRes.configuration.plainByDefault).toEqual(true);
+
+      newRes.one('accounts',0).get().then(function(account) {
+        expect(account).toEqual(accountsModel[0]);
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("shoud not add restangularized methods to response collection", function() {
+      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setPlainByDefault(true);
+      });
+
+      newRes.all('accounts').getList().then(function(accounts){
+        expect(accounts).toEqual(accountsModel);
+      });
+      $httpBackend.flush();
+    });
+  });
 });
