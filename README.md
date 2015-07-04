@@ -1299,6 +1299,7 @@ Users reported that this server frameworks play real nice with Restangular, as t
 * Slim Framework
 * Symfony2 with FOSRestBundle (PHP)
 * Microsoft ASP.NET Web API 2
+* Grails Framework ([example](https://github.com/rmondejar/grails-angular-duo))
 
 **[Back to top](#table-of-contents)**
 
