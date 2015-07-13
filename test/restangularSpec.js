@@ -1070,7 +1070,7 @@ describe("Restangular", function() {
     });
   });
 
-  describe("testing normilize url", function () {
+  describe("testing normalize url", function () {
 
     it("should get a list of objects", function () {
       Restangular.all('customers/').getList().then(function(res){
@@ -1109,12 +1109,12 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
-    it("should return a normilized URL even it has extra slashes", function() {
+    it("should return a normalized URL even it has extra slashes", function() {
       var restangularSpaces = Restangular.one("accounts//", 123).one("buildings//", 456).all("spaces///");
       expect(restangularSpaces.getRestangularUrl()).toEqual("/accounts/123/buildings/456/spaces/");
     });
 
-    it("should create a new service and still working normilized URL", function() {
+    it("should create a new service and still working normalized URL", function() {
       var newRes = Restangular.withConfig(function(RestangularConfigurer){
         RestangularConfigurer.setBaseUrl('http://localhost:8080');
       });
