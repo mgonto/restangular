@@ -620,6 +620,13 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
 
+    it("customPATCH should work", function() {
+      var data = { foo: 'bar' };
+      $httpBackend.expectPATCH('/accounts/hey', data).respond(accountsModel);
+      restangularAccounts.customPATCH(data, 'hey');
+      $httpBackend.flush();
+    });
+
     it("options()  should safely return", function() {
       restangularAccounts.options().then(function() {
         expect(true).toBe(true);
