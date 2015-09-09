@@ -924,20 +924,16 @@ restangular.provider('Restangular', function() {
 
       function addCustomOperation(elem) {
         elem[config.restangularFields.customOperation] = _.bind(customFunction, elem);
-        _.each(['put', 'patch', 'post', 'get', 'delete'], function(oper) {
+        var requestMethods = { get: customFunction, delete: customFunction };
+        _.each(['put', 'patch', 'post'], function(name) {
+          requestMethods[name] = function(operation, elem, path, params, headers) {
+            return _.bind(customFunction, this)(operation, path, params, headers, elem);
+          };
+        });
+        _.each(requestMethods, function(requestFunc, name) {
+          var callOperation = name === 'delete' ? 'remove' : name;
           _.each(['do', 'custom'], function(alias) {
-            var callOperation = oper === 'delete' ? 'remove' : oper;
-            var name = alias + oper.toUpperCase();
-            var callFunction;
-
-            if (/^(post|put|patch)$/.test(oper)) {
-              callFunction = function(operation, elem, path, params, headers) {
-                return _.bind(customFunction, this)(operation, path, params, headers, elem);
-              };
-            } else {
-              callFunction = customFunction;
-            }
-            elem[name] = _.bind(callFunction, elem, callOperation);
+            elem[alias + name.toUpperCase()] = _.bind(requestFunc, elem, callOperation);
           });
         });
         elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
