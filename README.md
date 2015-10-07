@@ -41,6 +41,7 @@ You can also **check out [a video introduction of a talk I gave at Devoxx France
       - [setRequestInterceptor](#setrequestinterceptor)
       - [addRequestInterceptor](#addrequestinterceptor)
       - [setFullRequestInterceptor](#setfullrequestinterceptor)
+      - [addFullRequestInterceptor](#addfullrequestinterceptor)
       - [setErrorInterceptor](#seterrorinterceptor)
       - [setRestangularFields](#setrestangularfields)
       - [setMethodOverriders](#setmethodoverriders)
@@ -143,8 +144,8 @@ You can download this by:
 
 ````html
 <!-- Or use TAG number for specific version. New versions are auto deployed -->
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js"></script>
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.5.1/restangular.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.5.1/restangular.min.js"></script>
 ````
 
 **[Back to top](#table-of-contents)**
