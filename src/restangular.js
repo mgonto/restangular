@@ -1,4 +1,12 @@
-(function() {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['angular', 'lodash'], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = factory(require('angular'), require('lodash'));
+  } else {
+    root.returnExports = factory(root._, root.angular);
+  }
+}(this, function (_, angular) {
 
 var restangular = angular.module('restangular', []);
 
@@ -1346,17 +1354,5 @@ restangular.provider('Restangular', function() {
     return createServiceForConfiguration(globalConfiguration);
   }];
 });
-
-})();
-
-
-/**
- * This lets you inject the module into angularjs using the commonjs require
- * syntax with browserify.
- */
-/* jshint ignore:start */
-if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports){
- var _ = require('lodash');
- module.exports = 'restangular';
-}
-/* jshint ignore:end */
+  return restangular.name;
+}));
