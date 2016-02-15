@@ -1,3 +1,7 @@
+1.5.2 / 2016-02-15
+==================
+
+  * Change _.contains to _.includes for compatability with lodash >= 4.0
 
 1.5.1 / 2015-04-03
 ==================
