@@ -1,5 +1,5 @@
-// https://github.com/umdjs/umd/blob/master/templates/returnExports.js
 (function (root, factory) {
+  // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (typeof define === 'function' && define.amd) {
     define(['angular', 'lodash'], factory);
   } else if (typeof module === 'object' && module.exports) {
