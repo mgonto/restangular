@@ -1,10 +1,12 @@
+// https://github.com/umdjs/umd/blob/master/templates/returnExports.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular', 'lodash'], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('angular'), require('lodash'));
   } else {
-    root.returnExports = factory(root._, root.angular);
+    // No global export, Restangular will register itself as Angular.js module
+    factory(root._, root.angular);
   }
 }(this, function (_, angular) {
 
