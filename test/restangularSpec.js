@@ -309,7 +309,7 @@ describe("Restangular", function() {
       };
 
       CallbackManager.firstErrorInterceptor = function(response) {
-        expect(response.status).toEqual(404);
+        expect(Number(response.status)).toEqual(404);
       };
       CallbackManager.secondErrorInterceptor = function() {};
 
