@@ -1149,5 +1149,16 @@ describe("Restangular", function() {
 
       $httpBackend.flush();
     });
+
+    it("Should work with absolute URL with //authority", function() {
+      var newRes = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setBaseUrl('//localhost:8080');
+      });
+      expect(newRes.configuration.baseUrl).toEqual('//localhost:8080');
+      newRes.all("customers////").getList();
+      $httpBackend.expectGET('//localhost:8080/customers/').respond([]);
+
+      $httpBackend.flush();
+    });
   });
 });
