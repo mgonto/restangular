@@ -254,7 +254,7 @@ baseAccounts.getList().then(function (accounts) {
   $scope.buildings = firstAccount.getList("buildings");
 
   // GET /accounts/123/places?query=param with request header: x-user:mgonto
-  $scope.loggedInPlaces = firstAccount.getList("places", {query: param}, {'x-user': 'mgonto'})
+  $scope.loggedInPlaces = firstAccount.getList("places", {query: 'param'}, {x-user: 'mgonto'})
 
   // This is a regular JS object, we can change anything we want :)
   firstAccount.name = "Gonto"
