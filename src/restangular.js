@@ -1,9 +1,9 @@
 (function (root, factory) {
   // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (typeof define === 'function' && define.amd) {
-    define(['angular', 'lodash'], factory);
+    define(['lodash', 'angular'], factory);
   } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('angular'), require('lodash'));
+    module.exports = factory(require('lodash'), require('angular'));
   } else {
     // No global export, Restangular will register itself as Angular.js module
     factory(root._, root.angular);
@@ -648,7 +648,7 @@ restangular.provider('Restangular', function() {
     Path.prototype = new BaseCreator();
 
     Path.prototype.normalizeUrl = function (url){
-      var parts = /(http[s]?:\/\/)?(.*)?/.exec(url);
+      var parts = /((?:http[s]?:)?\/\/)?(.*)?/.exec(url);
       parts[2] = parts[2].replace(/[\\\/]+/g, '/');
       return (typeof parts[1] !== 'undefined')? parts[1] + parts[2] : parts[2];
     };
