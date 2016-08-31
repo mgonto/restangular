@@ -27,11 +27,11 @@ describe("Restangular", function() {
 
     infoModel = {
       id: 0, text: "Some additional account information"
-    }
+    };
 
     newAccount = {id: 44, user: "First User", amount: 45, transactions: []};
 
-    messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}]
+    messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}];
 
     accountsDoSomethingModel = { result: 1 };
 
@@ -332,7 +332,7 @@ describe("Restangular", function() {
     it("Should decorate element both on server and local by default", function() {
 
       Restangular.extendModel('accounts', function(account) {
-        account.extended = function() {return true;}
+        account.extended = function() {return true;};
         return account;
       });
 
@@ -476,7 +476,7 @@ describe("Restangular", function() {
 
     it("Shouldn't be restangularized by default", function() {
       Restangular.extendModel('accounts', function(account) {
-        account.extended = function() {return true;}
+        account.extended = function() {return true;};
         return account;
       });
 
@@ -824,6 +824,21 @@ describe("Restangular", function() {
       copiedAccount.getRestangularUrl(); // invoke the method we are spying on
       expect(that).toBe(copiedAccount);
     });
+
+    it("should copy an object and 'fromServer' param should be the same with the copied object", function() {
+      // with fromServer=true
+      restangularAccount1.get().then(function(account) {
+        var copiedAccount = Restangular.copy(account);
+        expect(account.fromServer).toEqual(copiedAccount.fromServer);
+      });
+
+      // with fromServer=false
+      var account = Restangular.one('accounts', 123),
+          copiedAccount = Restangular.copy(account);
+      expect(account.fromServer).toEqual(copiedAccount.fromServer);
+
+      $httpBackend.flush();
+    });
   });
 
   describe("getRestangularUrl", function() {
@@ -1049,7 +1064,7 @@ describe("Restangular", function() {
     });
 
     it('does not use the id for single nested resource GET', function() {
-      Restangular.one('accounts', 1).one('info', 0, true).get()
+      Restangular.one('accounts', 1).one('info', 0, true).get();
       $httpBackend.expectGET('/accounts/1/info');
       $httpBackend.flush();
     });

@@ -73,7 +73,7 @@ restangular.provider('Restangular', function() {
     object.setPlainByDefault = function(value) {
       config.plainByDefault = value === true ? true : false;
       return this;
-    }
+    };
 
     config.withHttpValues = function(httpLocalConfig, obj) {
       return _.defaults(obj, httpLocalConfig, config.defaultHttpFields);
@@ -962,7 +962,7 @@ restangular.provider('Restangular', function() {
       function copyRestangularizedElement(fromElement, toElement) {
         var copiedElement = angular.copy(fromElement, toElement);
         return restangularizeElem(copiedElement[config.restangularFields.parentResource],
-                copiedElement, copiedElement[config.restangularFields.route], true);
+                copiedElement, copiedElement[config.restangularFields.route], copiedElement[config.restangularFields.fromServer]);
       }
 
       function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
