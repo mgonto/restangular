@@ -65,6 +65,15 @@ restangular.provider('Restangular', function() {
       config.defaultHttpFields = values;
       return this;
     };
+    
+    /**
+     * Always return plain data, no restangularized object
+    **/
+    config.plainByDefault = config.plainByDefault || false;
+    object.setPlainByDefault = function(value) {
+      config.plainByDefault = value === true ? true : false;
+      return this;
+    }
 
     config.withHttpValues = function(httpLocalConfig, obj) {
       return _.defaults(obj, httpLocalConfig, config.defaultHttpFields);
@@ -1079,6 +1088,11 @@ restangular.provider('Restangular', function() {
           if (!_.isArray(data)) {
             throw new Error('Response for getList SHOULD be an array and not an object or something else');
           }
+
+          if (true === config.plainByDefault) {
+            return resolvePromise(deferred, response, data, filledArray);
+          }
+
           var processedData = _.map(data, function(elem) {
             if (!__this[config.restangularFields.restangularCollection]) {
               return restangularizeElem(__this, elem, what, true, data);
@@ -1169,8 +1183,14 @@ restangular.provider('Restangular', function() {
           var resData = response.data;
           var fullParams = response.config.params;
           var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
+
           if (elem) {
             var data;
+
+            if (true === config.plainByDefault) {
+              return resolvePromise(deferred, response, elem, filledObject);
+            }
+
             if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
               data = restangularizeElem(
                 __this[config.restangularFields.parentResource],
