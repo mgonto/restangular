@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Fri Aug 09 2013 14:14:35 GMT-0500 (CDT)
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
@@ -13,11 +13,21 @@ module.exports = function(config) {
     files: [
       'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.js',
       'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular-mocks.js',
-      'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.3.0/lodash.js',
+      'node_modules/babel-polyfill/dist/polyfill.js',
       'src/restangular.js',
       'test/*.js'
     ],
 
+    preprocessors: {
+      'src/restangular.js': ['babel']
+    },
+
+    babelPreprocessor: {
+      options: {
+        presets: ['es2015'],
+        sourceMap: 'inline'
+      }
+    },
 
     // list of files to exclude
     exclude: [

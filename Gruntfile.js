@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   'use strict';
 
   // Project configuration.
@@ -6,14 +6,15 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     meta: {
       banner: [
-                '/**',
-                ' * <%= pkg.description %>',
-                ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
-                ' * @link <%= pkg.homepage %>',
-                ' * @author <%= pkg.author %>',
-                ' * @license MIT License, http://www.opensource.org/licenses/MIT',
-                ' */'
-              ].join('\n')
+        '/**',
+        ' * <%= pkg.description %>',
+        ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
+        ' * @link <%= pkg.homepage %>',
+        ' * @author <%= pkg.author %>',
+        ' * @license MIT License, http://www.opensource.org/licenses/MIT',
+        ' */',
+        ''
+      ].join('\n')
     },
     dirs: {
       dest: 'dist'
@@ -24,7 +25,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: ['src/*.js'],
-        dest: '<%= dirs.dest %>/<%= pkg.name %>.js'
+        dest: '<%= dirs.dest %>/<%= pkg.name %>.babel.js'
       }
     },
     zip: {
@@ -34,15 +35,26 @@ module.exports = function(grunt) {
       ]
     },
     bowerInstall: {
-        install: {
+      install: {
+      }
+    },
+    babel: {
+      options: {
+        sourceMap: false,
+        presets: ['es2015']
+      },
+      dist: {
+        files: {
+          '<%= dirs.dest %>/<%= pkg.name %>.js': '<%= concat.dist.dest %>'
         }
+      }
     },
     uglify: {
       options: {
         banner: '<%= meta.banner %>'
       },
       dist: {
-        src: ['<%= concat.dist.dest %>'],
+        src: '<%= dirs.dest %>/<%= pkg.name %>.js',
         dest: '<%= dirs.dest %>/<%= pkg.name %>.min.js'
       }
     },
@@ -70,17 +82,6 @@ module.exports = function(grunt) {
         autoWatch: false,
         browsers: ['Firefox']
       },
-      travisUnderscore: {
-        singleRun: true,
-        autoWatch: false,
-        browsers: ['Firefox'],
-        configFile: 'karma.underscore.conf.js',
-      },
-      buildUnderscore: {
-        configFile: 'karma.underscore.conf.js',
-        singleRun: true,
-        autoWatch: false
-      },
       dev: {
         autoWatch: true
       }
@@ -97,6 +98,8 @@ module.exports = function(grunt) {
 
   // Load the plugin that provides the "concat" task.
   grunt.loadNpmTasks('grunt-contrib-concat');
+
+  grunt.loadNpmTasks('grunt-babel');
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -116,23 +119,23 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
 
   // Build task.
-  grunt.registerTask('build', ['bowerInstall', 'karma:build', 'karma:buildUnderscore', 'concat', 'uglify', 'zip']);
+  grunt.registerTask('build', ['bowerInstall', 'karma:build', 'concat', 'babel', 'uglify', 'zip']);
 
-  grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
+  grunt.registerTask('test', ['karma:build']);
 
   grunt.registerTask('test-debug', ['karma:debug']);
 
-  grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore']);
+  grunt.registerTask('travis', ['karma:travis']);
 
   // Provides the "bump" task.
-  grunt.registerTask('bump', 'Increment version number', function() {
+  grunt.registerTask('bump', 'Increment version number', function () {
     var versionType = grunt.option('type');
     function bumpVersion(version, versionType) {
-      var type = {patch: 2, minor: 1, major: 0},
-          parts = version.split('.'),
-          idx = type[versionType || 'patch'];
+      var type = { patch: 2, minor: 1, major: 0 },
+        parts = version.split('.'),
+        idx = type[versionType || 'patch'];
       parts[idx] = parseInt(parts[idx], 10) + 1;
-      while(++idx < parts.length) { parts[idx] = 0; }
+      while (++idx < parts.length) { parts[idx] = 0; }
       return parts.join('.');
     }
     var version;

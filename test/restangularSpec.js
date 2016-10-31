@@ -424,8 +424,8 @@ describe("Restangular", function() {
 
       Restangular.restangularizeCollection(null, collection, 'accounts');
 
-      expect(_.has(collection, 'get')).toBe(true);
-      expect(_.has(collection[0], 'get')).toBe(true);
+      expect(collection.hasOwnProperty('get')).toBe(true);
+      expect(collection[0].hasOwnProperty('get')).toBe(true);
 
       expect(collection.getRestangularUrl()).toBe('/accounts');
       expect(collection[0].getRestangularUrl()).toBe('/accounts/0');
@@ -437,7 +437,7 @@ describe("Restangular", function() {
 
       Restangular.restangularizeCollection(null, collection, 'accounts');
 
-      expect(_.has(collection, 'get')).toBe(true);
+      expect(collection.hasOwnProperty('get')).toBe(true);
 
       expect(collection.getRestangularUrl()).toBe('/accounts');
     });
@@ -696,7 +696,7 @@ describe("Restangular", function() {
       }).service('accounts');
 
       expect(Accounts.doSomething).toBeDefined();
-      expect(_.isFunction(Accounts.doSomething)).toBeTruthy();
+      expect(typeof Accounts.doSomething === 'function').toBeTruthy();
 
       Accounts.post(newAccount);
       Accounts.one(0).get();
