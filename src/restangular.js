@@ -61,9 +61,9 @@
       **/
       config.plainByDefault = config.plainByDefault || false;
       object.setPlainByDefault = function (value) {
-        config.plainByDefault = value === true ? true : false;
+        config.plainByDefault = value === true || false;
         return this;
-      }
+      };
 
       config.withHttpValues = (httpLocalConfig, obj) => angular.extend(obj, httpLocalConfig, config.defaultHttpFields);
 
@@ -885,14 +885,14 @@
         function addCustomOperation(elem) {
           elem[config.restangularFields.customOperation] = customFunction.bind(elem);
 
-          var requestMethods = { get: customFunction, delete: customFunction };
+          const requestMethods = { get: customFunction, delete: customFunction };
           angular.forEach(['put', 'patch', 'post'], function (name) {
-            requestMethods[name] = function (operation, elem, path, params, headers) {
-              return customFunction.bind(this)(operation, path, params, headers, elem);
+            requestMethods[name] = function (operation, elm, path, params, headers) {
+              return customFunction.bind(this)(operation, path, params, headers, elm);
             };
           });
           angular.forEach(requestMethods, (requestFunc, name) => {
-            var callOperation = name === 'delete' ? 'remove' : name;
+            const callOperation = name === 'delete' ? 'remove' : name;
             angular.forEach(['do', 'custom'], alias => elem[alias + name.toUpperCase()] = requestFunc.bind(elem, callOperation));
           });
           elem[config.restangularFields.customGETLIST] = fetchFunction.bind(elem);
@@ -1231,10 +1231,10 @@
               headers,
               elem
             }, {
-                params: defaultParams,
-                headers: defaultHeaders,
-                elem: defaultElem
-              });
+              params: defaultParams,
+              headers: defaultHeaders,
+              elem: defaultElem
+            });
             return bindedFunction(callParams.params, callParams.headers, callParams.elem);
           };
 
