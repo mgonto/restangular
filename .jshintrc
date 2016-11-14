@@ -15,8 +15,11 @@
   "undef": true,
   "unused": true,
   "browser": true,
+  "esversion": 6,
   "globals": {
     "module": true,
-    "angular": true
+    "angular": true,
+    "define": true,
+    "require": true
   }
 }

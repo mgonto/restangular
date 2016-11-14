@@ -8,7 +8,7 @@
     // No global export, Restangular will register itself as Angular.js module
     factory(angular);
   }
-}(function (angular) {
+} (function (angular) {
   const restangular = angular.module('restangular', []);
 
   restangular.provider('Restangular', function () {
@@ -234,7 +234,7 @@
 
       config.getIdFromElem = elem => config.getFieldFromElem(config.restangularFields.id, elem);
 
-      config.isValidId = elemId => '' !== elemId && !!angular.isDefined(elemId) && !(elemId === null);
+      config.isValidId = elemId => '' !== elemId && !!angular.isDefined(elemId) && elemId !== null;
 
       config.setUrlToElem = function (elem, url) {
         config.setFieldToElem(config.restangularFields.selfLink, elem, url);
@@ -577,7 +577,8 @@
           // Add default parameters
           value.params = angular.extend({}, value.params, localConfig.defaultRequestParams[value.method.toLowerCase()]);
           // We don't want the ? if no params are there
-          if (!value.params || !(angular.isObject(value.params)) || !(angular.isArray(value.params) ? value.params : Object.keys(value.params)).length) {
+          if (!value.params || !(angular.isObject(value.params)) ||
+            !(angular.isArray(value.params) ? value.params : Object.keys(value.params)).length) {
             delete value.params;
           }
 
@@ -1160,7 +1161,9 @@
           const isOverrideOperation = config.isOverridenMethod(operation);
           if (isOverrideOperation) {
             callOperation = 'post';
-            callHeaders = angular.extend(callHeaders, { 'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation.toUpperCase() });
+            callHeaders = angular.extend(callHeaders, {
+              'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation.toUpperCase()
+            });
           } else if (config.jsonp && callOperation === 'get') {
             callOperation = 'jsonp';
           }
@@ -1231,10 +1234,10 @@
               headers,
               elem
             }, {
-              params: defaultParams,
-              headers: defaultHeaders,
-              elem: defaultElem
-            });
+                params: defaultParams,
+                headers: defaultHeaders,
+                elem: defaultElem
+              });
             return bindedFunction(callParams.params, callParams.headers, callParams.elem);
           };
 
