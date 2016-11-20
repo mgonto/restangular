@@ -443,6 +443,28 @@ describe("Restangular", function() {
 
       expect(collection.getRestangularUrl()).toBe('/accounts');
     });
+
+    it("should have fromServer set when restangularizeElement is called with that param", function() {
+      var element = Restangular.restangularizeElement(null, {}, 'accounts', true);
+      expect(element.fromServer).toEqual(true);
+
+      element = Restangular.restangularizeElement(null, {}, 'accounts', false);
+      expect(element.fromServer).toEqual(false);
+
+      element = Restangular.restangularizeElement(null, {}, 'accounts');
+      expect(element.fromServer).toEqual(false);
+    });
+
+    it("should have fromServer set when restangularizeCollection is called with that param", function() {
+      var collection = Restangular.restangularizeCollection(null, [{}], 'accounts', true);
+      expect(collection[0].fromServer).toEqual(true);
+
+      collection = Restangular.restangularizeCollection(null, [{}], 'accounts', false);
+      expect(collection[0].fromServer).toEqual(false);
+
+      collection = Restangular.restangularizeCollection(null, [{}], 'accounts');
+      expect(collection[0].fromServer).toEqual(false);
+    });
   });
 
   describe("restangularizePromiseIntercept", function() {
