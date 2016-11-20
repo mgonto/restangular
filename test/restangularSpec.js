@@ -3,7 +3,7 @@ describe("Restangular", function() {
   var Restangular, $httpBackend;
   var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
   var accountsHalModel;
-  var messages, newAccount;
+  var messages, newAccount, nextAccountId
 
   // Load required modules
   beforeEach(angular.mock.module("restangular"));
@@ -15,6 +15,7 @@ describe("Restangular", function() {
       {id: 0, user: "Martin ", amount: 42, transactions: []},
       {id: 1, user: "Paul", amount: 3.1416, transactions: [{from: "Martin", amount: 3, id: 0}, {from: "Anonymous", amount: 0.1416, id:1}]}
     ];
+    nextAccountId = 22;
 
     // HAL model (http://stateless.co/hal_specification.html)
     accountsHalModel = [
@@ -29,7 +30,7 @@ describe("Restangular", function() {
       id: 0, text: "Some additional account information"
     };
 
-    newAccount = {id: 44, user: "First User", amount: 45, transactions: []};
+    newAccount = {user: "First User", amount: 45, transactions: []};
 
     messages = [{id: 23, name: "Gonto"}, {id: 45, name: "John"}];
 
@@ -72,6 +73,7 @@ describe("Restangular", function() {
     $httpBackend.whenPOST("/accounts").respond(function(method, url, data, headers) {
       var newData = angular.fromJson(data);
       newData.fromServer = true;
+      newData.id = nextAccountId;
       return [201, JSON.stringify(newData), ""];
     });
 
@@ -581,7 +583,8 @@ describe("Restangular", function() {
     it("post() should add a new item with data and return the data from the server", function() {
      restangularAccounts.post(newAccount).then(function(added) {
        expect(added.fromServer).toEqual(true);
-       expect(added.id).toEqual(newAccount.id);
+       expect(added.id).toEqual(nextAccountId);
+       expect(added.user).toEqual(newAccount.user);
      });
 
     $httpBackend.expectPOST('/accounts');
@@ -591,7 +594,7 @@ describe("Restangular", function() {
     it("Doing a post and then other operation (delete) should call right URLs", function() {
       restangularAccounts.post(newAccount).then(function(added) {
         added.remove();
-        $httpBackend.expectDELETE('/accounts/44').respond(201, '');
+        $httpBackend.expectDELETE('/accounts/'+nextAccountId).respond(201, '');
       });
 
       $httpBackend.flush();
