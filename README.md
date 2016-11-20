@@ -370,7 +370,7 @@ This is a hook. After each element has been "restangularized" (Added the new met
 **I favor the usage of `addElementTransformer` instead of `onElemRestangularized` whenever possible as the implementation is much cleaner.**
 
 
-This callback is a function that has 3 parameters:
+This callback is a function that has 4 parameters:
 
 * **elem**: The element that has just been restangularized. Can be a collection or a single element.
 * **isCollection**: Boolean indicating if this is a collection or a single element.
@@ -459,7 +459,7 @@ Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
 
 #### setRestangularFields
 
-Restangular required 3 fields for every "Restangularized" element. These are:
+Restangular requires 7 fields for every "Restangularized" element. These are:
 
 * id: Id of the element. Default: id
 * route: Name of the route of this element. Default: route
@@ -747,7 +747,7 @@ These are the methods that can be called on the Restangular object.
 
 ### Collection methods
 * **getList([queryParams, headers]): Gets itself again (Remember this is a collection)**.
-* **get([id]): Gets one item from the collection by id**.
+* **get(id): Gets one item from the collection by id**.
 * **post(elementToPost, [queryParams, headers])**: Creates a new element of this collection.
 * **head([queryParams, headers])**: Does a HEAD
 * **trace: ([queryParams, headers])**: Does a TRACE
@@ -792,7 +792,7 @@ All custom methods have an alias where you replace `custom` by `do`. For example
 **[Back to top](#table-of-contents)**
 
 ## Copying elements
-Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` binded in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
+Before modifying an object, we sometimes want to copy it and then modify the copied object. We can't use `angular.copy` for this because it'll not change the `this` bound in the functions we add to the object. In this cases, you must use `Restangular.copy(fromElement)`.
 
 **[Back to top](#table-of-contents)**
 
