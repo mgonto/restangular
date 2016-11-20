@@ -672,7 +672,7 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
 
 ### Decoupled Restangular Service
 
-There're some times where you want to use Restangular but you don't want to expose Restangular object anywhere. 
+There're some times where you want to use Restangular but you don't want to expose Restangular object anywhere.
 For those cases, you can actually use the `service` feature of Restangular.
 
 Let's see how it works:
@@ -732,8 +732,8 @@ These are the methods that can be called on the Restangular object.
 * **oneUrl(route, url)**: This will create a new Restangular object that is just a pointer to one element with the specified URL.
 * **allUrl(route, url)**: This creates a Restangular object that is just a pointer to a list at the specified URL.
 * **copy(fromElement)**: This will create a copy of the from element so that we can modify the copied one.
-* **restangularizeElement(parent, element, route, queryParams)**: Restangularizes a new element
-* **restangularizeCollection(parent, element, route, queryParams)**: Restangularizes a new collection
+* **restangularizeElement(parent, element, route, fromServer, collection, reqParams)**: Restangularizes a new element
+* **restangularizeCollection(parent, element, route, fromServer, reqParams)**: Restangularizes a new collection
 
 **[Back to top](#table-of-contents)**
 
