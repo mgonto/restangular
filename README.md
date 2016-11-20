@@ -1289,7 +1289,7 @@ So, why not use it? If you've never heard of them, by using Restangular, you cou
 
 # Supported Angular versions
 
-Restangular supports all angular versions including 1.0.X, 1.1.X and 1.2.X (1.2.4 being the current at the time)
+Restangular supports all Angular versions from 1.0.X - 1.5.X
 
 Also, when using Restangular with version >= 1.1.4, in case you're using Restangular inside a callback not handled by Angular, you have to wrap the whole request with `$scope.apply` to make it work or you need to run one extra `$digest` manually. Check out https://github.com/mgonto/restangular/issues/71
 
