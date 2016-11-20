@@ -709,6 +709,15 @@ describe("Restangular", function() {
       $httpBackend.expectGET('/accounts/do-something');
       $httpBackend.flush();
     });
+
+    it("should provide a one-off $http configuration method", function() {
+      var Accounts = Restangular.service('accounts');
+      Accounts.withHttpConfig({transformRequest: angular.identity});
+      Accounts.post(newAccount);
+      $httpBackend.expectPOST('/accounts');
+      $httpBackend.flush();
+    });
+
   });
 
   describe("ONE", function() {

@@ -672,7 +672,8 @@ app.controller('MainCtrl', function(Restangular, BingRestangular) {
 
 ### Decoupled Restangular Service
 
-There're some times where you want to use Restangular but you don't want to expose Restangular object anywhere. For those cases, you can actually use the `service` feature of Restangular.
+There're some times where you want to use Restangular but you don't want to expose Restangular object anywhere. 
+For those cases, you can actually use the `service` feature of Restangular.
 
 Let's see how it works:
 
@@ -694,6 +695,21 @@ Users.getList().then(function(users) {
   user.put();
 })
 ````
+
+You can also use ```withHttpConfig``` on objects created by ```Restangular.service```.
+
+```js
+var personService = Restangular.service('person');
+var entity = personService.withHttpConfig({transformRequest: function(data) {
+  data.fullname = data.firstname + ' ' + data.lastname;
+  return JSON.stringify(data);
+}}).post({
+  "lastname": "Mueller",
+  "firstname": "Gerd"
+}).then(function(resp) {
+    console.log(resp);
+});
+```
 
 We can also use Nested RESTful resources with this:
 
