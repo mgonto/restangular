@@ -595,7 +595,7 @@ restangular.provider('Restangular', function() {
 
       var url = this.base(current);
 
-      if (what) {
+      if (what || what === 0) {
         var add = '';
         if (!/\/$/.test(url)) {
           add += '/';
