@@ -1,9 +1,19 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.5.2 - 2016-02-08 * @link https://github.com/mgonto/restangular
+ * @version v1.6.0 - 2016-12-25 * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gon.to>
  * @license MIT License, http://www.opensource.org/licenses/MIT
- */(function() {
+ */(function (root, factory) {
+  // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
+  if (typeof define === 'function' && define.amd) {
+    define(['lodash', 'angular'], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = factory(require('lodash'), require('angular'));
+  } else {
+    // No global export, Restangular will register itself as Angular.js module
+    factory(root._, root.angular);
+  }
+}(this, function (_, angular) {
 
 var restangular = angular.module('restangular', []);
 
@@ -58,6 +68,15 @@ restangular.provider('Restangular', function() {
     config.defaultHttpFields = config.defaultHttpFields || {};
     object.setDefaultHttpFields = function(values) {
       config.defaultHttpFields = values;
+      return this;
+    };
+
+    /**
+     * Always return plain data, no restangularized object
+    **/
+    config.plainByDefault = config.plainByDefault || false;
+    object.setPlainByDefault = function(value) {
+      config.plainByDefault = value === true ? true : false;
       return this;
     };
 
@@ -188,12 +207,14 @@ restangular.provider('Restangular', function() {
       oneUrl: 'oneUrl',
       allUrl: 'allUrl',
       customPUT: 'customPUT',
+      customPATCH: 'customPATCH',
       customPOST: 'customPOST',
       customDELETE: 'customDELETE',
       customGET: 'customGET',
       customGETLIST: 'customGETLIST',
       customOperation: 'customOperation',
       doPUT: 'doPUT',
+      doPATCH: 'doPATCH',
       doPOST: 'doPOST',
       doDELETE: 'doDELETE',
       doGET: 'doGET',
@@ -424,6 +445,7 @@ restangular.provider('Restangular', function() {
      * Add element transformers for certain routes.
      */
     config.transformers = config.transformers || {};
+    config.matchTransformers = config.matchTransformers || [];
     object.addElementTransformer = function(type, secondArg, thirdArg) {
       var isCollection = null;
       var transformer = null;
@@ -434,17 +456,24 @@ restangular.provider('Restangular', function() {
         isCollection = secondArg;
       }
 
-      var typeTransformers = config.transformers[type];
-      if (!typeTransformers) {
-        typeTransformers = config.transformers[type] = [];
-      }
-
-      typeTransformers.push(function(coll, elem) {
+      var transformerFn = function(coll, elem) {
         if (_.isNull(isCollection) || (coll === isCollection)) {
           return transformer(elem);
         }
         return elem;
-      });
+      };
+
+      if (_.isRegExp(type)) {
+        config.matchTransformers.push({
+          regexp: type,
+          transformer: transformerFn
+        });
+      } else {
+        if (!config.transformers[type]) {
+          config.transformers[type] = [];
+        }
+        config.transformers[type].push(transformerFn);
+      }
 
       return object;
     };
@@ -461,8 +490,19 @@ restangular.provider('Restangular', function() {
       if (!force && !config.transformLocalElements && !elem[config.restangularFields.fromServer]) {
         return elem;
       }
-      var typeTransformers = config.transformers[route];
+
       var changedElem = elem;
+
+      var matchTransformers = config.matchTransformers;
+      if (matchTransformers) {
+        _.each(matchTransformers, function (transformer) {
+          if (route.match(transformer.regexp)) {
+            changedElem = transformer.transformer(isCollection, changedElem);
+          }
+        });
+      }
+
+      var typeTransformers = config.transformers[route];
       if (typeTransformers) {
         _.each(typeTransformers, function(transformer) {
           changedElem = transformer(isCollection, changedElem);
@@ -560,7 +600,7 @@ restangular.provider('Restangular', function() {
 
       var url = this.base(current);
 
-      if (what) {
+      if (what || what === 0) {
         var add = '';
         if (!/\/$/.test(url)) {
           add += '/';
@@ -641,7 +681,7 @@ restangular.provider('Restangular', function() {
     Path.prototype = new BaseCreator();
 
     Path.prototype.normalizeUrl = function (url){
-      var parts = /(http[s]?:\/\/)?(.*)?/.exec(url);
+      var parts = /((?:http[s]?:)?\/\/)?(.*)?/.exec(url);
       parts[2] = parts[2].replace(/[\\\/]+/g, '/');
       return (typeof parts[1] !== 'undefined')? parts[1] + parts[2] : parts[2];
     };
@@ -927,20 +967,16 @@ restangular.provider('Restangular', function() {
 
       function addCustomOperation(elem) {
         elem[config.restangularFields.customOperation] = _.bind(customFunction, elem);
-        _.each(['put', 'post', 'get', 'delete'], function(oper) {
+        var requestMethods = { get: customFunction, delete: customFunction };
+        _.each(['put', 'patch', 'post'], function(name) {
+          requestMethods[name] = function(operation, elem, path, params, headers) {
+            return _.bind(customFunction, this)(operation, path, params, headers, elem);
+          };
+        });
+        _.each(requestMethods, function(requestFunc, name) {
+          var callOperation = name === 'delete' ? 'remove' : name;
           _.each(['do', 'custom'], function(alias) {
-            var callOperation = oper === 'delete' ? 'remove' : oper;
-            var name = alias + oper.toUpperCase();
-            var callFunction;
-
-            if (callOperation !== 'put' && callOperation !== 'post') {
-              callFunction = customFunction;
-            } else {
-              callFunction = function(operation, elem, path, params, headers) {
-                return _.bind(customFunction, this)(operation, path, params, headers, elem);
-              };
-            }
-            elem[name] = _.bind(callFunction, elem, callOperation);
+            elem[alias + name.toUpperCase()] = _.bind(requestFunc, elem, callOperation);
           });
         });
         elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
@@ -950,7 +986,7 @@ restangular.provider('Restangular', function() {
       function copyRestangularizedElement(fromElement, toElement) {
         var copiedElement = angular.copy(fromElement, toElement);
         return restangularizeElem(copiedElement[config.restangularFields.parentResource],
-                copiedElement, copiedElement[config.restangularFields.route], true);
+                copiedElement, copiedElement[config.restangularFields.route], copiedElement[config.restangularFields.fromServer]);
       }
 
       function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
@@ -1003,10 +1039,12 @@ restangular.provider('Restangular', function() {
         return config.transformElem(localElem, true, route, service, true);
       }
 
-      function restangularizeCollectionAndElements(parent, element, route) {
-        var collection = restangularizeCollection(parent, element, route, false);
+      function restangularizeCollectionAndElements(parent, element, route, fromServer) {
+        var collection = restangularizeCollection(parent, element, route, fromServer);
         _.each(collection, function(elem) {
-          restangularizeElem(parent, elem, route, false);
+          if (elem) {
+            restangularizeElem(parent, elem, route, fromServer);
+          }
         });
         return collection;
       }
@@ -1074,6 +1112,11 @@ restangular.provider('Restangular', function() {
           if (!_.isArray(data)) {
             throw new Error('Response for getList SHOULD be an array and not an object or something else');
           }
+
+          if (true === config.plainByDefault) {
+            return resolvePromise(deferred, response, data, filledArray);
+          }
+
           var processedData = _.map(data, function(elem) {
             if (!__this[config.restangularFields.restangularCollection]) {
               return restangularizeElem(__this, elem, what, true, data);
@@ -1164,8 +1207,15 @@ restangular.provider('Restangular', function() {
           var resData = response.data;
           var fullParams = response.config.params;
           var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
-          if (elem) {
+
+          // accept 0 as response
+          if (elem !== null && elem !== undefined && elem !== '') {
             var data;
+
+            if (true === config.plainByDefault) {
+              return resolvePromise(deferred, response, elem, filledObject);
+            }
+
             if (operation === 'post' && !__this[config.restangularFields.restangularCollection]) {
               data = restangularizeElem(
                 __this[config.restangularFields.parentResource],
@@ -1310,6 +1360,8 @@ restangular.provider('Restangular', function() {
         serv.one = _.bind(one, (parent || service), parent, route);
         serv.post = _.bind(collection.post, collection);
         serv.getList = _.bind(collection.getList, collection);
+        serv.withHttpConfig = _.bind(collection.withHttpConfig, collection);
+        serv.get = _.bind(collection.get, collection);
 
         for (var prop in collection) {
           if (collection.hasOwnProperty(prop) && _.isFunction(collection[prop]) && !_.includes(knownCollectionMethods, prop)) {
@@ -1351,5 +1403,5 @@ restangular.provider('Restangular', function() {
     return createServiceForConfiguration(globalConfiguration);
   }];
 });
-
-})();
+  return restangular.name;
+}));
