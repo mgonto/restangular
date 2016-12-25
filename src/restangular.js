@@ -1184,7 +1184,8 @@ restangular.provider('Restangular', function() {
           var fullParams = response.config.params;
           var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
 
-          if (elem) {
+          // accept 0 as response
+          if (elem !== null && elem !== undefined && elem !== '') {
             var data;
 
             if (true === config.plainByDefault) {

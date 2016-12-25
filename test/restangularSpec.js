@@ -102,6 +102,10 @@ describe('Restangular', function() {
       return [500, {}, ''];
     });
 
+    $httpBackend.whenGET('/misc/zero').respond(function() {
+      return [200, 0, ''];
+    });
+
     $httpBackend.whenPOST('/customs').respond(function(method, url, data, headers) {
       if (JSON.parse(data).one) {
         return [201, '', ''];
@@ -1133,6 +1137,13 @@ describe('Restangular', function() {
 
     it('should not stip non-restangularized elements', function () {
       expect(Restangular.stripRestangular(['test','test2'])).toEqual(['test','test2']);
+    });
+
+    it('should accept 0 as response', function () {
+      Restangular.one('misc', 'zero').get().then(function(res) {
+        expect(res).toEqual(0);
+      });
+      $httpBackend.flush();
     });
   });
 
