@@ -710,10 +710,12 @@ describe('Restangular', function() {
       Transactions.post(newAccount);
       Transactions.one(1).get();
       Transactions.getList();
+      Transactions.get(1);
 
       $httpBackend.expectPOST('/accounts/1/transactions');
       $httpBackend.expectGET('/accounts/1/transactions/1');
       $httpBackend.expectGET('/accounts/1/transactions');
+      $httpBackend.expectGET('/accounts/1/transactions/1');
       $httpBackend.flush();
      });
 
@@ -732,11 +734,13 @@ describe('Restangular', function() {
       Accounts.one(0).get();
       Accounts.getList();
       Accounts.doSomething();
+      Accounts.get(0);
 
       $httpBackend.expectPOST('/accounts');
       $httpBackend.expectGET('/accounts/0');
       $httpBackend.expectGET('/accounts');
       $httpBackend.expectGET('/accounts/do-something');
+      $httpBackend.expectGET('/accounts/0');
       $httpBackend.flush();
     });
 
