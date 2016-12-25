@@ -65,7 +65,7 @@ restangular.provider('Restangular', function() {
       config.defaultHttpFields = values;
       return this;
     };
-    
+
     /**
      * Always return plain data, no restangularized object
     **/
@@ -440,6 +440,7 @@ restangular.provider('Restangular', function() {
      * Add element transformers for certain routes.
      */
     config.transformers = config.transformers || {};
+    config.matchTransformers = config.matchTransformers || [];
     object.addElementTransformer = function(type, secondArg, thirdArg) {
       var isCollection = null;
       var transformer = null;
@@ -450,17 +451,24 @@ restangular.provider('Restangular', function() {
         isCollection = secondArg;
       }
 
-      var typeTransformers = config.transformers[type];
-      if (!typeTransformers) {
-        typeTransformers = config.transformers[type] = [];
-      }
-
-      typeTransformers.push(function(coll, elem) {
+      var transformerFn = function(coll, elem) {
         if (_.isNull(isCollection) || (coll === isCollection)) {
           return transformer(elem);
         }
         return elem;
-      });
+      };
+
+      if (_.isRegExp(type)) {
+        config.matchTransformers.push({
+          regexp: type,
+          transformer: transformerFn
+        });
+      } else {
+        if (!config.transformers[type]) {
+          config.transformers[type] = [];
+        }
+        config.transformers[type].push(transformerFn);
+      }
 
       return object;
     };
@@ -477,8 +485,19 @@ restangular.provider('Restangular', function() {
       if (!force && !config.transformLocalElements && !elem[config.restangularFields.fromServer]) {
         return elem;
       }
-      var typeTransformers = config.transformers[route];
+
       var changedElem = elem;
+
+      var matchTransformers = config.matchTransformers;
+      if (matchTransformers) {
+        _.each(matchTransformers, function (transformer) {
+          if (route.match(transformer.regexp)) {
+            changedElem = transformer.transformer(isCollection, changedElem);
+          }
+        });
+      }
+
+      var typeTransformers = config.transformers[route];
       if (typeTransformers) {
         _.each(typeTransformers, function(transformer) {
           changedElem = transformer(isCollection, changedElem);

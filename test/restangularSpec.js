@@ -54,6 +54,7 @@ describe('Restangular', function() {
     $httpBackend.whenJSONP('/accounts/1').respond(accountsModel[1]);
     $httpBackend.whenGET('/accounts/1/transactions').respond(accountsModel[1].transactions);
     $httpBackend.whenGET('/accounts/1/transactions/1').respond(accountsModel[1].transactions[1]);
+    $httpBackend.whenGET('/accounts/search/byOwner').respond(accountsModel);
 
     $httpBackend.whenGET('/info').respond(infoModel);
     $httpBackend.whenGET('/accounts/1/info').respond(infoModel);
@@ -950,6 +951,62 @@ describe('Restangular', function() {
 
       $httpBackend.flush();
     });
+
+    it("should allow for a custom method to be placed at the collection level using a regexp matching the route", function () {
+      var accountPromise;
+
+      Restangular.addElementTransformer(/^accounts/, false, function(model) {
+         model.prettifyAmount = function() {};
+         return model;
+      });
+
+      accountsPromise = Restangular.all('accounts/search/byOwner', 1).getList();
+
+      accountsPromise.then(function(accounts) {
+        accounts.forEach(function(account, index) {
+          expect(typeof account.prettifyAmount).toEqual("function");
+        });
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("should allow for a custom method to be placed at the model level using regexp route when one model is requested", function() {
+      var accountPromise;
+
+      Restangular.addElementTransformer(/^accounts/, false, function(model) {
+         model.prettifyAmount = function() {};
+         return model;
+      });
+
+      accountPromise = Restangular.one('accounts', 1).get();
+
+      accountPromise.then(function(account) {
+        expect(typeof account.prettifyAmount).toEqual("function");
+      });
+
+      $httpBackend.flush();
+    });
+
+    it("should allow for a custom method to be placed at the model level using regexp when several models are requested", function() {
+      var accountPromise;
+
+      Restangular.addElementTransformer(/^accounts/, false, function(model) {
+         model.prettifyAmount = function() {};
+         return model;
+      });
+
+      accountsPromise = Restangular.all('accounts', 1).getList();
+
+      accountsPromise.then(function(accounts) {
+        accounts.forEach(function(account, index) {
+          expect(typeof account.prettifyAmount).toEqual("function");
+        });
+      });
+
+      $httpBackend.flush();
+    });
+
   });
 
   describe('extendCollection', function() {
