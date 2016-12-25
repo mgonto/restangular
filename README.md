@@ -684,6 +684,7 @@ module.factory('Users', function(Restangular) {
 });
 
 // In your controller you inject Users
+Users.get(2) // GET to /users/2
 Users.one(2).get() // GET to /users/2
 Users.post({data}) // POST to /users
 
