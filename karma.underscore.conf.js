@@ -1,19 +1,22 @@
-// Karma configuration
-// Generated on Fri Aug 09 2013 14:14:35 GMT-0500 (CDT)
+// Karma configuration for use with underscore instead of lodash
 
-module.exports = function(config) {
+var angularVersion = '1.5.9';
+var underscoreVersion = '1.8.3';
+
+
+module.exports = function (config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
-    frameworks: ["jasmine"],
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
-      'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.6/angular.js',
-      'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.6/angular-mocks.js',
-      'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.1/underscore.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/angular.js/' + angularVersion + '/angular.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/angular.js/' + angularVersion + '/angular-mocks.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/' + underscoreVersion + '/underscore.js',
       'src/restangular.js',
       'test/*.js'
     ],
