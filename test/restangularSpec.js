@@ -1206,6 +1206,12 @@ describe('Restangular', function() {
       });
       $httpBackend.flush();
     });
+
+    it('Should accept 0 as a proper id in custom requests', function () {
+      $httpBackend.expectDELETE('/accounts/0').respond(202);
+      Restangular.all('accounts').customDELETE(0);
+      $httpBackend.flush();
+    });
   });
 
   describe('testing normalize url', function () {
