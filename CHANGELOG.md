@@ -1,3 +1,6 @@
+# Unreleased
+
+
 # 1.6.0 (2016-12-25)
 
 * Url now supports unescaped suffix (0350bcd)
@@ -20,14 +23,11 @@
 * Added context/explanation of when to use JSONP. (fec9b27)
 * Add regexp matching for route to element transformers (#1430) (de8f561)
 
-
-1.5.2 / 2016-02-15
-==================
+# 1.5.2 (2016-02-15)
 
 * Change \_.contains to \_.includes for compatability with lodash >= 4.0
 
-1.5.1 / 2015-04-03
-==================
+# 1.5.1 (2015-04-03)
 
 * Release 1.5.0
 * Updated zip
@@ -39,7 +39,7 @@
 * Update README.md
 * Update README.md
 
-1.5.0 / 2015-04-03
-==================
+# 1.5.0 (2015-04-03)
+
 * Tons of bug fixes
 * Upgraded Lodash to 1.3.0
