@@ -10,9 +10,9 @@
 Restangular is an AngularJS service that simplifies common GET, POST, DELETE, and UPDATE requests with a minimum of client code.
 It's a perfect fit for any WebApp that consumes data from a RESTful API.
 
-**Check out a, [live demo on plunkr](http://plnkr.co/edit/d6yDka?p=preview).** It uses the same example as the official [Angular Javascript Project](http://angularjs.org/#wire-up-a-backend)... but Restangularized!
+Try the [live demo on plunkr](http://plnkr.co/edit/8qrGeE?p=preview). It uses the same example as the official [Angular Javascript Project](http://angularjs.org/#wire-up-a-backend), but with Restangular!
 
-You can also **check out [a video introduction of a talk I gave at Devoxx France](http://www.parleys.com/play/535a189ee4b0c5ba17d43455/chapter1/about)** about Restangular
+Watch [a video introduction of a talk I gave at Devoxx France](http://www.parleys.com/play/535a189ee4b0c5ba17d43455/chapter1/about) about Restangular.
 
 #Table of contents
 
