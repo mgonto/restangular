@@ -1,3 +1,5 @@
+*Switch to the Preview tab to read this message in the Github issue form.*
+
 The project lacks resources to answer questions regarding general usage and problems occurring from misconfiguration and or improper use. That's why we kindly ask you to following the following guidelines when considering opening an issue.
 
 **Before opening an issue:**
