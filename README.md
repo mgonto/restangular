@@ -84,6 +84,7 @@ Watch [a video introduction of a talk I gave at Devoxx France](http://www.parley
     - [How can I access the unrestangularized element as well as the restangularized one?](#how-can-i-access-the-unrestangularized-element-as-well-as-the-restangularized-one)
     - [Restangular fails with status code 0](#restangular-fails-with-status-code-0)
     - [Why does this depend on Lodash / Underscore?](#why-does-this-depend-on-lodash--underscore)
+    - [How do I cancel a request?](#how-do-i-cancel-a-request)
 - [Supported Angular versions](#supported-angular-versions)
 - [Server Frameworks](#server-frameworks)
 - [Releases Notes](#releases-notes)
@@ -1303,6 +1304,24 @@ This is typically caused by Cross Origin Request policy. In order to enable cros
 This is a very good question. I could've done the code so that I don't depend on Underscore nor Lodash, but I think both libraries make your life SO much easier. They have all of the "functional" stuff like map, reduce, filter, find, etc.
 With these libraries, you always work with immutable stuff, you get compatibility for browsers which don't implement ECMA5 nor some of these cool methods, and they're actually quicker.
 So, why not use it? If you've never heard of them, by using Restangular, you could start using them. Trust me, you're never going to give them up after this!
+
+**[Back to top](#table-of-contents)**
+
+#### How do I cancel a request?
+
+Sometimes you may wish to cancel a request, this is how you would do it:
+
+```
+var canceler = $q.defer();
+Restangular.all('users').withHttpConfig({timeout: canceler.promise}).get();
+canceler.resolve(); // cancels the request
+```
+
+This is a little counterintuitive, so let me explain. Restangular is built on top of `$http`, which takes a timeout parameter. As per the $http docs:
+
+    timeout in milliseconds, or promise that should abort the request when resolved.
+
+Resolving the promise (canceler in this case), will cancel the request.
 
 **[Back to top](#table-of-contents)**
 

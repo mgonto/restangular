@@ -17,3 +17,8 @@ The project lacks resources to answer questions regarding general usage and prob
 * Please **enclose your code in [fenced blocks](https://help.github.com/articles/creating-and-highlighting-code-blocks/)** for readability.
 
 The maintainers may opt to close issues that don't follow these guidelines.
+
+**Also remember:**
+
+* Pull requests fixing problems are highly appreciated ;)
+
