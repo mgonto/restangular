@@ -1,4 +1,4 @@
-/* global describe, beforeEach, inject, afterEach, it, expect, spyOn */
+/* global describe, beforeEach, inject, afterEach, it, expect, spyOn, jasmine */
 /* jshint unused: false */
 describe('Restangular', function() {
   // API
@@ -952,18 +952,65 @@ describe('Restangular', function() {
     });
 
     it('should copy an object and "fromServer" param should be the same with the copied object', function() {
+      var responseHandler = jasmine.createSpy();
+
       // with fromServer=true
-      restangularAccount1.get().then(function(account) {
-        var copiedAccount = Restangular.copy(account);
-        expect(account.fromServer).toEqual(copiedAccount.fromServer);
-      });
+      restangularAccount1.get().then(responseHandler);
+      $httpBackend.flush();
+      var account = responseHandler.calls[0].args[0],
+        copiedAccount = Restangular.copy(account);
+      expect(account.fromServer).toEqual(true);
+      expect(copiedAccount.fromServer).toEqual(true);
 
       // with fromServer=false
+      account = Restangular.one('accounts', 123),
+        copiedAccount = Restangular.copy(account);
+      expect(account.fromServer).toEqual(false);
+      expect(copiedAccount.fromServer).toEqual(false);
+    });
+
+    it('should copy a collection and "fromServer" param should stay the same', function () {
+      var responseHandler = jasmine.createSpy();
+
+      // with collections, fromServer=false
+      var accounts = Restangular.all('accounts'),
+        copiedAccounts = Restangular.copy(accounts);
+      expect(accounts.fromServer).toEqual(false);
+      expect(copiedAccounts.fromServer).toEqual(false);
+
+      // with collections, fromServer = true;
+      restangularAccounts.getList().then(responseHandler);
+      $httpBackend.flush();
+      accounts = responseHandler.calls[0].args[0],
+        copiedAccounts = Restangular.copy(accounts);
+      expect(accounts.fromServer).toEqual(true);
+      expect(copiedAccounts.fromServer).toEqual(true);
+    });
+
+    it('should copy an object and "route" param should be the same in the copied object', function () {
+      // for element
       var account = Restangular.one('accounts', 123),
         copiedAccount = Restangular.copy(account);
-      expect(account.fromServer).toEqual(copiedAccount.fromServer);
+      expect(account.route).toEqual(copiedAccount.route);
 
-      $httpBackend.flush();
+      // for collection
+      var accounts = Restangular.all('accounts'),
+        copiedAccounts = Restangular.copy(accounts);
+      expect(accounts.route).toEqual(copiedAccounts.route);
+    });
+
+    it('should copy an object and the parent property should stay the same', function () {
+      // element
+      var user = Restangular.one('account', 12).one('user', 14),
+        userCopy = Restangular.copy(user);
+      expect(user.parentResource.route).toEqual('account');
+      expect(userCopy.parentResource.route).toEqual('account');
+
+      // collection
+      var users = Restangular.one('account', 12).all('users'),
+        usersCopy = Restangular.copy(users);
+      expect(user.parentResource.route).toEqual('account');
+      expect(usersCopy.parentResource.route).toEqual('account');
     });
   });
 
