@@ -492,7 +492,7 @@
         var matchTransformers = config.matchTransformers;
         if (matchTransformers) {
           _.each(matchTransformers, function(transformer) {
-            if (route.match(transformer.regexp)) {
+            if (transformer.regexp.test(route)) {
               changedElem = transformer.transformer(isCollection, changedElem);
             }
           });
