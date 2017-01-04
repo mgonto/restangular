@@ -1,9 +1,12 @@
+/* global describe, beforeEach, inject, afterEach, it, expect, spyOn */
+/* jshint unused: false */
 describe('Restangular', function() {
   // API
-  var Restangular, $httpBackend;
-  var accountsModel, restangularAccounts, restangularAccount0, restangularAccount1;
-  var accountsHalModel;
-  var messages, newAccount, nextAccountId;
+  var Restangular, $httpBackend,
+      accountsModel, restangularAccounts, restangularAccount0, restangularAccount1,
+      infoModel, accountsDoSomethingModel, customers, publications, newCustomer,
+      accountsHalModel,
+      messages, newAccount, nextAccountId;
 
   // Load required modules
   beforeEach(angular.mock.module('restangular'));
@@ -873,7 +876,7 @@ describe('Restangular', function() {
       }).then(function(accountFromServer2) {
         expect(accountFromServer2.route).toBe(account1.route);
       });
-      $httpBackend.flush()
+      $httpBackend.flush();
     });
 
     it('Should make RequestLess connections with one', function() {
@@ -1018,7 +1021,7 @@ describe('Restangular', function() {
     });
 
     it('should allow for a custom method to be placed at the model level when several models are requested', function() {
-      var accountPromise;
+      var accountsPromise;
 
       Restangular.addElementTransformer('accounts', false, function(model) {
         model.prettifyAmount = function() {};
@@ -1028,7 +1031,7 @@ describe('Restangular', function() {
       accountsPromise = Restangular.all('accounts', 1).getList();
 
       accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account, index) {
+        accounts.forEach(function(account) {
           expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
@@ -1036,8 +1039,8 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it("should allow for a custom method to be placed at the collection level using a regexp matching the route", function() {
-      var accountPromise;
+    it('should allow for a custom method to be placed at the collection level using a regexp matching the route', function() {
+      var accountsPromise;
 
       Restangular.addElementTransformer(/^accounts/, false, function(model) {
         model.prettifyAmount = function() {};
@@ -1047,15 +1050,15 @@ describe('Restangular', function() {
       accountsPromise = Restangular.all('accounts/search/byOwner', 1).getList();
 
       accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account, index) {
-          expect(typeof account.prettifyAmount).toEqual("function");
+        accounts.forEach(function(account) {
+          expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
 
       $httpBackend.flush();
     });
 
-    it("should allow for a custom method to be placed at the model level using regexp route when one model is requested", function() {
+    it('should allow for a custom method to be placed at the model level using regexp route when one model is requested', function() {
       var accountPromise;
 
       Restangular.addElementTransformer(/^accounts/, false, function(model) {
@@ -1066,14 +1069,14 @@ describe('Restangular', function() {
       accountPromise = Restangular.one('accounts', 1).get();
 
       accountPromise.then(function(account) {
-        expect(typeof account.prettifyAmount).toEqual("function");
+        expect(typeof account.prettifyAmount).toEqual('function');
       });
 
       $httpBackend.flush();
     });
 
-    it("should allow for a custom method to be placed at the model level using regexp when several models are requested", function() {
-      var accountPromise;
+    it('should allow for a custom method to be placed at the model level using regexp when several models are requested', function() {
+      var accountsPromise;
 
       Restangular.addElementTransformer(/^accounts/, false, function(model) {
         model.prettifyAmount = function() {};
@@ -1083,8 +1086,8 @@ describe('Restangular', function() {
       accountsPromise = Restangular.all('accounts', 1).getList();
 
       accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account, index) {
-          expect(typeof account.prettifyAmount).toEqual("function");
+        accounts.forEach(function(account) {
+          expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
 
@@ -1244,7 +1247,7 @@ describe('Restangular', function() {
     });
 
     it('getRestangularUrl() returns still the url without id after GET', function() {
-      record = Restangular.one('info', 0, true);
+      var record = Restangular.one('info', 0, true);
       record.get().then(function(data) {
         expect(data.getRestangularUrl()).toEqual('/info');
       });
