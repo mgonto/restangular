@@ -1105,6 +1105,24 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
+    it('should work with cloned collections', function () {
+      var responseHandler = jasmine.createSpy();
+
+      Restangular.addElementTransformer(/^accounts/, true, function(collection) {
+        collection.customThing = 'customValue';
+        return collection;
+      });
+
+      Restangular.all('accounts').getList().then(responseHandler);
+      $httpBackend.flush();
+
+      var accounts = responseHandler.calls[0].args[0];
+      var accountsCopy = accounts.clone();
+
+      expect(accounts.customThing).toEqual('customValue');
+      expect(accountsCopy.customThing).toEqual('customValue');
+    });
+
     it('should allow for a custom method to be placed at the model level using regexp route when one model is requested', function() {
       var accountPromise;
 

@@ -996,10 +996,31 @@
           elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
         }
 
-        function copyRestangularizedElement(fromElement, toElement) {
-          var copiedElement = angular.copy(fromElement, toElement);
-          return restangularizeElem(fromElement[config.restangularFields.parentResource],
-            copiedElement, fromElement[config.restangularFields.route], fromElement[config.restangularFields.fromServer]);
+        function copyRestangularizedElement(element) {
+          var copiedElement = angular.copy(element);
+
+          // check if we're dealing with a collection (i.e. an array)
+          // and restangularize the element using the proper restangularizer,
+          // element / collection
+          if (_.isArray(element)) {
+            return restangularizeCollection(
+              element[config.restangularFields.parentResource],
+              copiedElement,
+              element[config.restangularFields.route],
+              element[config.restangularFields.fromServer],
+              element[config.restangularFields.reqParams]
+            );
+          }
+
+          // not a collection, restangularize it as an element
+          return restangularizeElem(
+            element[config.restangularFields.parentResource],
+            copiedElement,
+            element[config.restangularFields.route],
+            element[config.restangularFields.fromServer],
+            element[config.restangularFields.restangularCollection],
+            element[config.restangularFields.reqParams]
+          );
         }
 
         function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
