@@ -1,6 +1,10 @@
 <a name="Unreleased"></a>
 # Unreleased (2017-01-05)
 
+* chore(changelog): upgrade package and config ([58caacd](https://github.com/mgonto/restangular/commit/58caacd))
+* chore(dependencies): Update lodash version to ~4.17.0 as in unit tests ([e0b68a0](https://github.com/mgonto/restangular/commit/e0b68a0))
+* chore(deps): upgrade dev dependencies, fix tests (#1450) ([b583197](https://github.com/mgonto/restangular/commit/b583197)), closes [#1450](https://github.com/mgonto/restangular/issues/1450)
+* chore(travis): change travis script and include coveralls ([ca9856a](https://github.com/mgonto/restangular/commit/ca9856a))
 * test(coverage): add coverage and coveralls.io integration ([fdd5de6](https://github.com/mgonto/restangular/commit/fdd5de6))
 * chore(docs) Add new example production site ([2596035](https://github.com/mgonto/restangular/commit/2596035))
 * chore(docs) Add note about pull requests and github preview tab ([6883075](https://github.com/mgonto/restangular/commit/6883075))
@@ -14,9 +18,6 @@
 * fix(copy) Copying collections now correctly sets route, fromServer and parent on the copy ([7fd668b](https://github.com/mgonto/restangular/commit/7fd668b))
 * fix(elementTransformer) matchTransformer now doesn't throw if route is undefined ([fb242ae](https://github.com/mgonto/restangular/commit/fb242ae))
 * Update dist files ([7c245a2](https://github.com/mgonto/restangular/commit/7c245a2))
-* chore(dependencies): Update lodash version to ~4.17.0 as in unit tests ([e0b68a0](https://github.com/mgonto/restangular/commit/e0b68a0))
-
-
 
 
 
