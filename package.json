@@ -43,7 +43,7 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-conventional-changelog": "0.0.12",
+    "grunt-conventional-changelog": "latest",
     "grunt-coveralls": "^1.0.1",
     "grunt-karma": "latest",
     "grunt-zip": "*",

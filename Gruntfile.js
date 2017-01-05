@@ -102,9 +102,28 @@ module.exports = function(grunt) {
         }
       },
     },
-    changelog: {
+    conventionalChangelog: {
       options: {
-        dest: 'CHANGELOG.md'
+        changelogOpts: {
+          // conventional-changelog options go here
+          outputUnreleased: true,
+          // preset: 'angular'
+        },
+        context: {
+          // context goes here
+        },
+        gitRawCommitsOpts: {
+          // git-raw-commits options go here
+        },
+        parserOpts: {
+          // conventional-commits-parser options go here
+        },
+        writerOpts: {
+          // conventional-changelog-writer options go here
+        }
+      },
+      release: {
+        src: 'CHANGELOG.md'
       }
     }
   });
@@ -142,6 +161,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test-debug', ['karma:debug']);
 
   grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore']);
+
+  grunt.registerTask('changelog', ['conventionalChangelog']);
 
   // Provides the "bump" task.
   grunt.registerTask('bump', 'Increment version number', function() {

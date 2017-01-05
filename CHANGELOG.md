@@ -1,4 +1,23 @@
-# Unreleased
+<a name="Unreleased"></a>
+# Unreleased (2017-01-05)
+
+* test(coverage): add coverage and coveralls.io integration ([fdd5de6](https://github.com/mgonto/restangular/commit/fdd5de6))
+* chore(docs) Add new example production site ([2596035](https://github.com/mgonto/restangular/commit/2596035))
+* chore(docs) Add note about pull requests and github preview tab ([6883075](https://github.com/mgonto/restangular/commit/6883075))
+* chore(docs) Apply automatic formatting to code and spec ([bc16122](https://github.com/mgonto/restangular/commit/bc16122))
+* chore(docs) Reformat changelog, add unreleased section ([8bfa685](https://github.com/mgonto/restangular/commit/8bfa685))
+* chore(docs) Update issue guidelines to include StackOverflow as source for solutions to problems ([34b0e9a](https://github.com/mgonto/restangular/commit/34b0e9a))
+* chore(docs) Update link to demo Plunker, rephrase ([7c30615](https://github.com/mgonto/restangular/commit/7c30615))
+* chore(test) fix jshint errors in spec file ([1a988cb](https://github.com/mgonto/restangular/commit/1a988cb))
+* feat(docs) Add FAQ about cancelling request ([8552c51](https://github.com/mgonto/restangular/commit/8552c51)), closes [#926](https://github.com/mgonto/restangular/issues/926) [#1145](https://github.com/mgonto/restangular/issues/1145) [#1377](https://github.com/mgonto/restangular/issues/1377) [#1391](https://github.com/mgonto/restangular/issues/1391)
+* fix(copy) Collections are now copied/cloned properly ([c92b138](https://github.com/mgonto/restangular/commit/c92b138))
+* fix(copy) Copying collections now correctly sets route, fromServer and parent on the copy ([7fd668b](https://github.com/mgonto/restangular/commit/7fd668b))
+* fix(elementTransformer) matchTransformer now doesn't throw if route is undefined ([fb242ae](https://github.com/mgonto/restangular/commit/fb242ae))
+* Update dist files ([7c245a2](https://github.com/mgonto/restangular/commit/7c245a2))
+* chore(dependencies): Update lodash version to ~4.17.0 as in unit tests ([e0b68a0](https://github.com/mgonto/restangular/commit/e0b68a0))
+
+
+
 
 
 # 1.6.0 (2016-12-25)
