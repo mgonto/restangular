@@ -160,7 +160,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test-debug', ['karma:debug']);
 
-  grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore']);
+  grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore', 'coveralls']);
 
   grunt.registerTask('changelog', ['conventionalChangelog']);
 
