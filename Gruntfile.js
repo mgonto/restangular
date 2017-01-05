@@ -85,6 +85,23 @@ module.exports = function(grunt) {
         autoWatch: true
       }
     },
+    coveralls: {
+      // Options relevant to all targets
+      options: {
+        // When true, grunt-coveralls will only print a warning rather than
+        // an error, to prevent CI builds from failing unnecessarily (e.g. if
+        // coveralls.io is down). Optional, defaults to false.
+        force: false
+      },
+
+      restangular: {
+        // LCOV coverage file (can be string, glob or array)
+        src: 'coverage/**/lcov.info',
+        options: {
+          // Any options for just this target
+        }
+      },
+    },
     changelog: {
       options: {
         dest: 'CHANGELOG.md'
@@ -110,6 +127,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-conventional-changelog');
 
   grunt.loadNpmTasks('grunt-zip');
+
+  grunt.loadNpmTasks('grunt-coveralls');
 
 
   // Default task.
