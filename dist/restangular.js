@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.6.0 - 2017-01-05 * @link https://github.com/mgonto/restangular
+ * @version v1.6.1 - 2017-01-06 * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gon.to>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */(function(root, factory) {

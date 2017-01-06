@@ -1,11 +1,16 @@
-<a name="Unreleased"></a>
-# Unreleased (2017-01-05)
+<a name="1.6.1"></a>
+## 1.6.1 (2017-01-06)
 
-* chore(changelog): upgrade package and config ([58caacd](https://github.com/mgonto/restangular/commit/58caacd))
-* chore(dependencies): Update lodash version to ~4.17.0 as in unit tests ([e0b68a0](https://github.com/mgonto/restangular/commit/e0b68a0))
-* chore(deps): upgrade dev dependencies, fix tests (#1450) ([b583197](https://github.com/mgonto/restangular/commit/b583197)), closes [#1450](https://github.com/mgonto/restangular/issues/1450)
-* chore(travis): change travis script and include coveralls ([ca9856a](https://github.com/mgonto/restangular/commit/ca9856a))
-* test(coverage): add coverage and coveralls.io integration ([fdd5de6](https://github.com/mgonto/restangular/commit/fdd5de6))
+### Bug fixes
+
+* fix(copy) Collections are now copied/cloned properly ([c92b138](https://github.com/mgonto/restangular/commit/c92b138))
+* fix(copy) Copying collections now correctly sets route, fromServer and parent on the copy ([7fd668b](https://github.com/mgonto/restangular/commit/7fd668b))
+* fix(elementTransformer) matchTransformer now doesn't throw if route is undefined ([fb242ae](https://github.com/mgonto/restangular/commit/fb242ae))
+
+### Docs
+
+* chore(docs): update contribution guidelines ([c49ca45](https://github.com/mgonto/restangular/commit/c49ca45))
+* fix(docs): add link to david-dm.org from badge ([2bfb745](https://github.com/mgonto/restangular/commit/2bfb745))
 * chore(docs) Add new example production site ([2596035](https://github.com/mgonto/restangular/commit/2596035))
 * chore(docs) Add note about pull requests and github preview tab ([6883075](https://github.com/mgonto/restangular/commit/6883075))
 * chore(docs) Apply automatic formatting to code and spec ([bc16122](https://github.com/mgonto/restangular/commit/bc16122))
@@ -14,14 +19,18 @@
 * chore(docs) Update link to demo Plunker, rephrase ([7c30615](https://github.com/mgonto/restangular/commit/7c30615))
 * chore(test) fix jshint errors in spec file ([1a988cb](https://github.com/mgonto/restangular/commit/1a988cb))
 * feat(docs) Add FAQ about cancelling request ([8552c51](https://github.com/mgonto/restangular/commit/8552c51)), closes [#926](https://github.com/mgonto/restangular/issues/926) [#1145](https://github.com/mgonto/restangular/issues/1145) [#1377](https://github.com/mgonto/restangular/issues/1377) [#1391](https://github.com/mgonto/restangular/issues/1391)
-* fix(copy) Collections are now copied/cloned properly ([c92b138](https://github.com/mgonto/restangular/commit/c92b138))
-* fix(copy) Copying collections now correctly sets route, fromServer and parent on the copy ([7fd668b](https://github.com/mgonto/restangular/commit/7fd668b))
-* fix(elementTransformer) matchTransformer now doesn't throw if route is undefined ([fb242ae](https://github.com/mgonto/restangular/commit/fb242ae))
+
+### Other
+
+* chore(changelog): upgrade package and config ([58caacd](https://github.com/mgonto/restangular/commit/58caacd))
+* chore(dependencies): Update lodash version to ~4.17.0 as in unit tests ([e0b68a0](https://github.com/mgonto/restangular/commit/e0b68a0))
+* chore(deps): upgrade dev dependencies, fix tests (#1450) ([b583197](https://github.com/mgonto/restangular/commit/b583197)), closes [#1450](https://github.com/mgonto/restangular/issues/1450)
+* chore(travis): change travis script and include coveralls ([ca9856a](https://github.com/mgonto/restangular/commit/ca9856a))
+* test(coverage): add coverage and coveralls.io integration ([fdd5de6](https://github.com/mgonto/restangular/commit/fdd5de6))
 * Update dist files ([7c245a2](https://github.com/mgonto/restangular/commit/7c245a2))
 
-
-
-# 1.6.0 (2016-12-25)
+<a name="1.6.0"></a>
+## 1.6.0 (2016-12-25)
 
 * Url now supports unescaped suffix (0350bcd)
 * Added Restangular Plunkr example (c4ef002)
@@ -43,11 +52,13 @@
 * Added context/explanation of when to use JSONP. (fec9b27)
 * Add regexp matching for route to element transformers (#1430) (de8f561)
 
-# 1.5.2 (2016-02-15)
+<a name="1.5.2"></a>
+## 1.5.2 (2016-02-15)
 
 * Change \_.contains to \_.includes for compatability with lodash >= 4.0
 
-# 1.5.1 (2015-04-03)
+<a name="1.5.1"></a>
+## 1.5.1 (2015-04-03)
 
 * Release 1.5.0
 * Updated zip
@@ -59,7 +70,8 @@
 * Update README.md
 * Update README.md
 
-# 1.5.0 (2015-04-03)
+<a name="1.5.0"></a>
+## 1.5.0 (2015-04-03)
 
 * Tons of bug fixes
 * Upgraded Lodash to 1.3.0
