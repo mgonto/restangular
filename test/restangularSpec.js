@@ -1377,6 +1377,29 @@ describe('Restangular', function () {
       Restangular.all('accounts').customDELETE(0);
       $httpBackend.flush();
     });
+
+    it('should accept reserved properties as keys in POST data when POSTing raw data', function () {
+      // https://github.com/mgonto/restangular/issues/374
+      $httpBackend.expectPOST('/accounts/1/merge', {ids: 'test', options: 'foo', clone: 'bar'}).respond(200);
+      var parent = Restangular.restangularizeElement(null, {id: 1}, 'accounts', true);
+      parent.post('merge', {ids: 'test', options: 'foo', clone: 'bar'});
+      $httpBackend.flush();
+    });
+
+    it('should accept reserved properties as a key in POST data when using a restangularized element by configuring restangularFields', function () {
+      // https://github.com/mgonto/restangular/issues/374
+      $httpBackend.expectPOST('/accounts', {ids: 'test', options: 'foo', clone: 'bar'}).respond(200);
+      Restangular.setRestangularFields({
+        ids: '_ids',
+        clone: '_clone',
+        options: '_options'
+      });
+      var parent = Restangular.restangularizeElement(null, {ids: 'test', options: 'foo', clone: 'bar'}, 'accounts', false);
+      parent.save();
+      $httpBackend.flush();
+    });
+
+
   });
 
   describe('testing normalize url', function () {
