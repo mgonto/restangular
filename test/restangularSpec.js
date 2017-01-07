@@ -1,168 +1,211 @@
-/* global describe, beforeEach, inject, afterEach, it, expect, spyOn, jasmine */
+/* global describe, beforeEach, afterEach, it, expect, spyOn, jasmine */
 /* jshint unused: false */
-describe('Restangular', function() {
+describe('Restangular', function () {
   // API
-  var Restangular, $httpBackend,
-      accountsModel, restangularAccounts, restangularAccount0, restangularAccount1,
-      infoModel, accountsDoSomethingModel, customers, publications, newCustomer,
-      accountsHalModel,
-      messages, newAccount, nextAccountId;
+  var Restangular, $httpBackend, testData,
+    restangularAccounts, restangularAccount0, restangularAccount1;
 
   // Load required modules
-  beforeEach(angular.mock.module('restangular'));
+  beforeEach(function () {
+    // Load restangular module
+    angular.mock.module('restangular');
 
-  // Init HTTP mock backend and Restangular resources
-  beforeEach(inject(function($injector) {
-    // Model
-    accountsModel = [{
-      id: 0,
-      user: 'Martin ',
-      amount: 42,
-      transactions: []
-    }, {
-      id: 1,
-      user: 'Paul',
-      amount: 3.1416,
-      transactions: [{
-        from: 'Martin',
-        amount: 3,
-        id: 0
-      }, {
-        from: 'Anonymous',
-        amount: 0.1416,
-        id: 1
-      }]
-    }];
-    nextAccountId = 22;
+    // Get references to modules from the injector
+    angular.mock.inject(function ($injector) {
+      $httpBackend = $injector.get('$httpBackend');
+      Restangular = $injector.get('Restangular');
+    });
 
-    // HAL model (http://stateless.co/hal_specification.html)
-    accountsHalModel = [{
-      id: 0,
-      user: 'Martin',
-      amount: 42,
-      transaction: [],
-      _links: {
-        self: '/accountsHAL/martin'
-      }
-    }, {
-      id: 1,
-      user: 'Paul',
-      amount: 3.1416,
-      transaction: [{
-        from: 'Martin',
-        amount: 3,
+    // Restangularize a few demo accounts
+    restangularAccounts = Restangular.all('accounts');
+    restangularAccount0 = Restangular.one('accounts', 0);
+    restangularAccount1 = Restangular.one('accounts', 1);
+
+    // Create testdata for our tests
+    testData = {
+      // Model
+      accountsModel: [{
         id: 0,
+        user: 'Martin ',
+        amount: 42,
+        transactions: []
+      }, {
+        id: 1,
+        user: 'Paul',
+        amount: 3.1416,
+        transactions: [{
+          from: 'Martin',
+          amount: 3,
+          id: 0
+        }, {
+          from: 'Anonymous',
+          amount: 0.1416,
+          id: 1
+        }]
+      }],
+
+      nextAccountId: 22,
+
+      // HAL model (http://stateless.co/hal_specification.html)
+      accountsHalModel: [{
+        id: 0,
+        user: 'Martin',
+        amount: 42,
+        transaction: [],
         _links: {
-          self: '/accountsHAL/paul/transactions/0'
+          self: '/accountsHAL/martin'
         }
       }, {
-        from: 'Anonymous',
-        amount: 0.1416,
         id: 1,
+        user: 'Paul',
+        amount: 3.1416,
+        transaction: [{
+          from: 'Martin',
+          amount: 3,
+          id: 0,
+          _links: {
+            self: '/accountsHAL/paul/transactions/0'
+          }
+        }, {
+          from: 'Anonymous',
+          amount: 0.1416,
+          id: 1,
+          _links: {
+            self: '/accountsHAL/paul/transactions/1'
+          }
+        }],
         _links: {
-          self: '/accountsHAL/paul/transactions/1'
+          self: '/accountsHAL/paul'
         }
       }],
-      _links: {
-        self: '/accountsHAL/paul'
+
+      infoModel: {
+        id: 0,
+        text: 'Some additional account information'
+      },
+
+      newAccount: {
+        user: 'First User',
+        amount: 45,
+        transactions: []
+      },
+
+      messages: [{
+        id: 23,
+        name: 'Gonto'
+      }, {
+        id: 45,
+        name: 'John'
+      }],
+
+      accountsDoSomethingModel: {
+        result: 1
+      },
+
+      // Another API for testing
+      customers: [{
+        id: 0,
+        name: 'Alice',
+        status: 'active',
+        credit: 4000.0
+      }, {
+        id: 1,
+        name: 'Bob',
+        status: 'active',
+        credit: 4000.0
+      }, {
+        id: 2,
+        name: 'Carl',
+        status: 'active',
+        credit: 4000.0
+      }],
+      publications: [{
+        id: 1,
+        title: 'Sample',
+        content: 'Rich data',
+        tags: [
+          'science',
+          'chemistry'
+        ]
+      }],
+      newCustomer: {
+        id: 3,
+        name: 'New',
+        status: 'active',
+        credit: 4000.0
       }
-    }];
-
-    infoModel = {
-      id: 0,
-      text: 'Some additional account information'
     };
 
-    newAccount = {
-      user: 'First User',
-      amount: 45,
-      transactions: []
-    };
 
-    messages = [{
-      id: 23,
-      name: 'Gonto'
-    }, {
-      id: 45,
-      name: 'John'
-    }];
-
-    accountsDoSomethingModel = {
-      result: 1
-    };
-
-    $httpBackend = $injector.get('$httpBackend');
-
+    // Set up backend responses
     $httpBackend.when('HEAD', '/accounts').respond();
     $httpBackend.when('TRACE', '/accounts').respond();
     $httpBackend.when('OPTIONS', '/accounts').respond();
 
-    $httpBackend.whenGET('/accounts').respond(accountsModel);
-    $httpBackend.whenGET('/accounts/do-something').respond(accountsDoSomethingModel);
-    $httpBackend.whenJSONP('/accounts').respond(accountsModel);
-    $httpBackend.whenGET('/accounts/0,1').respond(accountsModel);
-    $httpBackend.whenGET('/accounts/messages').respond(messages);
-    $httpBackend.whenGET('/accounts/1/message').respond(messages[0]);
-    $httpBackend.whenGET('/accounts/1/messages').respond(messages);
-    $httpBackend.whenGET('/accounts/0').respond(accountsModel[0]);
-    $httpBackend.whenGET('/accounts/1').respond(accountsModel[1]);
-    $httpBackend.whenJSONP('/accounts/1').respond(accountsModel[1]);
-    $httpBackend.whenGET('/accounts/1/transactions').respond(accountsModel[1].transactions);
-    $httpBackend.whenGET('/accounts/1/transactions/1').respond(accountsModel[1].transactions[1]);
-    $httpBackend.whenGET('/accounts/search/byOwner').respond(accountsModel);
+    // CRUD /accounts
+    $httpBackend.whenGET('/accounts').respond(testData.accountsModel);
+    $httpBackend.whenJSONP('/accounts').respond(testData.accountsModel);
+    $httpBackend.whenPOST('/accounts').respond(function (method, url, data, headers) {
+      var newData = angular.fromJson(data);
+      newData.fromServer = true;
+      newData.id = testData.nextAccountId;
+      return [201, JSON.stringify(newData), ''];
+    });
+    $httpBackend.whenGET('/accounts/do-something').respond(testData.accountsDoSomethingModel);
+    $httpBackend.whenGET('/accounts/search/byOwner').respond(testData.accountsModel);
 
-    $httpBackend.whenGET('/info').respond(infoModel);
-    $httpBackend.whenGET('/accounts/1/info').respond(infoModel);
-    $httpBackend.whenPUT('/info').respond(function(method, url, data) {
+    // CRUD /accounts/{id}
+    $httpBackend.whenGET('/accounts/0,1').respond(testData.accountsModel);
+    $httpBackend.whenGET('/accounts/messages').respond(testData.messages);
+    $httpBackend.whenGET('/accounts/1/message').respond(testData.messages[0]);
+    $httpBackend.whenGET('/accounts/1/messages').respond(testData.messages);
+    $httpBackend.whenGET('/accounts/0').respond(testData.accountsModel[0]);
+    $httpBackend.whenGET('/accounts/1').respond(testData.accountsModel[1]);
+    $httpBackend.whenJSONP('/accounts/1').respond(testData.accountsModel[1]);
+    $httpBackend.whenGET('/accounts/1/transactions').respond(testData.accountsModel[1].transactions);
+    $httpBackend.whenGET('/accounts/1/transactions/1').respond(testData.accountsModel[1].transactions[1]);
+    $httpBackend.whenPOST('/accounts/1/transactions').respond(function (method, url, data, headers) {
+      return [201, '', ''];
+    });
+    $httpBackend.whenDELETE('/accounts/1/transactions/1').respond(function (method, url, data, headers) {
+      return [200, '', ''];
+    });
+    $httpBackend.whenDELETE('/accounts/1').respond(function (method, url, data, headers) {
+      return [200, '', ''];
+    });
+    $httpBackend.whenPOST('/accounts/1').respond(function (method, url, data, headers) {
+      return [200, '', ''];
+    });
+    $httpBackend.whenPUT('/accounts/1').respond(function (method, url, data, headers) {
+      testData.accountsModel[1] = angular.fromJson(data);
+      return [201, data, ''];
+    });
+
+
+    $httpBackend.whenGET('/info').respond(testData.infoModel);
+    $httpBackend.whenGET('/accounts/1/info').respond(testData.infoModel);
+    $httpBackend.whenPUT('/info').respond(function (method, url, data) {
       return [200, data, ''];
     });
 
-    $httpBackend.whenGET('/accountsHAL').respond(accountsHalModel);
-    $httpBackend.whenPUT('/accountsHAL/martin').respond(function(method, url, data) {
-      accountsHalModel[0] = angular.fromJson(data);
+    $httpBackend.whenGET('/accountsHAL').respond(testData.accountsHalModel);
+    $httpBackend.whenPUT('/accountsHAL/martin').respond(function (method, url, data) {
+      testData.accountsHalModel[0] = angular.fromJson(data);
       return [200, data, ''];
     });
 
     // Full URL
-    $httpBackend.whenGET('http://accounts.com/all').respond(accountsModel);
+    $httpBackend.whenGET('http://accounts.com/all').respond(testData.accountsModel);
 
-    $httpBackend.whenPOST('/accounts').respond(function(method, url, data, headers) {
-      var newData = angular.fromJson(data);
-      newData.fromServer = true;
-      newData.id = nextAccountId;
-      return [201, JSON.stringify(newData), ''];
-    });
-
-    $httpBackend.whenPOST('/accounts/1/transactions').respond(function(method, url, data, headers) {
-      return [201, '', ''];
-    });
-
-    $httpBackend.whenDELETE('/accounts/1/transactions/1').respond(function(method, url, data, headers) {
-      return [200, '', ''];
-    });
-
-    $httpBackend.whenDELETE('/accounts/1').respond(function(method, url, data, headers) {
-      return [200, '', ''];
-    });
-
-    $httpBackend.whenPOST('/accounts/1').respond(function(method, url, data, headers) {
-      return [200, '', ''];
-    });
-
-    $httpBackend.whenPUT('/accounts/1').respond(function(method, url, data, headers) {
-      accountsModel[1] = angular.fromJson(data);
-      return [201, data, ''];
-    });
-
-    $httpBackend.whenGET('/error').respond(function() {
+    $httpBackend.whenGET('/error').respond(function () {
       return [500, {}, ''];
     });
 
-    $httpBackend.whenGET('/misc/zero').respond(function() {
+    $httpBackend.whenGET('/misc/zero').respond(function () {
       return [200, 0, ''];
     });
 
-    $httpBackend.whenPOST('/customs').respond(function(method, url, data, headers) {
+    $httpBackend.whenPOST('/customs').respond(function (method, url, data, headers) {
       if (JSON.parse(data).one) {
         return [201, '', ''];
       } else {
@@ -173,85 +216,46 @@ describe('Restangular', function() {
     // return the status code given
     // e.g.: /error/404 returns 404 Not Found
     var urlRegex = /\/error\/(\d{3})/;
-    $httpBackend.whenGET(urlRegex).respond(function(method, url, data, headers) {
+    $httpBackend.whenGET(urlRegex).respond(function (method, url, data, headers) {
       return [url.match(urlRegex)[1], {}, ''];
     });
 
-    Restangular = $injector.get('Restangular');
-    restangularAccounts = Restangular.all('accounts');
-    restangularAccount0 = Restangular.one('accounts', 0);
-    restangularAccount1 = Restangular.one('accounts', 1);
-
-
-    // Another API for testing
-    customers = [{
-      id: 0,
-      name: 'Alice',
-      status: 'active',
-      credit: 4000.0
-    }, {
-      id: 1,
-      name: 'Bob',
-      status: 'active',
-      credit: 4000.0
-    }, {
-      id: 2,
-      name: 'Carl',
-      status: 'active',
-      credit: 4000.0
-    }];
-    publications = [{
-      id: 1,
-      title: 'Sample',
-      content: 'Rich data',
-      tags: [
-        'science',
-        'chemistry'
-      ]
-    }];
-    newCustomer = {
-      id: 3,
-      name: 'New',
-      status: 'active',
-      credit: 4000.0
-    };
-
-    $httpBackend.whenGET('/customers/').respond(customers);
-    $httpBackend.whenGET('http://localhost:8080/customers/').respond(customers);
-    $httpBackend.whenGET('api.new.domain/customers/').respond(customers);
-    $httpBackend.whenGET('/customers/?active=true').respond(customers);
-    $httpBackend.whenGET('/customers/publications/?tags=chemistry').respond(publications);
-    $httpBackend.whenPUT('/customers/0').respond(function(method, url, data) {
-      customers[0] = angular.fromJson(data);
+    $httpBackend.whenGET('/customers/').respond(testData.customers);
+    $httpBackend.whenGET('http://localhost:8080/customers/').respond(testData.customers);
+    $httpBackend.whenGET('api.new.domain/customers/').respond(testData.customers);
+    $httpBackend.whenGET('/customers/?active=true').respond(testData.customers);
+    $httpBackend.whenGET('/customers/publications/?tags=chemistry').respond(testData.publications);
+    $httpBackend.whenPUT('/customers/0').respond(function (method, url, data) {
+      testData.customers[0] = angular.fromJson(data);
       return [200, data, ''];
     });
-    $httpBackend.whenPOST('/customers/').respond(function(method, url, data, headers) {
+    $httpBackend.whenPOST('/customers/').respond(function (method, url, data, headers) {
       var newData = angular.fromJson(data);
       newData.fromServer = true;
       return [201, JSON.stringify(newData), ''];
     });
 
-  }));
+  }); // END OF BEFOREEACH
 
-  afterEach(function() {
+  afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-  describe('Interceptors', function() {
-    it('Should add multiple request and response interceptors', function() {
-      Restangular.addRequestInterceptor(function(elem) {
+  describe('Interceptors', function () {
+    it('Should add multiple request and response interceptors', function () {
+      Restangular.addRequestInterceptor(function (elem) {
         var elemCopy = angular.copy(elem);
         elemCopy.firstRequestInterceptor = true;
         return elemCopy;
       });
-      Restangular.addRequestInterceptor(function(elem) {
+      Restangular.addRequestInterceptor(function (elem) {
         expect(elem.firstRequestInterceptor).toBeDefined();
         var elemCopy = angular.copy(elem);
         elemCopy.secondRequestInterceptor = true;
         return elemCopy;
       });
-      Restangular.addFullRequestInterceptor(function(elem) {
+      Restangular.addFullRequestInterceptor(function (elem) {
         expect(elem.firstRequestInterceptor).toBeDefined();
         expect(elem.secondRequestInterceptor).toBeDefined();
         var elemCopy = angular.copy(elem);
@@ -261,20 +265,20 @@ describe('Restangular', function() {
         };
       });
 
-      Restangular.addResponseInterceptor(function(elem) {
+      Restangular.addResponseInterceptor(function (elem) {
         var elemCopy = angular.copy(elem);
         elemCopy.firstResponseInterceptor = true;
         return elemCopy;
       });
 
-      Restangular.addResponseInterceptor(function(elem) {
+      Restangular.addResponseInterceptor(function (elem) {
         expect(elem.firstResponseInterceptor).toBeDefined();
         var elemCopy = angular.copy(elem);
         elemCopy.secondResponseInterceptor = true;
         return elemCopy;
       });
 
-      $httpBackend.whenPOST('/list').respond(function(method, url, data, headers) {
+      $httpBackend.whenPOST('/list').respond(function (method, url, data, headers) {
         var elem = angular.fromJson(data);
         expect(elem.firstRequestInterceptor).toBeDefined();
         expect(elem.secondRequestInterceptor).toBeDefined();
@@ -286,7 +290,7 @@ describe('Restangular', function() {
 
       Restangular.all('list').post({
         name: 'Gonto'
-      }).then(function(elem) {
+      }).then(function (elem) {
         expect(elem.firstResponseInterceptor).toBeDefined();
         expect(elem.secondResponseInterceptor).toBeDefined();
       });
@@ -294,20 +298,20 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should add multiple error interceptors', function() {
+    it('Should add multiple error interceptors', function () {
       $httpBackend.expectGET('/error');
 
-      var CallbackManager = function() {};
-      CallbackManager.successCallback = function() {
+      var CallbackManager = function () {};
+      CallbackManager.successCallback = function () {
         expect(CallbackManager.successCallback).not.toHaveBeenCalled();
       };
-      CallbackManager.errorCallback = function() {
+      CallbackManager.errorCallback = function () {
         expect(CallbackManager.firstErrorInterceptor).toHaveBeenCalled();
         expect(CallbackManager.secondErrorInterceptor).toHaveBeenCalled();
       };
 
-      CallbackManager.firstErrorInterceptor = function() {};
-      CallbackManager.secondErrorInterceptor = function() {};
+      CallbackManager.firstErrorInterceptor = function () {};
+      CallbackManager.secondErrorInterceptor = function () {};
 
       spyOn(CallbackManager, 'successCallback').and.callThrough();
       spyOn(CallbackManager, 'firstErrorInterceptor').and.callThrough();
@@ -323,21 +327,21 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should add multiple error interceptors but don\'t reject the promise if one of them returns false', function() {
+    it('Should add multiple error interceptors but don\'t reject the promise if one of them returns false', function () {
       $httpBackend.expectGET('/error');
 
-      var CallbackManager = function() {};
-      CallbackManager.successCallback = function() {
+      var CallbackManager = function () {};
+      CallbackManager.successCallback = function () {
         expect(CallbackManager.successCallback).not.toHaveBeenCalled();
       };
-      CallbackManager.errorCallback = function() {
+      CallbackManager.errorCallback = function () {
         expect(CallbackManager.errorCallback).not.toHaveBeenCalled();
       };
 
-      CallbackManager.firstErrorInterceptor = function() {
+      CallbackManager.firstErrorInterceptor = function () {
         return true;
       };
-      CallbackManager.secondErrorInterceptor = function() {
+      CallbackManager.secondErrorInterceptor = function () {
         return false; // prevent promise to be rejected
       };
 
@@ -354,22 +358,22 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should add multiple error interceptors for a single get too', function() {
+    it('Should add multiple error interceptors for a single get too', function () {
       $httpBackend.expectGET('/error/404');
 
-      var CallbackManager = function() {};
-      CallbackManager.successCallback = function() {
+      var CallbackManager = function () {};
+      CallbackManager.successCallback = function () {
         expect(CallbackManager.successCallback).not.toHaveBeenCalled();
       };
-      CallbackManager.errorCallback = function() {
+      CallbackManager.errorCallback = function () {
         expect(CallbackManager.firstErrorInterceptor).toHaveBeenCalled();
         expect(CallbackManager.secondErrorInterceptor).toHaveBeenCalled();
       };
 
-      CallbackManager.firstErrorInterceptor = function(response) {
+      CallbackManager.firstErrorInterceptor = function (response) {
         expect(Number(response.status)).toEqual(404);
       };
-      CallbackManager.secondErrorInterceptor = function() {};
+      CallbackManager.secondErrorInterceptor = function () {};
 
       spyOn(CallbackManager, 'successCallback').and.callThrough();
       spyOn(CallbackManager, 'firstErrorInterceptor').and.callThrough();
@@ -386,17 +390,17 @@ describe('Restangular', function() {
     });
   });
 
-  describe('Transformers', function() {
-    it('Should decorate element both on server and local by default', function() {
+  describe('Transformers', function () {
+    it('Should decorate element both on server and local by default', function () {
 
-      Restangular.extendModel('accounts', function(account) {
-        account.extended = function() {
+      Restangular.extendModel('accounts', function (account) {
+        account.extended = function () {
           return true;
         };
         return account;
       });
 
-      Restangular.one('accounts', 1).get().then(function(account) {
+      Restangular.one('accounts', 1).get().then(function (account) {
         expect(account.extended).toBeDefined();
       });
 
@@ -409,9 +413,9 @@ describe('Restangular', function() {
 
   });
 
-  describe('With Suffix', function() {
-    it('shouldn\'t add suffix to getRestangularUrl', function() {
-      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+  describe('With Suffix', function () {
+    it('shouldn\'t add suffix to getRestangularUrl', function () {
+      var suffixRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
       var collection = suffixRestangular.all('accounts');
@@ -419,8 +423,8 @@ describe('Restangular', function() {
       expect(collection.one('1').getRestangularUrl()).toBe('/accounts/1');
     });
 
-    it('should add suffix to getRequestedUrl', function() {
-      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+    it('should add suffix to getRequestedUrl', function () {
+      var suffixRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
       var collection = suffixRestangular.all('accounts');
@@ -428,8 +432,8 @@ describe('Restangular', function() {
       expect(collection.one('1').getRequestedUrl()).toBe('/accounts/1.json');
     });
 
-    it('should add suffix to request', function() {
-      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+    it('should add suffix to request', function () {
+      var suffixRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
       var collection = suffixRestangular.all('accounts');
@@ -440,8 +444,8 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('shouldn\'t add suffix to allUrl', function() {
-      var suffixRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+    it('shouldn\'t add suffix to allUrl', function () {
+      var suffixRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
       $httpBackend.expectGET('http://accounts.com/all');
@@ -450,8 +454,8 @@ describe('Restangular', function() {
     });
   });
 
-  describe('JSONp', function() {
-    it('should work for get', function() {
+  describe('JSONp', function () {
+    it('should work for get', function () {
       Restangular.setJsonp(true);
       Restangular.one('accounts', 1).get();
 
@@ -459,7 +463,7 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should work for getList', function() {
+    it('should work for getList', function () {
       Restangular.setJsonp(true);
       Restangular.all('accounts').getList();
 
@@ -467,7 +471,7 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('shouldn\'t override post', function() {
+    it('shouldn\'t override post', function () {
       Restangular.setJsonp(true);
       restangularAccounts.post({
         id: 2,
@@ -481,9 +485,9 @@ describe('Restangular', function() {
 
   });
 
-  describe('Local data', function() {
-    it('Should restangularize a collection OK', function() {
-      var collection = angular.copy(accountsModel);
+  describe('Local data', function () {
+    it('Should restangularize a collection OK', function () {
+      var collection = angular.copy(testData.accountsModel);
 
       Restangular.restangularizeCollection(null, collection, 'accounts');
 
@@ -495,8 +499,8 @@ describe('Restangular', function() {
 
     });
 
-    it('Should restangularize a function with arguments OK', function() {
-      var collection = function(a, b) {};
+    it('Should restangularize a function with arguments OK', function () {
+      var collection = function (a, b) {};
 
       Restangular.restangularizeCollection(null, collection, 'accounts');
 
@@ -505,7 +509,7 @@ describe('Restangular', function() {
       expect(collection.getRestangularUrl()).toBe('/accounts');
     });
 
-    it('should have fromServer set when restangularizeElement is called with that param', function() {
+    it('should have fromServer set when restangularizeElement is called with that param', function () {
       var element = Restangular.restangularizeElement(null, {}, 'accounts', true);
       expect(element.fromServer).toEqual(true);
 
@@ -516,7 +520,7 @@ describe('Restangular', function() {
       expect(element.fromServer).toEqual(false);
     });
 
-    it('should have fromServer set when restangularizeCollection is called with that param', function() {
+    it('should have fromServer set when restangularizeCollection is called with that param', function () {
       var collection = Restangular.restangularizeCollection(null, [{}], 'accounts', true);
       expect(collection[0].fromServer).toEqual(true);
 
@@ -528,11 +532,11 @@ describe('Restangular', function() {
     });
   });
 
-  describe('restangularizePromiseIntercept', function() {
-    it('should be invoked by restangularizePromise', function() {
+  describe('restangularizePromiseIntercept', function () {
+    it('should be invoked by restangularizePromise', function () {
       var calledWithPromise;
 
-      Restangular.setRestangularizePromiseInterceptor(function(promise) {
+      Restangular.setRestangularizePromiseInterceptor(function (promise) {
         calledWithPromise = promise;
 
         promise.$object.$custom = true;
@@ -547,8 +551,8 @@ describe('Restangular', function() {
     });
   });
 
-  describe('$object', function() {
-    it('Should work for single get', function() {
+  describe('$object', function () {
+    it('Should work for single get', function () {
       var promise = Restangular.one('accounts', 1).get();
       var obj = promise.$object;
       expect(obj).toBeDefined();
@@ -559,9 +563,9 @@ describe('Restangular', function() {
       expect(obj.amount).toEqual(3.1416);
     });
 
-    it('Shouldn\'t be restangularized by default', function() {
-      Restangular.extendModel('accounts', function(account) {
-        account.extended = function() {
+    it('Shouldn\'t be restangularized by default', function () {
+      Restangular.extendModel('accounts', function (account) {
+        account.extended = function () {
           return true;
         };
         return account;
@@ -575,7 +579,7 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should work for single get', function() {
+    it('Should work for single get', function () {
       var promise = Restangular.all('accounts').getList();
       var list = promise.$object;
       expect(list).toBeDefined();
@@ -588,120 +592,120 @@ describe('Restangular', function() {
     });
   });
 
-  describe('ALL', function() {
-    it('getList() should return an array of items', function() {
-      restangularAccounts.getList().then(function(accounts) {
-        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
+  describe('ALL', function () {
+    it('getList() should return an array of items', function () {
+      restangularAccounts.getList().then(function (accounts) {
+        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(testData.accountsModel));
       });
 
       $httpBackend.flush();
     });
 
-    it('several getList() should return an array of items', function() {
+    it('several getList() should return an array of items', function () {
       $httpBackend.expectGET('/accounts/0,1');
-      Restangular.several('accounts', 0, 1).getList().then(function(accounts) {
-        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
+      Restangular.several('accounts', 0, 1).getList().then(function (accounts) {
+        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(testData.accountsModel));
       });
 
       $httpBackend.flush();
     });
 
-    it('several remove() should work', function() {
+    it('several remove() should work', function () {
       $httpBackend.expectDELETE('/accounts/0,1').respond([200, '', '']);
       Restangular.several('accounts', 0, 1).remove();
 
       $httpBackend.flush();
     });
 
-    it('get(id) should return the item with given id', function() {
-      restangularAccounts.get(0).then(function(account) {
-        expect(Restangular.stripRestangular(account)).toEqual(Restangular.stripRestangular(accountsModel[0]));
+    it('get(id) should return the item with given id', function () {
+      restangularAccounts.get(0).then(function (account) {
+        expect(Restangular.stripRestangular(account)).toEqual(Restangular.stripRestangular(testData.accountsModel[0]));
       });
 
       $httpBackend.flush();
     });
 
-    it('uses all to get the list without parameters', function() {
+    it('uses all to get the list without parameters', function () {
       Restangular.one('accounts', 1).all('messages').getList();
       $httpBackend.expectGET('/accounts/1/messages');
       $httpBackend.flush();
     });
 
-    it('Custom GET methods should work', function() {
-      restangularAccounts.customGETLIST('messages').then(function(msgs) {
-        expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(messages));
+    it('Custom GET methods should work', function () {
+      restangularAccounts.customGETLIST('messages').then(function (msgs) {
+        expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(testData.messages));
       });
 
       $httpBackend.flush();
     });
 
-    it('post() should add a new item', function() {
+    it('post() should add a new item', function () {
       restangularAccounts.post({
         id: 2,
         user: 'Someone'
-      }).then(function() {
-        expect(accountsModel.length).toEqual(2);
+      }).then(function () {
+        expect(testData.accountsModel.length).toEqual(2);
       });
 
       $httpBackend.expectPOST('/accounts').respond(201, '');
       $httpBackend.flush();
     });
 
-    it('customPOST() should add a new item', function() {
+    it('customPOST() should add a new item', function () {
       restangularAccounts.customPOST({
         id: 2,
         user: 'Someone'
-      }).then(function() {
-        expect(accountsModel.length).toEqual(2);
+      }).then(function () {
+        expect(testData.accountsModel.length).toEqual(2);
       });
 
       $httpBackend.expectPOST('/accounts').respond(201, '');
       $httpBackend.flush();
     });
 
-    it('post() should work with arrays', function() {
+    it('post() should work with arrays', function () {
       Restangular.all('places').post([{
         name: 'Gonto'
       }, {
         name: 'John'
-      }]).then(function(value) {
+      }]).then(function (value) {
         expect(value.length).toEqual(2);
       });
 
-      $httpBackend.expectPOST('/places').respond(function(method, url, data, headers) {
+      $httpBackend.expectPOST('/places').respond(function (method, url, data, headers) {
         return [201, angular.fromJson(data), ''];
       });
 
       $httpBackend.flush();
     });
 
-    it('post() should add a new item with data and return the data from the server', function() {
-      restangularAccounts.post(newAccount).then(function(added) {
+    it('post() should add a new item with data and return the data from the server', function () {
+      restangularAccounts.post(testData.newAccount).then(function (added) {
         expect(added.fromServer).toEqual(true);
-        expect(added.id).toEqual(nextAccountId);
-        expect(added.user).toEqual(newAccount.user);
+        expect(added.id).toEqual(testData.nextAccountId);
+        expect(added.user).toEqual(testData.newAccount.user);
       });
 
       $httpBackend.expectPOST('/accounts');
       $httpBackend.flush();
     });
 
-    it('Doing a post and then other operation (delete) should call right URLs', function() {
-      restangularAccounts.post(newAccount).then(function(added) {
+    it('Doing a post and then other operation (delete) should call right URLs', function () {
+      restangularAccounts.post(testData.newAccount).then(function (added) {
         added.remove();
-        $httpBackend.expectDELETE('/accounts/' + nextAccountId).respond(201, '');
+        $httpBackend.expectDELETE('/accounts/' + testData.nextAccountId).respond(201, '');
       });
 
       $httpBackend.flush();
     });
 
-    it('Doing a post to a server that returns no element will return undefined', function() {
-      restangularAccounts.getList().then(function(accounts) {
+    it('Doing a post to a server that returns no element will return undefined', function () {
+      restangularAccounts.getList().then(function (accounts) {
         var newTransaction = {
           id: 1,
           name: 'Gonto'
         };
-        accounts[1].post('transactions', newTransaction).then(function(transaction) {
+        accounts[1].post('transactions', newTransaction).then(function (transaction) {
           expect(transaction).toBeUndefined();
         });
       });
@@ -709,23 +713,23 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('head() should safely return', function() {
-      restangularAccounts.head().then(function() {
+    it('head() should safely return', function () {
+      restangularAccounts.head().then(function () {
         expect(true).toBe(true);
       });
       $httpBackend.flush();
     });
 
-    it('trace()  should safely return', function() {
-      restangularAccounts.trace().then(function() {
+    it('trace()  should safely return', function () {
+      restangularAccounts.trace().then(function () {
         expect(true).toBe(true);
       });
 
       $httpBackend.flush();
     });
 
-    it('customPUT should work', function() {
-      $httpBackend.expectPUT('/accounts/hey').respond(accountsModel);
+    it('customPUT should work', function () {
+      $httpBackend.expectPUT('/accounts/hey').respond(testData.accountsModel);
       restangularAccounts.customPUT({
         key: 'value'
       }, 'hey');
@@ -733,50 +737,50 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('customPATCH should work', function() {
+    it('customPATCH should work', function () {
       var data = {
         foo: 'bar'
       };
-      $httpBackend.expectPATCH('/accounts/hey', data).respond(accountsModel);
+      $httpBackend.expectPATCH('/accounts/hey', data).respond(testData.accountsModel);
       restangularAccounts.customPATCH(data, 'hey');
       $httpBackend.flush();
     });
 
-    it('options()  should safely return', function() {
-      restangularAccounts.options().then(function() {
+    it('options()  should safely return', function () {
+      restangularAccounts.options().then(function () {
         expect(true).toBe(true);
       });
 
       $httpBackend.flush();
     });
 
-    it('getList() should correctly handle params after customDELETE', function() {
-      $httpBackend.expectGET('/accounts?foo=1').respond(accountsModel);
+    it('getList() should correctly handle params after customDELETE', function () {
+      $httpBackend.expectGET('/accounts?foo=1').respond(testData.accountsModel);
       restangularAccounts.getList({
         foo: 1
-      }).then(function() {
+      }).then(function () {
         $httpBackend.expectDELETE('/accounts?id=1').respond(201, '');
         return restangularAccounts.customDELETE('', {
           id: 1
         });
-      }).then(function() {
-        $httpBackend.expectGET('/accounts?foo=1').respond(accountsModel);
+      }).then(function () {
+        $httpBackend.expectGET('/accounts?foo=1').respond(testData.accountsModel);
         return restangularAccounts.getList({
           foo: 1
         });
-      }).then(function(accounts) {
-        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(accountsModel));
+      }).then(function (accounts) {
+        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(testData.accountsModel));
       });
 
       $httpBackend.flush();
     });
   });
 
-  describe('Scoped Service', function() {
+  describe('Scoped Service', function () {
 
-    it('should correctly work', function() {
+    it('should correctly work', function () {
       var Accounts = Restangular.service('accounts');
-      Accounts.post(newAccount);
+      Accounts.post(testData.newAccount);
       Accounts.one(0).get();
       Accounts.getList();
 
@@ -786,9 +790,9 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should correctly work with children', function() {
+    it('should correctly work with children', function () {
       var Transactions = Restangular.service('transactions', restangularAccount1);
-      Transactions.post(newAccount);
+      Transactions.post(testData.newAccount);
       Transactions.one(1).get();
       Transactions.getList();
       Transactions.get(1);
@@ -800,9 +804,9 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should add custom collection method added with withConfig', function() {
-      var Accounts = Restangular.withConfig(function(RestangularConfigurer) {
-        RestangularConfigurer.addElementTransformer('accounts', true, function(worker) {
+    it('should add custom collection method added with withConfig', function () {
+      var Accounts = Restangular.withConfig(function (RestangularConfigurer) {
+        RestangularConfigurer.addElementTransformer('accounts', true, function (worker) {
           worker.addRestangularMethod('doSomething', 'get', 'do-something');
           return worker;
         });
@@ -811,7 +815,7 @@ describe('Restangular', function() {
       expect(Accounts.doSomething).toBeDefined();
       expect(_.isFunction(Accounts.doSomething)).toBeTruthy();
 
-      Accounts.post(newAccount);
+      Accounts.post(testData.newAccount);
       Accounts.one(0).get();
       Accounts.getList();
       Accounts.doSomething();
@@ -825,30 +829,30 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should provide a one-off $http configuration method', function() {
+    it('should provide a one-off $http configuration method', function () {
       var Accounts = Restangular.service('accounts');
       Accounts.withHttpConfig({
         transformRequest: angular.identity
       });
-      Accounts.post(newAccount);
+      Accounts.post(testData.newAccount);
       $httpBackend.expectPOST('/accounts');
       $httpBackend.flush();
     });
 
   });
 
-  describe('ONE', function() {
-    it('get() should return a JSON item', function() {
-      restangularAccount1.get().then(function(account) {
+  describe('ONE', function () {
+    it('get() should return a JSON item', function () {
+      restangularAccount1.get().then(function (account) {
         expect(Restangular.stripRestangular(account))
-          .toEqual(Restangular.stripRestangular(accountsModel[1]));
+          .toEqual(Restangular.stripRestangular(testData.accountsModel[1]));
       });
 
       $httpBackend.flush();
     });
 
-    it('Should save as put correctly', function() {
-      restangularAccount1.get().then(function(account) {
+    it('Should save as put correctly', function () {
+      restangularAccount1.get().then(function (account) {
         $httpBackend.expectPUT('/accounts/1');
         account.put();
       });
@@ -856,7 +860,7 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should save as post correctly', function() {
+    it('Should save as post correctly', function () {
       var account1 = angular.copy(restangularAccount1);
       $httpBackend.expectPOST('/accounts/1');
       account1.name = 'Hey';
@@ -865,52 +869,52 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should keep route property when element is created', function() {
+    it('Should keep route property when element is created', function () {
       var account1 = Restangular.restangularizeElement(null, {}, 'accounts');
       $httpBackend.expectPOST('/accounts');
       $httpBackend.expectPUT('/accounts/1');
       account1.name = 'Hey';
-      account1.save().then(function(accountFromServer) {
+      account1.save().then(function (accountFromServer) {
         accountFromServer.id = 1;
         return accountFromServer.save();
-      }).then(function(accountFromServer2) {
+      }).then(function (accountFromServer2) {
         expect(accountFromServer2.route).toBe(account1.route);
       });
       $httpBackend.flush();
     });
 
-    it('Should make RequestLess connections with one', function() {
-      restangularAccount1.one('transactions', 1).get().then(function(transaction) {
+    it('Should make RequestLess connections with one', function () {
+      restangularAccount1.one('transactions', 1).get().then(function (transaction) {
         expect(Restangular.stripRestangular(transaction))
-          .toEqual(Restangular.stripRestangular(accountsModel[1].transactions[1]));
+          .toEqual(Restangular.stripRestangular(testData.accountsModel[1].transactions[1]));
       });
 
       $httpBackend.flush();
     });
 
-    it('Should make RequestLess connections with all', function() {
-      restangularAccount1.all('transactions').getList().then(function(transactions) {
+    it('Should make RequestLess connections with all', function () {
+      restangularAccount1.all('transactions').getList().then(function (transactions) {
         expect(Restangular.stripRestangular(transactions))
-          .toEqual(Restangular.stripRestangular(accountsModel[1].transactions));
+          .toEqual(Restangular.stripRestangular(testData.accountsModel[1].transactions));
       });
 
       $httpBackend.flush();
     });
 
 
-    it('Custom GET methods should work', function() {
-      restangularAccount1.customGET('message').then(function(msg) {
-        expect(Restangular.stripRestangular(msg)).toEqual(Restangular.stripRestangular(messages[0]));
+    it('Custom GET methods should work', function () {
+      restangularAccount1.customGET('message').then(function (msg) {
+        expect(Restangular.stripRestangular(msg)).toEqual(Restangular.stripRestangular(testData.messages[0]));
       });
 
       $httpBackend.flush();
     });
 
-    it('put() should update the value', function() {
-      restangularAccount1.get().then(function(account) {
+    it('put() should update the value', function () {
+      restangularAccount1.get().then(function (account) {
         account.amount = 1.618;
-        account.put().then(function(newAc) {
-          expect(accountsModel[1].amount).toEqual(1.618);
+        account.put().then(function (newAc) {
+          expect(testData.accountsModel[1].amount).toEqual(1.618);
           newAc.remove();
           $httpBackend.expectDELETE('/accounts/1');
         });
@@ -922,11 +926,11 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should return an array when accessing a subvalue', function() {
-      restangularAccount1.get().then(function(account) {
-        account.getList('transactions').then(function(transactions) {
+    it('should return an array when accessing a subvalue', function () {
+      restangularAccount1.get().then(function (account) {
+        account.getList('transactions').then(function (transactions) {
           expect(Restangular.stripRestangular(transactions))
-            .toEqual(Restangular.stripRestangular(accountsModel[1].transactions));
+            .toEqual(Restangular.stripRestangular(testData.accountsModel[1].transactions));
         });
       });
 
@@ -934,16 +938,16 @@ describe('Restangular', function() {
     });
   });
 
-  describe('COPY', function() {
-    it('should copy an object and "this" should reference the copied object', function() {
-      var copiedAccount = Restangular.copy(accountsModel[0]);
+  describe('COPY', function () {
+    it('should copy an object and "this" should reference the copied object', function () {
+      var copiedAccount = Restangular.copy(testData.accountsModel[0]);
       var that;
 
       copiedAccount.user = 'Copied string';
-      expect(copiedAccount).not.toBe(accountsModel[0]);
+      expect(copiedAccount).not.toBe(testData.accountsModel[0]);
 
       // create a spy for one of the methods to capture the value of 'this'
-      spyOn(copiedAccount, 'getRestangularUrl').and.callFake(function() {
+      spyOn(copiedAccount, 'getRestangularUrl').and.callFake(function () {
         that = this;
       });
 
@@ -951,7 +955,7 @@ describe('Restangular', function() {
       expect(that).toBe(copiedAccount);
     });
 
-    it('should copy an object and "fromServer" param should be the same with the copied object', function() {
+    it('should copy an object and "fromServer" param should be the same with the copied object', function () {
       var responseHandler = jasmine.createSpy();
 
       // with fromServer=true
@@ -1014,16 +1018,16 @@ describe('Restangular', function() {
     });
   });
 
-  describe('getRestangularUrl', function() {
-    it('should return the generated URL when you chain Restangular methods together', function() {
+  describe('getRestangularUrl', function () {
+    it('should return the generated URL when you chain Restangular methods together', function () {
       var restangularSpaces = Restangular.one('accounts', 123).one('buildings', 456).all('spaces');
       expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
     });
   });
 
-  describe('getRestangularUrl with useCannonicalId set to true', function() {
-    it('should return the generated URL when you chain Restangular methods together', function() {
-      var R = Restangular.withConfig(function(config) {
+  describe('getRestangularUrl with useCannonicalId set to true', function () {
+    it('should return the generated URL when you chain Restangular methods together', function () {
+      var R = Restangular.withConfig(function (config) {
         config.setUseCannonicalId(true);
       });
       var restangularSpaces = R.one('accounts', 123).one('buildings', 456).all('spaces');
@@ -1032,53 +1036,53 @@ describe('Restangular', function() {
   });
 
 
-  describe('addElementTransformer', function() {
-    it('should allow for a custom method to be placed at the collection level', function() {
+  describe('addElementTransformer', function () {
+    it('should allow for a custom method to be placed at the collection level', function () {
       var accountsPromise;
 
-      Restangular.addElementTransformer('accounts', true, function(collection) {
-        collection.totalAmount = function() {};
+      Restangular.addElementTransformer('accounts', true, function (collection) {
+        collection.totalAmount = function () {};
         return collection;
       });
 
       accountsPromise = Restangular.all('accounts').getList();
 
-      accountsPromise.then(function(accounts) {
+      accountsPromise.then(function (accounts) {
         expect(typeof accounts.totalAmount).toEqual('function');
       });
 
       $httpBackend.flush();
     });
 
-    it('should allow for a custom method to be placed at the model level when one model is requested', function() {
+    it('should allow for a custom method to be placed at the model level when one model is requested', function () {
       var accountPromise;
 
-      Restangular.addElementTransformer('accounts', false, function(model) {
-        model.prettifyAmount = function() {};
+      Restangular.addElementTransformer('accounts', false, function (model) {
+        model.prettifyAmount = function () {};
         return model;
       });
 
       accountPromise = Restangular.one('accounts', 1).get();
 
-      accountPromise.then(function(account) {
+      accountPromise.then(function (account) {
         expect(typeof account.prettifyAmount).toEqual('function');
       });
 
       $httpBackend.flush();
     });
 
-    it('should allow for a custom method to be placed at the model level when several models are requested', function() {
+    it('should allow for a custom method to be placed at the model level when several models are requested', function () {
       var accountsPromise;
 
-      Restangular.addElementTransformer('accounts', false, function(model) {
-        model.prettifyAmount = function() {};
+      Restangular.addElementTransformer('accounts', false, function (model) {
+        model.prettifyAmount = function () {};
         return model;
       });
 
       accountsPromise = Restangular.all('accounts', 1).getList();
 
-      accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account) {
+      accountsPromise.then(function (accounts) {
+        accounts.forEach(function (account) {
           expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
@@ -1086,18 +1090,18 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should allow for a custom method to be placed at the collection level using a regexp matching the route', function() {
+    it('should allow for a custom method to be placed at the collection level using a regexp matching the route', function () {
       var accountsPromise;
 
-      Restangular.addElementTransformer(/^accounts/, false, function(model) {
-        model.prettifyAmount = function() {};
+      Restangular.addElementTransformer(/^accounts/, false, function (model) {
+        model.prettifyAmount = function () {};
         return model;
       });
 
       accountsPromise = Restangular.all('accounts/search/byOwner', 1).getList();
 
-      accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account) {
+      accountsPromise.then(function (accounts) {
+        accounts.forEach(function (account) {
           expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
@@ -1108,7 +1112,7 @@ describe('Restangular', function() {
     it('should work with cloned collections', function () {
       var responseHandler = jasmine.createSpy();
 
-      Restangular.addElementTransformer(/^accounts/, true, function(collection) {
+      Restangular.addElementTransformer(/^accounts/, true, function (collection) {
         collection.customThing = 'customValue';
         return collection;
       });
@@ -1123,35 +1127,35 @@ describe('Restangular', function() {
       expect(accountsCopy.customThing).toEqual('customValue');
     });
 
-    it('should allow for a custom method to be placed at the model level using regexp route when one model is requested', function() {
+    it('should allow for a custom method to be placed at the model level using regexp route when one model is requested', function () {
       var accountPromise;
 
-      Restangular.addElementTransformer(/^accounts/, false, function(model) {
-        model.prettifyAmount = function() {};
+      Restangular.addElementTransformer(/^accounts/, false, function (model) {
+        model.prettifyAmount = function () {};
         return model;
       });
 
       accountPromise = Restangular.one('accounts', 1).get();
 
-      accountPromise.then(function(account) {
+      accountPromise.then(function (account) {
         expect(typeof account.prettifyAmount).toEqual('function');
       });
 
       $httpBackend.flush();
     });
 
-    it('should allow for a custom method to be placed at the model level using regexp when several models are requested', function() {
+    it('should allow for a custom method to be placed at the model level using regexp when several models are requested', function () {
       var accountsPromise;
 
-      Restangular.addElementTransformer(/^accounts/, false, function(model) {
-        model.prettifyAmount = function() {};
+      Restangular.addElementTransformer(/^accounts/, false, function (model) {
+        model.prettifyAmount = function () {};
         return model;
       });
 
       accountsPromise = Restangular.all('accounts', 1).getList();
 
-      accountsPromise.then(function(accounts) {
-        accounts.forEach(function(account) {
+      accountsPromise.then(function (accounts) {
+        accounts.forEach(function (account) {
           expect(typeof account.prettifyAmount).toEqual('function');
         });
       });
@@ -1161,12 +1165,12 @@ describe('Restangular', function() {
 
   });
 
-  describe('extendCollection', function() {
-    it('should be an alias for a specific invocation of addElementTransformer', function() {
+  describe('extendCollection', function () {
+    it('should be an alias for a specific invocation of addElementTransformer', function () {
       var spy = spyOn(Restangular, 'addElementTransformer');
 
-      var fn = function(collection) {
-        collection.totalAmount = function() {};
+      var fn = function (collection) {
+        collection.totalAmount = function () {};
         return collection;
       };
 
@@ -1176,12 +1180,12 @@ describe('Restangular', function() {
     });
   });
 
-  describe('extendModel', function() {
-    it('should be an alias for a specific invocation of addElementTransformer', function() {
+  describe('extendModel', function () {
+    it('should be an alias for a specific invocation of addElementTransformer', function () {
       var spy = spyOn(Restangular, 'addElementTransformer');
 
-      var fn = function(model) {
-        model.prettifyAmount = function() {};
+      var fn = function (model) {
+        model.prettifyAmount = function () {};
         return model;
       };
 
@@ -1191,8 +1195,8 @@ describe('Restangular', function() {
     });
   });
 
-  describe('headers', function() {
-    it('should return defaultHeaders', function() {
+  describe('headers', function () {
+    it('should return defaultHeaders', function () {
       var defaultHeaders = {
         testheader: 'header value'
       };
@@ -1200,9 +1204,9 @@ describe('Restangular', function() {
       expect(Restangular.defaultHeaders).toEqual(defaultHeaders);
     });
 
-    it('should pass uppercase methods in X-HTTP-Method-Override', function() {
+    it('should pass uppercase methods in X-HTTP-Method-Override', function () {
       Restangular.setMethodOverriders(['put']);
-      $httpBackend.expectPOST('/overriders/1').respond(function(method, url, data, headers) {
+      $httpBackend.expectPOST('/overriders/1').respond(function (method, url, data, headers) {
         expect(headers['X-HTTP-Method-Override']).toBe('PUT');
         return {};
       });
@@ -1211,8 +1215,8 @@ describe('Restangular', function() {
     });
   });
 
-  describe('defaultRequestParams', function() {
-    it('should return defaultRequestParams', function() {
+  describe('defaultRequestParams', function () {
+    it('should return defaultRequestParams', function () {
       var defaultRequestParams = {
         param: 'value'
       };
@@ -1222,7 +1226,7 @@ describe('Restangular', function() {
       expect(Restangular.requestParams.common).toEqual(defaultRequestParams);
     });
 
-    it('should be able to set default params for get, post, put.. methods separately', function() {
+    it('should be able to set default params for get, post, put.. methods separately', function () {
       var postParams = {
           post: 'value'
         },
@@ -1239,7 +1243,7 @@ describe('Restangular', function() {
       expect(Restangular.requestParams.common).not.toEqual(putParams);
     });
 
-    it('should be able to set default params for multiple methods with array', function() {
+    it('should be able to set default params for multiple methods with array', function () {
       var defaultParams = {
         param: 'value'
       };
@@ -1253,9 +1257,9 @@ describe('Restangular', function() {
     });
   });
 
-  describe('withConfig', function() {
-    it('should create new service with scoped configuration', function() {
-      var childRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+  describe('withConfig', function () {
+    it('should create new service with scoped configuration', function () {
+      var childRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setBaseUrl('/api/v1');
       });
 
@@ -1264,12 +1268,12 @@ describe('Restangular', function() {
 
     });
 
-    it('should allow nested configurations', function() {
-      var childRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+    it('should allow nested configurations', function () {
+      var childRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setBaseUrl('/api/v1');
       });
 
-      var grandchildRestangular = childRestangular.withConfig(function(RestangularConfigurer) {
+      var grandchildRestangular = childRestangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRequestSuffix('.json');
       });
 
@@ -1284,9 +1288,9 @@ describe('Restangular', function() {
     });
   });
 
-  describe('Self linking', function() {
-    it('Should request the link in HAL format', function() {
-      var linkRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+  describe('Self linking', function () {
+    it('Should request the link in HAL format', function () {
+      var linkRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setRestangularFields({
           selfLink: '_links.self'
         });
@@ -1304,38 +1308,38 @@ describe('Restangular', function() {
     });
   });
 
-  describe('Singe one (endpoint not expecting an id)', function() {
-    it('does not use the id for single resource GET', function() {
+  describe('Singe one (endpoint not expecting an id)', function () {
+    it('does not use the id for single resource GET', function () {
       Restangular.one('info', 0, true).get();
       $httpBackend.expectGET('/info');
       $httpBackend.flush();
     });
 
-    it('getRestangularUrl() returns still the url without id after GET', function() {
+    it('getRestangularUrl() returns still the url without id after GET', function () {
       var record = Restangular.one('info', 0, true);
-      record.get().then(function(data) {
+      record.get().then(function (data) {
         expect(data.getRestangularUrl()).toEqual('/info');
       });
       $httpBackend.expectGET('/info');
       $httpBackend.flush();
     });
 
-    it('does not use the id for single nested resource GET', function() {
+    it('does not use the id for single nested resource GET', function () {
       Restangular.one('accounts', 1).one('info', 0, true).get();
       $httpBackend.expectGET('/accounts/1/info');
       $httpBackend.flush();
     });
 
-    it('does not use the id for single resource PUT', function() {
+    it('does not use the id for single resource PUT', function () {
       Restangular.one('info', 0, true).put();
       $httpBackend.expectPUT('/info');
       $httpBackend.flush();
     });
   });
 
-  describe('setSelfLinkAbsoluteUrl', function() {
-    it('works', function() {
-      var childRestangular = Restangular.withConfig(function(RestangularConfigurer) {
+  describe('setSelfLinkAbsoluteUrl', function () {
+    it('works', function () {
+      var childRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setSelfLinkAbsoluteUrl(false);
       });
 
@@ -1344,41 +1348,41 @@ describe('Restangular', function() {
     });
   });
 
-  describe('Misc', function() {
-    it('should not strip [one] or [all] key from plain object', function() {
+  describe('Misc', function () {
+    it('should not strip [one] or [all] key from plain object', function () {
       Restangular.all('customs').customPOST({
         one: 'I am here',
         two: 'I am also here'
-      }).then(function() {
+      }).then(function () {
         expect(1).toBe(1);
-      }, function() {
+      }, function () {
         expect('Promise').toBe('correctly fulfilled');
       });
       $httpBackend.flush();
     });
 
-    it('should not stip non-restangularized elements', function() {
+    it('should not stip non-restangularized elements', function () {
       expect(Restangular.stripRestangular(['test', 'test2'])).toEqual(['test', 'test2']);
     });
 
-    it('should accept 0 as response', function() {
-      Restangular.one('misc', 'zero').get().then(function(res) {
+    it('should accept 0 as response', function () {
+      Restangular.one('misc', 'zero').get().then(function (res) {
         expect(res).toEqual(0);
       });
       $httpBackend.flush();
     });
 
-    it('Should accept 0 as a proper id in custom requests', function() {
+    it('Should accept 0 as a proper id in custom requests', function () {
       $httpBackend.expectDELETE('/accounts/0').respond(202);
       Restangular.all('accounts').customDELETE(0);
       $httpBackend.flush();
     });
   });
 
-  describe('testing normalize url', function() {
+  describe('testing normalize url', function () {
 
-    it('should get a list of objects', function() {
-      Restangular.all('customers/').getList().then(function(res) {
+    it('should get a list of objects', function () {
+      Restangular.all('customers/').getList().then(function (res) {
         res.getList({
           active: true
         });
@@ -1390,8 +1394,8 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should get a list of objects even if the path has extra slashes', function() {
-      Restangular.all('customers///').getList().then(function(res) {
+    it('should get a list of objects even if the path has extra slashes', function () {
+      Restangular.all('customers///').getList().then(function (res) {
         res.getList({
           active: true
         });
@@ -1401,37 +1405,37 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('should post with slash at the end', function() {
-      Restangular.all('customers/').getList().then(function(res) {
-        res.post(newCustomer);
+    it('should post with slash at the end', function () {
+      Restangular.all('customers/').getList().then(function (res) {
+        res.post(testData.newCustomer);
         $httpBackend.expectPOST('/customers/');
       });
       $httpBackend.expectGET('/customers/');
       $httpBackend.flush();
     });
 
-    it('should put with slash at the end', function() {
-      Restangular.all('customers/').getList().then(function(customers) {
+    it('should put with slash at the end', function () {
+      Restangular.all('customers/').getList().then(function (customers) {
         customers[0].put();
         $httpBackend.expectPUT('/customers/0');
       });
       $httpBackend.flush();
     });
 
-    it('should return a normalized URL even it has extra slashes', function() {
+    it('should return a normalized URL even it has extra slashes', function () {
       var restangularSpaces = Restangular.one('accounts//', 123).one('buildings//', 456).all('spaces///');
       expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces/');
     });
 
-    it('should create a new service and still working normalized URL', function() {
-      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+    it('should create a new service and still working normalized URL', function () {
+      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setBaseUrl('http://localhost:8080');
       });
       expect(newRes.configuration.baseUrl).toEqual('http://localhost:8080');
       newRes.all('customers////').getList();
       $httpBackend.expectGET('http://localhost:8080/customers/');
 
-      var newApi = Restangular.withConfig(function(RestangularConfigurer) {
+      var newApi = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setBaseUrl('api.new.domain');
       });
 
@@ -1442,8 +1446,8 @@ describe('Restangular', function() {
       $httpBackend.flush();
     });
 
-    it('Should work with absolute URL with //authority', function() {
-      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+    it('Should work with absolute URL with //authority', function () {
+      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setBaseUrl('//localhost:8080');
       });
       expect(newRes.configuration.baseUrl).toEqual('//localhost:8080');
@@ -1454,29 +1458,29 @@ describe('Restangular', function() {
     });
   });
 
-  describe('setPlainByDefault', function() {
+  describe('setPlainByDefault', function () {
 
-    it('should not add restangularized methods to response object', function() {
-      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+    it('should not add restangularized methods to response object', function () {
+      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setPlainByDefault(true);
       });
 
       expect(newRes.configuration.plainByDefault).toEqual(true);
 
-      newRes.one('accounts', 0).get().then(function(account) {
-        expect(account).toEqual(accountsModel[0]);
+      newRes.one('accounts', 0).get().then(function (account) {
+        expect(account).toEqual(testData.accountsModel[0]);
       });
 
       $httpBackend.flush();
     });
 
-    it('shoud not add restangularized methods to response collection', function() {
-      var newRes = Restangular.withConfig(function(RestangularConfigurer) {
+    it('shoud not add restangularized methods to response collection', function () {
+      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setPlainByDefault(true);
       });
 
-      newRes.all('accounts').getList().then(function(accounts) {
-        expect(accounts).toEqual(accountsModel);
+      newRes.all('accounts').getList().then(function (accounts) {
+        expect(accounts).toEqual(testData.accountsModel);
       });
       $httpBackend.flush();
     });
