@@ -205,14 +205,6 @@ describe('Restangular', function () {
       return [200, 0, ''];
     });
 
-    $httpBackend.whenPOST('/customs').respond(function (method, url, data, headers) {
-      if (JSON.parse(data).one) {
-        return [201, '', ''];
-      } else {
-        return [400, '', ''];
-      }
-    });
-
     // return the status code given
     // e.g.: /error/404 returns 404 Not Found
     var urlRegex = /\/error\/(\d{3})/;
@@ -240,6 +232,64 @@ describe('Restangular', function () {
   afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
+  });
+
+  describe('stripRestangular', function () {
+    // We test stripRestangular by saving objects and checking
+    // the data received by the backend in the POST request.
+    // StripRestangular is used to remove Restangular's methods
+    // from the restangularized POST data (element), but not from raw data.
+
+    it('should not strip Restangular properties from raw POST data', function () {
+      // https://github.com/mgonto/restangular/issues/374
+      var restangularFields = Restangular.configuration.restangularFields;
+      // create an object whose keys are the values of the restangularFields
+      var postData = _.keyBy(restangularFields, function (value) { return value; });
+      // we don't want our post data to be treated as a restangularized object
+      postData.restangularized = false;
+      // when posting, restangular shouldn't remove any of our properties
+      var expectedData = angular.copy(postData);
+
+      $httpBackend.expectPOST('/accounts/1/merge', expectedData).respond(200);
+      var parent = Restangular.restangularizeElement(null, {id: 1}, 'accounts', true);
+      parent.post('merge', postData);
+      $httpBackend.flush();
+    });
+
+    it('should not strip "original" Restangular properties in restangularized POST data when overriding restangularFields', function () {
+      // https://github.com/mgonto/restangular/issues/374
+      // Here, we want to post a data object with fields
+      // that normally are used by Restangular, such that save, ids, options etc.
+      // We do that by taking each field in restangularFields and overriding it
+      // with something else, making restangular use different properties
+      // for its internal properties and functions, freeing the original ones
+      // for use in our data object
+
+      // these are the original field names used by restangular
+      var restangularFields = Restangular.configuration.restangularFields;
+      // create an object whose keys are the values of the restangularFields
+      // i.e. {save: "save", clone: "clone", doPOST: "doPOST", ...}
+      var postData = _.keyBy(restangularFields, function (value) { return value; });
+      // we expect the http service to get all of these "original" properties in the data object
+      var expectedData = angular.copy(postData);
+
+      // Override the field names used internally by Restangular,
+      // the new config will be something like
+      // {id: '_id', save: '_save', clone: '_clone', ...}
+      var newFieldConfig = {};
+      _.each(restangularFields, function (value, key) {
+        newFieldConfig[key] = '_' + key;
+      });
+      Restangular.setRestangularFields(newFieldConfig);
+
+      // Restangularize the data as an element to save
+      var parent = Restangular.restangularizeElement(null, postData, 'accounts', false);
+
+      // make the POST and check the posted data
+      $httpBackend.expectPOST('/accounts', expectedData).respond(200);
+      parent._save(); // we've overriden the save method as _save
+      $httpBackend.flush();
+    });
   });
 
   describe('Interceptors', function () {
@@ -1349,21 +1399,6 @@ describe('Restangular', function () {
   });
 
   describe('Misc', function () {
-    it('should not strip [one] or [all] key from plain object', function () {
-      Restangular.all('customs').customPOST({
-        one: 'I am here',
-        two: 'I am also here'
-      }).then(function () {
-        expect(1).toBe(1);
-      }, function () {
-        expect('Promise').toBe('correctly fulfilled');
-      });
-      $httpBackend.flush();
-    });
-
-    it('should not stip non-restangularized elements', function () {
-      expect(Restangular.stripRestangular(['test', 'test2'])).toEqual(['test', 'test2']);
-    });
 
     it('should accept 0 as response', function () {
       Restangular.one('misc', 'zero').get().then(function (res) {
@@ -1377,28 +1412,6 @@ describe('Restangular', function () {
       Restangular.all('accounts').customDELETE(0);
       $httpBackend.flush();
     });
-
-    it('should accept reserved properties as keys in POST data when POSTing raw data', function () {
-      // https://github.com/mgonto/restangular/issues/374
-      $httpBackend.expectPOST('/accounts/1/merge', {ids: 'test', options: 'foo', clone: 'bar'}).respond(200);
-      var parent = Restangular.restangularizeElement(null, {id: 1}, 'accounts', true);
-      parent.post('merge', {ids: 'test', options: 'foo', clone: 'bar'});
-      $httpBackend.flush();
-    });
-
-    it('should accept reserved properties as a key in POST data when using a restangularized element by configuring restangularFields', function () {
-      // https://github.com/mgonto/restangular/issues/374
-      $httpBackend.expectPOST('/accounts', {ids: 'test', options: 'foo', clone: 'bar'}).respond(200);
-      Restangular.setRestangularFields({
-        ids: '_ids',
-        clone: '_clone',
-        options: '_options'
-      });
-      var parent = Restangular.restangularizeElement(null, {ids: 'test', options: 'foo', clone: 'bar'}, 'accounts', false);
-      parent.save();
-      $httpBackend.flush();
-    });
-
 
   });
 

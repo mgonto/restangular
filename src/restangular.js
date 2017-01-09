@@ -989,7 +989,7 @@
           _.each(requestMethods, function(requestFunc, name) {
             var callOperation = name === 'delete' ? 'remove' : name;
             _.each(['do', 'custom'], function(alias) {
-              elem[alias + name.toUpperCase()] = _.bind(requestFunc, elem, callOperation);
+              elem[config.restangularFields[alias + name.toUpperCase()]] = _.bind(requestFunc, elem, callOperation);
             });
           });
           elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
