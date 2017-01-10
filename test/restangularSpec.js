@@ -244,7 +244,10 @@ describe('Restangular', function () {
       // https://github.com/mgonto/restangular/issues/374
       var restangularFields = Restangular.configuration.restangularFields;
       // create an object whose keys are the values of the restangularFields
-      var postData = _.keyBy(restangularFields, function (value) { return value; });
+      var postData = {};
+      _.each(restangularFields, function (value, key) {
+        postData.value = value;
+      });
       // we don't want our post data to be treated as a restangularized object
       postData.restangularized = false;
       // when posting, restangular shouldn't remove any of our properties
@@ -269,7 +272,10 @@ describe('Restangular', function () {
       var restangularFields = Restangular.configuration.restangularFields;
       // create an object whose keys are the values of the restangularFields
       // i.e. {save: "save", clone: "clone", doPOST: "doPOST", ...}
-      var postData = _.keyBy(restangularFields, function (value) { return value; });
+      var postData = {};
+      _.each(restangularFields, function (value, key) {
+        postData.value = value;
+      });
       // we expect the http service to get all of these "original" properties in the data object
       var expectedData = angular.copy(postData);
 
