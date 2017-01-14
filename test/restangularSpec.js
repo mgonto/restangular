@@ -1501,30 +1501,152 @@ describe('Restangular', function () {
   });
 
   describe('setPlainByDefault', function () {
+    var plainByDefaultRestangular;
 
-    it('should not add restangularized methods to response object', function () {
-      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
+    beforeEach(function () {
+      plainByDefaultRestangular = Restangular.withConfig(function (RestangularConfigurer) {
         RestangularConfigurer.setPlainByDefault(true);
       });
+    });
 
-      expect(newRes.configuration.plainByDefault).toEqual(true);
+    it('should set the property on the configuration', function () {
+      expect(plainByDefaultRestangular.configuration.plainByDefault).toEqual(true);
+    });
 
-      newRes.one('accounts', 0).get().then(function (account) {
+    it('should not add restangularized methods to response object', function () {
+      plainByDefaultRestangular.one('accounts', 0).get().then(function (account) {
         expect(account).toEqual(testData.accountsModel[0]);
       });
-
       $httpBackend.flush();
     });
 
     it('shoud not add restangularized methods to response collection', function () {
-      var newRes = Restangular.withConfig(function (RestangularConfigurer) {
-        RestangularConfigurer.setPlainByDefault(true);
-      });
-
-      newRes.all('accounts').getList().then(function (accounts) {
+      plainByDefaultRestangular.all('accounts').getList().then(function (accounts) {
         expect(accounts).toEqual(testData.accountsModel);
       });
       $httpBackend.flush();
     });
+
+    describe('with ETag', function () {
+      beforeEach(function () {
+        $httpBackend.whenGET('/accounts').respond(
+          testData.accountsModel,
+          {'ETag': 'c11ea3f8-3bfd-4be8-a6a6-501dd831b8a4'}
+        );
+        $httpBackend.whenGET('/accounts/1').respond(
+          testData.accountsModel[1],
+          {'ETag': 'bf79b780-f132-4f44-a9eb-7e6eb4f902b2'}
+        );
+      });
+
+      it('should not add restangularized ETag to response object', function () {
+        plainByDefaultRestangular.one('accounts', 0).get().then(function (account) {
+          expect(account).toEqual(testData.accountsModel[0]);
+        });
+        $httpBackend.flush();
+      });
+
+      it('shoud not add restangularized ETag to response collection', function () {
+        plainByDefaultRestangular.all('accounts').getList().then(function (accounts) {
+          expect(accounts).toEqual(testData.accountsModel);
+        });
+        $httpBackend.flush();
+      });
+    });
+  });
+
+  describe('ETags', function () {
+    beforeEach(function () {
+      $httpBackend.whenGET('/etagAccounts').respond(
+        testData.accountsModel,
+        {'ETag': 'c11ea3f8-3bfd-4be8-a6a6-501dd831b8a4'}
+      );
+      $httpBackend.whenGET('/etagAccounts/1').respond(
+        testData.accountsModel[1],
+        {'ETag': 'bf79b780-f132-4f44-a9eb-7e6eb4f902b2'}
+      );
+    });
+
+    it('should include the ETag in the restangularized element', function () {
+      Restangular.one('etagAccounts', 1).get().then(function (account) {
+        expect(account.restangularEtag).toEqual('bf79b780-f132-4f44-a9eb-7e6eb4f902b2');
+      });
+      $httpBackend.flush();
+    });
+    it('should include the ETag in the restangularized collection', function () {
+      Restangular.all('etagAccounts').getList().then(function (accounts) {
+        expect(accounts.restangularEtag).toEqual('c11ea3f8-3bfd-4be8-a6a6-501dd831b8a4');
+      });
+      $httpBackend.flush();
+    });
+    it('should add the If-Match header on PUT requests', function () {
+      var responseHandler = jasmine.createSpy();
+      Restangular.one('etagAccounts', 1).get().then(responseHandler);
+      $httpBackend.flush();
+
+      var account = responseHandler.calls.argsFor(0)[0];
+      $httpBackend.expect(
+        'PUT',
+        '/etagAccounts/1',
+        testData.accountsModel[1],
+        function (headers) {
+          return headers['If-Match'] === 'bf79b780-f132-4f44-a9eb-7e6eb4f902b2';
+        }
+      ).respond(200);
+      account.save();
+      $httpBackend.flush();
+    });
+    it('should add the If-Match header on DELETE requests', function () {
+      var responseHandler = jasmine.createSpy();
+      Restangular.one('etagAccounts', 1).get().then(responseHandler);
+      $httpBackend.flush();
+
+      var account = responseHandler.calls.argsFor(0)[0];
+      $httpBackend.expect(
+        'DELETE',
+        '/etagAccounts/1',
+        testData.accountsModel[1],
+        function (headers) {
+          return headers['If-Match'] === 'bf79b780-f132-4f44-a9eb-7e6eb4f902b2';
+        }
+      ).respond(200);
+      account.remove();
+      $httpBackend.flush();
+    });
+    it('should add the If-None-Match header on GET requests for elements', function () {
+      var responseHandler = jasmine.createSpy();
+      Restangular.one('etagAccounts', 1).get().then(responseHandler);
+      $httpBackend.flush();
+
+      var account = responseHandler.calls.argsFor(0)[0];
+      $httpBackend.expect(
+        'GET',
+        '/etagAccounts/1',
+        undefined,
+        function (headers) {
+          return headers['If-None-Match'] === 'bf79b780-f132-4f44-a9eb-7e6eb4f902b2';
+        }
+      ).respond(200);
+      account.get();
+      $httpBackend.flush();
+    });
+    it('should add the If-None-Match header on GET requests for collections', function () {
+      var responseHandler = jasmine.createSpy();
+      Restangular.all('etagAccounts').getList().then(responseHandler);
+      $httpBackend.flush();
+
+      var accounts = responseHandler.calls.argsFor(0)[0];
+      $httpBackend.expect(
+        'GET',
+        '/etagAccounts',
+        undefined,
+        function (headers) {
+          return headers['If-None-Match'] === 'c11ea3f8-3bfd-4be8-a6a6-501dd831b8a4';
+        }
+      ).respond(200);
+      accounts.getList();
+      $httpBackend.flush();
+    });
+
   });
 });
