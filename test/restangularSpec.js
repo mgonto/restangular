@@ -1075,22 +1075,86 @@ describe('Restangular', function () {
   });
 
   describe('getRestangularUrl', function () {
+    it('should get the URL for the current object', function () {
+      var element = Restangular.one('accounts', 123);
+      expect(element.getRestangularUrl()).toEqual('/accounts/123');
+    });
+    it('should not include query parameters', function () {
+      var responseHandler = jasmine.createSpy(), element;
+      $httpBackend.expectGET('/accounts/123?query=params').respond({id: 123, name: 'account123'});
+      Restangular.one('accounts', 123).get({query: 'params'}).then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(element.getRestangularUrl()).toEqual('/accounts/123');
+    });
+    it('should be the same for the built resource as for the fetched resource', function () {
+      var responseHandler = jasmine.createSpy(), element, resource;
+      $httpBackend.expectGET('/accounts/123').respond({id: 123, name: 'Account 123'});
+      resource = Restangular.one('accounts', 123);
+      resource.get().then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRestangularUrl()).toEqual('/accounts/123');
+    });
+    it('should use the id from the response, not the request', function () {
+      var responseHandler = jasmine.createSpy(), element, resource;
+      $httpBackend.expectGET('/accounts/123').respond({id: 444, name: 'Account 444'});
+      resource = Restangular.one('accounts', 123);
+      resource.get().then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRestangularUrl()).toEqual('/accounts/444');
+    });
+    it('should have an empty id in the URL if the response id is empty', function () {
+      // https://github.com/mgonto/restangular/issues/1421
+      var responseHandler = jasmine.createSpy(), element, resource;
+      $httpBackend.expectGET('/accounts/123').respond({name: 'Account 444'});
+      resource = Restangular.one('accounts', 123);
+      resource.get().then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRestangularUrl()).toEqual('/accounts');
+    });
+    it('should return the generated URL for PUTed elements', function () {
+      var responseHandler = jasmine.createSpy(), element;
+      $httpBackend.expectPUT('/accounts/123').respond({id: 123, name: 'Account 123'});
+      Restangular.one('accounts', 123).put().then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(element.getRestangularUrl()).toEqual('/accounts/123');
+    });
+    it('should return the generated URL for POSTed elements', function () {
+      var responseHandler = jasmine.createSpy(), element;
+      $httpBackend.expectPOST('/accounts').respond({id: 123, name: 'Account 123'});
+      Restangular.restangularizeElement(null, {name: 'Account 123'}, 'accounts', false, false).save().then(responseHandler);
+      $httpBackend.flush();
+
+      element = responseHandler.calls.argsFor(0)[0];
+      expect(element.getRestangularUrl()).toEqual('/accounts/123');
+    });
     it('should return the generated URL when you chain Restangular methods together', function () {
       var restangularSpaces = Restangular.one('accounts', 123).one('buildings', 456).all('spaces');
       expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
     });
-  });
 
-  describe('getRestangularUrl with useCannonicalId set to true', function () {
-    it('should return the generated URL when you chain Restangular methods together', function () {
-      var R = Restangular.withConfig(function (config) {
-        config.setUseCannonicalId(true);
+    describe('with useCannonicalId set to true', function () {
+      it('should return the generated URL when you chain Restangular methods together', function () {
+        var R = Restangular.withConfig(function (config) {
+          config.setUseCannonicalId(true);
+        });
+        var restangularSpaces = R.one('accounts', 123).one('buildings', 456).all('spaces');
+        expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
       });
-      var restangularSpaces = R.one('accounts', 123).one('buildings', 456).all('spaces');
-      expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
     });
   });
-
 
   describe('addElementTransformer', function () {
     it('should allow for a custom method to be placed at the collection level', function () {
