@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/mgonto/restangular.svg?branch=master)](https://travis-ci.org/mgonto/restangular)
 [![Coverage Status](https://coveralls.io/repos/github/mgonto/restangular/badge.svg?branch=master)](https://coveralls.io/github/mgonto/restangular?branch=master)
 [![David](https://img.shields.io/david/dev/mgonto/restangular.svg)](https://david-dm.org/mgonto/restangular/?type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/mgonto/restangular/badge.svg)](https://snyk.io/test/github/mgonto/restangular)
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=martin%40gon%2eto&lc=US&item_name=Martin%20Gontovnikas&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate once-off to this project using Paypal")
 [![Donate on Gittip](http://img.shields.io/gittip/mgonto.svg)](https://www.gittip.com/mgonto/)
 <a href="https://twitter.com/intent/tweet?hashtags=&original_referer=http%3A%2F%2Fgithub.com%2F&text=Check+out+Restangular%2C+a+service+for+%23AngularJS+that+makes+it+easy+to+use+Rest+APIs&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2Fmgonto%2Frestangular" target="_blank">
