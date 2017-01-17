@@ -541,7 +541,7 @@ describe('Restangular', function () {
 
   });
 
-  describe('Local data', function () {
+  describe('Restangularize', function () {
     it('Should restangularize a collection OK', function () {
       var collection = angular.copy(testData.accountsModel);
 
@@ -588,7 +588,7 @@ describe('Restangular', function () {
     });
   });
 
-  describe('restangularizePromiseIntercept', function () {
+  describe('restangularizePromiseInterceptor', function () {
     it('should be invoked by restangularizePromise', function () {
       var calledWithPromise;
 
@@ -651,7 +651,7 @@ describe('Restangular', function () {
   describe('ALL', function () {
     it('getList() should return an array of items', function () {
       restangularAccounts.getList().then(function (accounts) {
-        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(testData.accountsModel));
+        expect(Restangular.stripRestangular(accounts)).toEqual(testData.accountsModel);
       });
 
       $httpBackend.flush();
@@ -660,7 +660,7 @@ describe('Restangular', function () {
     it('several getList() should return an array of items', function () {
       $httpBackend.expectGET('/accounts/0,1');
       Restangular.several('accounts', 0, 1).getList().then(function (accounts) {
-        expect(Restangular.stripRestangular(accounts)).toEqual(Restangular.stripRestangular(testData.accountsModel));
+        expect(Restangular.stripRestangular(accounts)).toEqual(testData.accountsModel);
       });
 
       $httpBackend.flush();
@@ -675,7 +675,7 @@ describe('Restangular', function () {
 
     it('get(id) should return the item with given id', function () {
       restangularAccounts.get(0).then(function (account) {
-        expect(Restangular.stripRestangular(account)).toEqual(Restangular.stripRestangular(testData.accountsModel[0]));
+        expect(Restangular.stripRestangular(account)).toEqual(testData.accountsModel[0]);
       });
 
       $httpBackend.flush();
@@ -687,9 +687,16 @@ describe('Restangular', function () {
       $httpBackend.flush();
     });
 
+    it('should work with getList on an element', function () {
+      var responseHandler = jasmine.createSpy();
+      $httpBackend.expectGET('/accounts/1/users').respond([{}]);
+      Restangular.one('accounts', 1).getList('users').then(responseHandler);
+      $httpBackend.flush();
+    });
+
     it('Custom GET methods should work', function () {
       restangularAccounts.customGETLIST('messages').then(function (msgs) {
-        expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(testData.messages));
+        expect(Restangular.stripRestangular(msgs)).toEqual(testData.messages);
       });
 
       $httpBackend.flush();
@@ -1074,10 +1081,11 @@ describe('Restangular', function () {
     });
   });
 
-  describe('getRestangularUrl', function () {
+  describe('getRestangularUrl and getRequestedUrl', function () {
     it('should get the URL for the current object', function () {
       var element = Restangular.one('accounts', 123);
       expect(element.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRequestedUrl()).toEqual('/accounts/123');
     });
     it('should not include query parameters', function () {
       var responseHandler = jasmine.createSpy(), element;
@@ -1087,6 +1095,7 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(element.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRequestedUrl()).toEqual('/accounts/123?query=params');
     });
     it('should be the same for the built resource as for the fetched resource', function () {
       var responseHandler = jasmine.createSpy(), element, resource;
@@ -1097,7 +1106,9 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(resource.getRequestedUrl()).toEqual('/accounts/123');
       expect(element.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRequestedUrl()).toEqual('/accounts/123');
     });
     it('should use the id from the response, not the request', function () {
       var responseHandler = jasmine.createSpy(), element, resource;
@@ -1108,7 +1119,9 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(resource.getRequestedUrl()).toEqual('/accounts/123');
       expect(element.getRestangularUrl()).toEqual('/accounts/444');
+      expect(element.getRequestedUrl()).toEqual('/accounts/444');
     });
     it('should have an empty id in the URL if the response id is empty', function () {
       // https://github.com/mgonto/restangular/issues/1421
@@ -1120,7 +1133,9 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(resource.getRestangularUrl()).toEqual('/accounts/123');
+      expect(resource.getRequestedUrl()).toEqual('/accounts/123');
       expect(element.getRestangularUrl()).toEqual('/accounts');
+      expect(element.getRequestedUrl()).toEqual('/accounts');
     });
     it('should return the generated URL for PUTed elements', function () {
       var responseHandler = jasmine.createSpy(), element;
@@ -1130,6 +1145,7 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(element.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRequestedUrl()).toEqual('/accounts/123');
     });
     it('should return the generated URL for POSTed elements', function () {
       var responseHandler = jasmine.createSpy(), element;
@@ -1139,10 +1155,12 @@ describe('Restangular', function () {
 
       element = responseHandler.calls.argsFor(0)[0];
       expect(element.getRestangularUrl()).toEqual('/accounts/123');
+      expect(element.getRequestedUrl()).toEqual('/accounts/123');
     });
     it('should return the generated URL when you chain Restangular methods together', function () {
       var restangularSpaces = Restangular.one('accounts', 123).one('buildings', 456).all('spaces');
       expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
+      expect(restangularSpaces.getRequestedUrl()).toEqual('/accounts/123/buildings/456/spaces');
     });
 
     describe('with useCannonicalId set to true', function () {
@@ -1152,7 +1170,33 @@ describe('Restangular', function () {
         });
         var restangularSpaces = R.one('accounts', 123).one('buildings', 456).all('spaces');
         expect(restangularSpaces.getRestangularUrl()).toEqual('/accounts/123/buildings/456/spaces');
+        expect(restangularSpaces.getRequestedUrl()).toEqual('/accounts/123/buildings/456/spaces');
       });
+    });
+
+    xdescribe('with custom methods', function () {
+      beforeEach(function () {
+        $httpBackend.whenGET('/accounts/do-something?param=value').respond(testData.accountsDoSomethingModel);
+        $httpBackend.whenGET('/accounts/messages?param=value').respond(testData.messages);
+        $httpBackend.whenGET('/accounts/1/message?param=value').respond(testData.messages[0]);
+      });
+      it('GETLIST should work', function() {
+        restangularAccounts.customGETLIST('messages', { param: 'value' }).then(function(msgs) {
+          expect(Restangular.stripRestangular(msgs)).toEqual(Restangular.stripRestangular(testData.messages));
+          expect(msgs.getRestangularUrl()).toBe('/accounts/messages');
+          // expect(msgs.getRequestedUrl()).toBe('/accounts/messages?param=value');
+        });
+        $httpBackend.flush();
+      });
+      it('GET should work', function() {
+        restangularAccount1.customGET('message', { param: 'value' }).then(function(msg) {
+          expect(Restangular.stripRestangular(msg)).toEqual(Restangular.stripRestangular(testData.messages[0]));
+          expect(msg.getRestangularUrl()).toBe('/accounts/23/message');
+          expect(msg.getRequestedUrl()).toBe('/accounts/23/message?param=value');
+        });
+        $httpBackend.flush();
+      });
+
     });
   });
 

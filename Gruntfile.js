@@ -63,6 +63,7 @@ module.exports = function(grunt) {
       debug: {
         singleRun: false,
         autoWatch: true,
+        preprocessors: null,
         browsers: ['Chrome']
       },
       travis: {
