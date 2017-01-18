@@ -66,6 +66,11 @@ module.exports = function(grunt) {
         preprocessors: null,
         browsers: ['Chrome']
       },
+      debugCoverage: {
+        singleRun: false,
+        autoWatch: true,
+        browsers: ['Chrome']
+      },
       travis: {
         singleRun: true,
         autoWatch: false,
@@ -160,6 +165,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['karma:build', 'karma:buildUnderscore']);
 
   grunt.registerTask('test-debug', ['karma:debug']);
+
+  grunt.registerTask('test-debug-coverage', ['karma:debugCoverage']);
 
   grunt.registerTask('travis', ['karma:travis', 'karma:travisUnderscore', 'coveralls']);
 
