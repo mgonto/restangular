@@ -1,3 +1,4 @@
+/* jshint jasmine: true */
 describe('BaseCreator', function () {
 
   var Restangular, BaseCreator, bc, $http;
@@ -115,13 +116,13 @@ describe('BaseCreator', function () {
     });
     it('should return an object with the same method names as the given object', function () {
       bc = new BaseCreator(config);
-      var resource = bc.createRestangularResource($http, url, methodConfig);
+      var resource = bc.createRestangularResource(url, methodConfig);
       var propertyNames = Object.getOwnPropertyNames(resource);
       expect(propertyNames).toEqual(['getList', 'get', 'foo']);
     });
     it('should create a function for each method name', function () {
       bc = new BaseCreator(config);
-      var resource = bc.createRestangularResource($http, url, methodConfig);
+      var resource = bc.createRestangularResource(url, methodConfig);
       expect(resource.getList).toEqual(jasmine.any(Function));
       expect(resource.get).toEqual(jasmine.any(Function));
       expect(resource.foo).toEqual(jasmine.any(Function));

@@ -13,9 +13,9 @@
 
   var restangularModule = angular.module('restangular', []);
 
-  restangularModule.provider('Restangular', function() {
+  restangularModule.provider('Restangular', function RestangularProvider() {
 
-    this.$get = ['$http', '$q', 'Configurer', 'Path', function($http, $q, Configurer, Path) {
+    this.$get = ['$q', 'Configurer', 'Path', function($q, Configurer, Path) {
 
       // augment `this` provider object with properties
       // and a configuration object using the Configurer
@@ -457,7 +457,6 @@
           // create a resource
           var resource = urlHandler.resource(
             this,
-            $http,
             request.httpConfig,
             request.headers,
             request.params,
@@ -573,7 +572,6 @@
 
           var resource = urlHandler.resource(
             this,
-            $http,
             request.httpConfig,
             callHeaders,
             request.params,
@@ -717,7 +715,7 @@
     }];
   });
 
-  restangularModule.factory('BaseCreator', function () {
+  restangularModule.factory('BaseCreator', ['$http', function BaseCreatorFactory($http) {
 
     /**
      * Base URL Creator. Base prototype for everything related to it
@@ -742,11 +740,10 @@
 
     /**
      * Creates a Restangular resource
-     * @param {[type]} $http                [description]
      * @param {[type]} url                  [description]
      * @param {[type]} methodConfigurations [description]
      */
-    BaseCreator.prototype.createRestangularResource = function($http, url, methodConfigurations) {
+    BaseCreator.prototype.createRestangularResource = function(url, methodConfigurations) {
       var __this = this;
       var resource = {};
       _.each(_.keys(methodConfigurations), function(methodName) {
@@ -785,7 +782,6 @@
     /**
      * Creates a resource
      * @param  {object} current         The current element
-     * @param  {Object} $http           Angular's $http service
      * @param  {Object} localHttpConfig HTTP configuration options
      * @param  {Object} callHeaders     Headers for the request
      * @param  {Object} callParams      Query params for the request
@@ -794,7 +790,7 @@
      * @param  {String} operation       HTTP verb (or getList)
      * @return {Object}                 An object representing a resource
      */
-    BaseCreator.prototype.resource = function(current, $http, localHttpConfig, callHeaders, callParams, what, etag, operation) {
+    BaseCreator.prototype.resource = function(current, localHttpConfig, callHeaders, callParams, what, etag, operation) {
 
       // extend the query parameters with default query params from config
       var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
@@ -832,7 +828,7 @@
 
       current[this.config.restangularFields.httpConfig] = undefined;
 
-      return this.createRestangularResource($http, url, {
+      return this.createRestangularResource(url, {
         getList: this.config.withHttpValues({
           method: 'GET',
           params: params,
@@ -896,9 +892,9 @@
     };
 
     return BaseCreator;
-  });
+  }]);
 
-  restangularModule.factory('Path', ['BaseCreator', function (BaseCreator) {
+  restangularModule.factory('Path', ['BaseCreator', function PathFactory(BaseCreator) {
 
     /**
      * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
@@ -1034,7 +1030,7 @@
     return Path;
   }]);
 
-  restangularModule.factory('Configurer', ['Path', function (Path) {
+  restangularModule.factory('Configurer', ['Path', function ConfigurerFactory(Path) {
     // Configuration
     var Configurer = {};
     Configurer.init = function(object, config) {

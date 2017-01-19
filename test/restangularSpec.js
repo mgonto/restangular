@@ -1,4 +1,4 @@
-/* global describe, beforeEach, afterEach, it, expect, spyOn, jasmine */
+/* jshint jasmine: true */
 /* jshint unused: false */
 describe('Restangular', function () {
   // API

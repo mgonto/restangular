@@ -1,3 +1,4 @@
+/* jshint jasmine: true */
 describe('Configurer', function () {
 
   var Configurer;

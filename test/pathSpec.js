@@ -1,3 +1,4 @@
+/* jshint jasmine: true */
 describe('Path', function () {
 
   var Path;
