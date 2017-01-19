@@ -1,7 +1,7 @@
 /* jshint jasmine: true */
 describe('BaseCreator', function () {
 
-  var Restangular, BaseCreator, bc, $http;
+  var Restangular, BaseCreator, bc, $http, $httpBackend, $rootScope;
 
   beforeEach(function () {
     angular.mock.module('restangular');
@@ -9,8 +9,15 @@ describe('BaseCreator', function () {
       BaseCreator = $injector.get('BaseCreator');
       Restangular = $injector.get('Restangular');
       $http = $injector.get('$http');
+      $rootScope = $injector.get('$rootScope');
+      $httpBackend = $injector.get('$httpBackend');
     });
     bc = new BaseCreator();
+  });
+
+  afterEach(function () {
+    $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend.verifyNoOutstandingExpectation();
   });
 
   it('should be a function', function () {
@@ -84,7 +91,7 @@ describe('BaseCreator', function () {
   });
 
   describe('function createRestangularResource', function () {
-    var methodConfig, config, url;
+    var methodConfig, config, url, resource;
     beforeEach(function () {
       methodConfig = {
         getList: {
@@ -97,39 +104,98 @@ describe('BaseCreator', function () {
           params: {q: 'abc'},
           headers: {'X-Foo-Bar': 'Yes'}
         },
-        foo: {
+        post: {
           method: 'POST',
           params: {},
           headers: {}
+        },
+        fooCustom: {
+          method: 'POST',
+          params: {custom: 'value'},
+          headers: {'X-Custom': 'headerValue'}
         }
       };
       config = {
         defaultRequestParams: {
-          getList: {},
           get: {},
-          foo: {}
+          post: {}
         }
       };
       config.isSafe = jasmine.createSpy();
       config.isSafe.and.returnValue(true);
       url = 'http://asdf.com/accounts/1';
+      bc = new BaseCreator(config);
+      resource = bc.createRestangularResource(url, methodConfig);
     });
     it('should return an object with the same method names as the given object', function () {
-      bc = new BaseCreator(config);
-      var resource = bc.createRestangularResource(url, methodConfig);
       var propertyNames = Object.getOwnPropertyNames(resource);
-      expect(propertyNames).toEqual(['getList', 'get', 'foo']);
+      expect(propertyNames).toEqual(['getList', 'get', 'post', 'fooCustom']);
     });
     it('should create a function for each method name', function () {
-      bc = new BaseCreator(config);
-      var resource = bc.createRestangularResource(url, methodConfig);
       expect(resource.getList).toEqual(jasmine.any(Function));
       expect(resource.get).toEqual(jasmine.any(Function));
-      expect(resource.foo).toEqual(jasmine.any(Function));
+      expect(resource.fooCustom).toEqual(jasmine.any(Function));
     });
-    describe('produced method function', function () {
-      it('should produce a function that calls $http', function () {
 
+    describe('produced method function', function () {
+      it('should produce a function that makes an HTTP call', function () {
+        $httpBackend.expectGET(/.*/).respond(200);
+        resource.get();
+        $httpBackend.flush();
+      });
+      it('should make a POST call when configured to do so', function () {
+        config.isSafe.and.returnValue(false);
+        $httpBackend.expectPOST(/.*/).respond(200);
+        resource.fooCustom();
+        $httpBackend.flush();
+      });
+      it('should call the specified url', function () {
+        $httpBackend.expectGET('http://asdf.com/accounts/1').respond(200);
+        resource.getList();
+        $httpBackend.flush();
+      });
+      it('should use the query parameters from the methodConfig', function () {
+        $httpBackend.expectGET('http://asdf.com/accounts/1?q=abc').respond(200);
+        resource.get();
+        $httpBackend.flush();
+      });
+      it('should use the defaultRequestParams for the given HTTP verb', function () {
+        config.defaultRequestParams.get = {def: 'value'};
+        bc = new BaseCreator(config);
+        resource = bc.createRestangularResource(url, methodConfig);
+
+        $httpBackend.expectGET('http://asdf.com/accounts/1?def=value&q=abc').respond(200);
+        resource.get();
+        $httpBackend.flush();
+      });
+      it('should use the defaultRequestParams over the methodConfig params', function () {
+        config.defaultRequestParams.get = {def: 'value', q: 'cde'};
+        bc = new BaseCreator(config);
+        resource = bc.createRestangularResource(url, methodConfig);
+
+        $httpBackend.expectGET('http://asdf.com/accounts/1?def=value&q=cde').respond(200);
+        resource.get();
+        $httpBackend.flush();
+      });
+      it('should use post data passed to the function', function () {
+        config.isSafe.and.returnValue(false);
+        resource = bc.createRestangularResource(url, methodConfig);
+        $httpBackend.expectPOST('http://asdf.com/accounts/1', {data: 'value'}).respond(200);
+        resource.post({data: 'value'});
+        $httpBackend.flush();
+      });
+      it('should use the given query parameters in a POST', function () {
+        config.isSafe.and.returnValue(false);
+        resource = bc.createRestangularResource(url, methodConfig);
+        $httpBackend.expectPOST(
+          'http://asdf.com/accounts/1?custom=value',
+          {data: 'value'},
+          function (headers) {
+            return headers['X-Custom'] === 'headerValue';
+          }
+        ).respond(200);
+        resource.fooCustom({data: 'value'});
+        $httpBackend.flush();
       });
     });
     // it('should extend the query params with the defaultRequestParams', function () {

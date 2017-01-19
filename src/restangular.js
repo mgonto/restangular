@@ -739,24 +739,63 @@
     };
 
     /**
-     * Creates a Restangular resource
-     * @param {[type]} url                  [description]
-     * @param {[type]} methodConfigurations [description]
+     * Creates an object "resource" with one method for each key
+     * in the given methodConfigurations. The method will make an $http
+     * request to the given URL using the HTTP verb, query parameters and
+     * headers given in the methodConfiguration. Query parameters will be
+     * extended (and possibly overwritten) with the default query parameters
+     * defined in the current configuration.
+     *
+     * If the HTTP verb given in the configuration is unsafe (sends data),
+     * the corresponding produced method will take one argument, which is
+     * the data to be sent in the request.
+     *
+     * @param {String} url                  The URL for the resource
+     * @param {Object} methodConfigurations Configuration options for resource methods
+     *
+     * @example
+     * var methodConfigs = {
+     *   getList: {
+     *     method: "GET",
+     *     params: {},
+     *     headers: {}
+     *   },
+     *   get: {
+     *     method: "GET",
+     *     params: {
+     *       q: "abc"
+     *     },
+     *     headers: {
+     *       "X-FooBar: "Yes"
+     *     }
+     *   },
+     *   post: {
+     *     method: "POST",
+     *     params: {},
+     *     headers: {}
+     *   },
+     *   fooCustom: {
+     *     method: "POST",
+     *     params: {one: 'value'},
+     *     headers: {'X-Some-Thing': 123}
+     *   }
+     * };
+     * var resource = baseCreator.createRestangularResource('http://server.com', methodConfigs);
+     * resource.fooCustom({some: 'data'});
+     * // -> POST http://server.com?one=value
+     * // with data {some: 'data'}
+     * // with headers {'X-Some-Thing': 123}
      */
     BaseCreator.prototype.createRestangularResource = function(url, methodConfigurations) {
-      var __this = this;
+      var _this = this;
       var resource = {};
-      _.each(_.keys(methodConfigurations), function(methodName) {
-        var methodConf = methodConfigurations[methodName];
+
+      _.each(methodConfigurations, function(methodConf, methodName) {
 
         // Add default parameters
-        methodConf.params = _.extend({}, methodConf.params, __this.config.defaultRequestParams[methodConf.method.toLowerCase()]);
-        // We don't want the ? if no params are there
-        if (_.isEmpty(methodConf.params)) {
-          delete methodConf.params;
-        }
+        methodConf.params = _.extend(methodConf.params, _this.config.defaultRequestParams[methodConf.method.toLowerCase()]);
 
-        if (__this.config.isSafe(methodConf.method)) {
+        if (_this.config.isSafe(methodConf.method)) {
 
           resource[methodName] = function() {
             return $http(_.extend(methodConf, {
@@ -783,8 +822,8 @@
      * Creates a resource
      * @param  {object} current         The current element
      * @param  {Object} localHttpConfig HTTP configuration options
-     * @param  {Object} callHeaders     Headers for the request
-     * @param  {Object} callParams      Query params for the request
+     * @param  {Object} callHeaders     Common headers for all requests
+     * @param  {Object} callParams      Common query params for all requests
      * @param  {String} what            Path of the resource
      * @param  {String} etag            ETag to use in the request
      * @param  {String} operation       HTTP verb (or getList)
