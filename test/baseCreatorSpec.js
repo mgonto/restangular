@@ -1,7 +1,7 @@
 /* jshint jasmine: true */
 describe('BaseCreator', function () {
 
-  var Restangular, BaseCreator, bc, $http, $httpBackend, $rootScope;
+  var Restangular, BaseCreator, bc, $http, $httpBackend, $rootScope, _;
 
   beforeEach(function () {
     angular.mock.module('restangular');
@@ -11,6 +11,7 @@ describe('BaseCreator', function () {
       $http = $injector.get('$http');
       $rootScope = $injector.get('$rootScope');
       $httpBackend = $injector.get('$httpBackend');
+      _ = $injector.get('$window')._;
     });
     bc = new BaseCreator();
   });
@@ -169,6 +170,7 @@ describe('BaseCreator', function () {
         $httpBackend.flush();
       });
       it('should use the defaultRequestParams over the methodConfig params', function () {
+        // TODO: OR SHOULD IT??
         config.defaultRequestParams.get = {def: 'value', q: 'cde'};
         bc = new BaseCreator(config);
         resource = bc.createRestangularResource(url, methodConfig);
@@ -198,16 +200,136 @@ describe('BaseCreator', function () {
         $httpBackend.flush();
       });
     });
-    // it('should extend the query params with the defaultRequestParams', function () {
-    //   config.defaultRequestParams.foo = {
-    //     custom: 'value'
-    //   };
-    //   bc = new BaseCreator(config);
-    //   var resource = bc.createRestangularResource($http, url, methodConfig);
-    //   expect(resource.params).toEqual({
-    //     custom: 'value'
-    //   })
-    // });
+  });
+
+  describe('function resource', function () {
+    var element;
+    beforeEach(function() {
+      Restangular.setBaseUrl('http://site.com');
+      element = Restangular.one('accounts', 1);
+      bc = new BaseCreator(Restangular.configuration);
+      spyOn(bc, 'createRestangularResource');
+      bc.base = jasmine.createSpy('base').and.returnValue('/accounts/1');
+    });
+    it('should call createRestangularResource', function () {
+      bc.resource(element);
+      expect(bc.createRestangularResource).toHaveBeenCalled();
+    });
+    it('return whatever createRestangularResource returns', function() {
+      bc.createRestangularResource.and.returnValue({some: 'object'});
+      expect(bc.resource(element)).toEqual({some: 'object'});
+    });
+    it('should clear the element\'s httpConfig', function() {
+      // TODO: why??
+      element._$httpConfig = {some: 'object'};
+      bc.resource(element);
+      expect(element._$httpConfig).toBeUndefined();
+    });
+    it('call createRestangularResource with the element url and a configuration object', function() {
+      bc.resource(element);
+      expect(bc.createRestangularResource).toHaveBeenCalledWith('/accounts/1', jasmine.any(Object));
+    });
+    describe('the generated url', function() {
+      it('should have the given "path"', function() {
+        bc.resource(element, {}, {}, {}, 'users');
+        var url = bc.createRestangularResource.calls.argsFor(0)[0];
+        expect(url).toEqual('/accounts/1/users');
+      });
+      it('should not have double slashes if the base url ends with a slash', function() {
+        bc.base.and.returnValue('/accounts/1/');
+        bc.resource(element, {}, {}, {}, 'users');
+        var url = bc.createRestangularResource.calls.argsFor(0)[0];
+        expect(url).toEqual('/accounts/1/users');
+      });
+      it('should have the configured suffix', function() {
+        bc.config.suffix = '.json';
+        bc.resource(element);
+        var url = bc.createRestangularResource.calls.argsFor(0)[0];
+        expect(url).toEqual('/accounts/1.json');
+      });
+      it('should not have a second suffix if one is already present on the url', function() {
+        bc.base.and.returnValue('/accounts/1.json');
+        bc.config.suffix = '.json';
+        bc.resource(element);
+        var url = bc.createRestangularResource.calls.argsFor(0)[0];
+        expect(url).toEqual('/accounts/1.json');
+      });
+      it('should not have a suffix if the element has a selfUrl', function() {
+        element.href = 'http://site.com/accounts/1';
+        bc.config.suffix = '.json';
+        bc.resource(element);
+        var url = bc.createRestangularResource.calls.argsFor(0)[0];
+        expect(url).toEqual('/accounts/1');
+      });
+    });
+    describe('the generated configuration object', function() {
+      var methods, obj;
+      beforeEach(function() {
+        methods = ['getList', 'get', 'jsonp', 'put', 'post', 'remove', 'head', 'trace', 'options', 'patch'];
+        spyOn(bc.config, 'withHttpValues').and.callFake(function (objParam) {
+          return objParam;
+        });
+        bc.resource(element);
+        obj = bc.createRestangularResource.calls.argsFor(0)[1];
+      });
+      it('should have a property for each restangular method', function() {
+        expect(_.keys(obj)).toEqual(methods);
+      });
+      it('should have method, params, and headers fields in each method property', function () {
+        methods.forEach(function (method) {
+          expect(_.keys(obj[method])).toEqual(['method', 'params', 'headers']);
+        });
+      });
+      it('should use the given params in the object', function () {
+        bc.resource(element, {}, {}, {query: 'value'});
+        obj = bc.createRestangularResource.calls.argsFor(1)[1];
+        methods.forEach(function (method) {
+          expect(obj[method].params).toEqual({query: 'value'});
+        });
+      });
+      it('should use the given headers in the object', function () {
+        bc.resource(element, {}, {header: 'value'}, {});
+        obj = bc.createRestangularResource.calls.argsFor(1)[1];
+        methods.forEach(function (method) {
+          expect(obj[method].headers).toEqual({header: 'value'});
+        });
+      });
+      it('should call withHttpValues for each method in object', function () {
+        expect(bc.config.withHttpValues.calls.count()).toEqual(methods.length);
+      });
+      it('should call withHttpValues with localHttpConfig as second argument', function () {
+        bc.config.withHttpValues.calls.reset();
+        var localHttpConfig = {
+          params: {some: 'defaultValue', other: 'param'},
+          headers: {header: 'defaultValue', other: 'header'},
+          method: 'FOO',
+          someCustom: 'property'
+        };
+        bc.resource(element, localHttpConfig, {header: 'value'}, {query: 'value'});
+        expect(bc.config.withHttpValues.calls.allArgs()).toEqual(
+          // make an array that contains [{}, localHttpConfig]
+          _.times(10, _.constant([jasmine.any(Object), localHttpConfig]))
+        );
+      });
+      it('should contain etag headers if etag is given on safe methods', function () {
+        spyOn(bc.config, 'isSafe').and.returnValue(true);
+        bc.resource(element, {}, {}, {}, null, '6938bcaa-69f2-451b-9f92-eb5ed70a0df8', 'operation');
+        obj = bc.createRestangularResource.calls.argsFor(1)[1];
+        expect(bc.config.isSafe).toHaveBeenCalledWith('operation');
+        methods.forEach(function (method) {
+          expect(obj[method].headers).toEqual({'If-None-Match': '6938bcaa-69f2-451b-9f92-eb5ed70a0df8'});
+        });
+      });
+      it('should contain etag headers if etag is given on safe methods', function () {
+        spyOn(bc.config, 'isSafe').and.returnValue(false);
+        bc.resource(element, {}, {}, {}, null, '6938bcaa-69f2-451b-9f92-eb5ed70a0df8', 'operation');
+        obj = bc.createRestangularResource.calls.argsFor(1)[1];
+        expect(bc.config.isSafe).toHaveBeenCalledWith('operation');
+        methods.forEach(function (method) {
+          expect(obj[method].headers).toEqual({'If-Match': '6938bcaa-69f2-451b-9f92-eb5ed70a0df8'});
+        });
+      });
+    });
   });
 
 });
