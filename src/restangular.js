@@ -946,15 +946,32 @@
      **/
     function Path(config) {
       // call "super" constructor
+      // Part of subclassing Path from BaseCreator
       BaseCreator.call(this, config);
     }
 
+    // Part of subclassing Path from BaseCreator
     Path.prototype = new BaseCreator();
 
+    // Part of subclassing Path from BaseCreator
     Path.prototype.constructor = BaseCreator;
 
+    /**
+     * Normalizes a URL by replacing multiple consecutive slashes,
+     * backslashes, or escaped slashes with single slashes. Leaves
+     * the (optional) protocol part intact.
+     *
+     * @param  {String} url A URL
+     * @return {String}     A normalized URL
+     */
     Path.prototype.normalizeUrl = function(url) {
+      // Regex match the given url and split it into three parts
+      // 0. (parts[0]): the full match
+      // 1. (parts[1]): the protocol part
+      // 2. (parst[2]): the rest
       var parts = /((?:http[s]?:)?\/\/)?(.*)?/.exec(url);
+      // replace any duplicate backslashes or slashes or combination
+      // with a single slash in the path part
       parts[2] = parts[2].replace(/[\\\/]+/g, '/');
       return (typeof parts[1] !== 'undefined') ? parts[1] + parts[2] : parts[2];
     };
