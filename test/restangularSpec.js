@@ -932,6 +932,22 @@ describe('Restangular', function () {
       $httpBackend.flush();
     });
 
+    it('Should remove correctly', function () {
+      var account1 = angular.copy(restangularAccount1);
+      $httpBackend.expectDELETE('/accounts/1');
+      account1.remove();
+
+      $httpBackend.flush();
+    });
+
+    it('Should remove correctly with an alphanumeric id', function () {
+      var account = Restangular.one('accounts', 'abc');
+      $httpBackend.expectDELETE('/accounts/abc').respond(200);
+      account.remove();
+
+      $httpBackend.flush();
+    });
+
     it('Should keep route property when element is created', function () {
       var account1 = Restangular.restangularizeElement(null, {}, 'accounts');
       $httpBackend.expectPOST('/accounts');
