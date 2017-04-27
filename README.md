@@ -1,4 +1,4 @@
-#Restangular
+# Restangular
 
 [![Build Status](https://travis-ci.org/mgonto/restangular.svg?branch=master)](https://travis-ci.org/mgonto/restangular)
 [![Coverage Status](https://coveralls.io/repos/github/mgonto/restangular/badge.svg?branch=master)](https://coveralls.io/github/mgonto/restangular?branch=master)
@@ -17,7 +17,7 @@ Restangular is an AngularJS service that simplifies common GET, POST, DELETE, an
 Learn Restangular! Try the [live demo on plunkr](http://plnkr.co/edit/8qrGeE?p=preview). It uses the same example as the official [Angular Javascript Project](http://angularjs.org/#wire-up-a-backend), but with Restangular! Or watch [a video introduction of a talk I gave at Devoxx France](http://www.parleys.com/play/535a189ee4b0c5ba17d43455/chapter1/about) about Restangular.
 
 
-#Table of contents
+# Table of contents
 
 - [Restangular](#restangular)
 - [Differences with $resource](#differences-with-resource)
@@ -138,7 +138,7 @@ $scope.user.one('messages', 123).one('from', 123).getList('unread');
 
 **[Back to top](#table-of-contents)**
 
-#How do I add this to my project?
+## How do I add this to my project?
 
 You can download this by:
 
@@ -155,7 +155,7 @@ You can download this by:
 
 **[Back to top](#table-of-contents)**
 
-#Dependencies
+## Dependencies
 
 Restangular depends on Angular and Lodash (or Underscore).
 
@@ -173,7 +173,7 @@ Each time, there're more Production WebApps using `Restangular`. If your webapp 
 
 **[Back to top](#table-of-contents)**
 
-#Starter Guide
+# Starter Guide
 
 ## Quick Configuration (For Lazy Readers)
 This is all you need to start using all the basic Restangular features.
